@@ -11,7 +11,7 @@ public class Restaurant {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @NotNull
     private String naam;
@@ -43,7 +43,7 @@ public class Restaurant {
         Beschrijving = beschrijving;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

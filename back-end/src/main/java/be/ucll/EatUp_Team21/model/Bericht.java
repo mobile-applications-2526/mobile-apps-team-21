@@ -13,7 +13,7 @@ public class Bericht {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @NotNull
     private String tekst;
@@ -38,7 +38,7 @@ public class Bericht {
         this.groep = groep;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

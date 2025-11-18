@@ -7,7 +7,7 @@ public class RestRel {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @NotNull
     public Persoon persoon;
@@ -27,7 +27,7 @@ public class RestRel {
         this.restaurant = restaurant;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

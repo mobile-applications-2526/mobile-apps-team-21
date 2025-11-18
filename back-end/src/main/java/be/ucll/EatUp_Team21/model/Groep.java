@@ -13,7 +13,7 @@ public class Groep {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @NotNull
     private String naam;
@@ -31,7 +31,7 @@ public class Groep {
         this.naam = naam;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
