@@ -1,0 +1,26 @@
+.group-card {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  margin: 12px 16px;
+}
+.group-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.group-card-header h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+.group-card-meta {
+  font-size: 0.7rem;
+  color: var(--ion-color-medium);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.group-card-meta .last {
+  color: var(--ion-color-dark);
+}

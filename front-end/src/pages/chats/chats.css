@@ -1,0 +1,22 @@
+/* Empty starter */
+ion-title {
+	font-weight: 600;
+}
+
+.groups-header {
+	padding: 12px 16px 4px 16px;
+}
+.groups-header h3 {
+	margin: 4px 0 12px 0;
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: var(--ion-color-medium);
+}
+.create-group-btn {
+	width: 100%;
+	border: 1px dashed var(--ion-color-success);
+	--border-radius: 10px;
+	font-size: 0.75rem;
+	height: 40px;
+	text-transform: none;
+}

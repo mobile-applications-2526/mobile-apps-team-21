@@ -11,10 +11,10 @@ import {
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import {chatbubblesOutline, compassOutline, timeOutline, personOutline } from 'ionicons/icons';
-import Chats from './pages/chats/chats';
-import Discover from './pages/discover/discover';
-import Revisit from './pages/revisit/revisit';
-import Profile from './pages/profile/profile';
+import Chats from './pages/chats/Chats';
+import Discover from './pages/discover/Discover';
+import Revisit from './pages/revisit/Revisit';
+import Profile from './pages/profile/Profile';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
