@@ -1,0 +1,7 @@
+{
+  "name": "EatUp-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
