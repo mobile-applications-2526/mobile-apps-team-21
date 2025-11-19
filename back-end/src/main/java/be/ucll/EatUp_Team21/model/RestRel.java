@@ -10,20 +10,20 @@ public class RestRel {
     private String id;
 
     @NotNull
-    public Persoon persoon;
+    public User user;
 
     @NotNull
     public Restaurant restaurant;
 
     private Float rating;
 
-    private boolean wilGaan = false;
+    private boolean wantsToGo = false;
 
     public RestRel() {
     }
 
-    public RestRel(@NotNull Persoon persoon, @NotNull Restaurant restaurant) {
-        this.persoon = persoon;
+    public RestRel(@NotNull User user, @NotNull Restaurant restaurant) {
+        this.user = user;
         this.restaurant = restaurant;
     }
 
@@ -31,8 +31,8 @@ public class RestRel {
         return id;
     }
 
-    public Persoon getPersoon() {
-        return persoon;
+    public User getUser() {
+        return user;
     }
 
     public Restaurant getRestaurant() {
@@ -46,8 +46,8 @@ public class RestRel {
         return -1.0f;
     }
 
-    public boolean getWilGaan() {
-        return wilGaan;
+    public boolean getWantsToGo() {
+        return wantsToGo;
     }
 
     public String setRating(Float rating) {
@@ -55,14 +55,14 @@ public class RestRel {
             return "Rating must be between 0.0 and 5.0";
         }
         this.rating = rating;
-        return "Rating van " + restaurant.getNaam() + " is gezet op " + rating;
+        return "Rating van " + restaurant.getName() + " is gezet op " + rating;
     }
 
-    public void WilGaan() {
-        this.wilGaan = true;
+    public void wantsToGo() {
+        this.wantsToGo = true;
     }
 
-    public void WilNietGaan() {
-        this.wilGaan = false;
+    public void doesNotWantToGo() {
+        this.wantsToGo = false;
     }
 }

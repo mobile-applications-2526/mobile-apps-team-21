@@ -14,19 +14,19 @@ public class Restaurant {
     private String id;
 
     @NotNull
-    private String naam;
+    private String name;
 
     @NotNull
-    public String adres;
+    public String adress;
 
     @NotNull
-    public String Telefoonnummer;
+    public String phoneNumber;
 
     @NotNull
-    public String Beschrijving;
+    public String description;
 
     @DBRef
-    private List<Groep> groep;
+    private List<Group> group;
 
     @DBRef
     private List<RestRel> restRels;
@@ -35,47 +35,47 @@ public class Restaurant {
     public Restaurant() {
     }
 
-    public Restaurant(@NotNull String naam, @NotNull String adres, @NotNull String telefoonnummer,
-            @NotNull String beschrijving) {
-        this.naam = naam;
-        this.adres = adres;
-        Telefoonnummer = telefoonnummer;
-        Beschrijving = beschrijving;
+    public Restaurant(@NotNull String name, @NotNull String adress, @NotNull String phoneNumber,
+            @NotNull String description) {
+        this.name = name;
+        this.adress = adress;
+        this.phoneNumber = phoneNumber;
+        this.description = description;
     }
 
     public String getId() {
         return id;
     }
 
-    public String getNaam() {
-        return naam;
+    public String getName() {
+        return name;
     }
 
-    public String getAdres() {
-        return adres;
+    public String getAdress() {
+        return adress;
     }
 
-    public String getTelefoonnummer() {
-        return Telefoonnummer;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public String getBeschrijving() {
-        return Beschrijving;
+    public String getDescription() {
+        return description;
     }
 
-    public void setNaam(String naam) {
-        this.naam = naam;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setAdres(String adres) {
-        this.adres = adres;
+    public void setAdress(String adress) {
+        this.adress = adress;
     }
 
-    public void setTelefoonnummer(String telefoonnummer) {
-        Telefoonnummer = telefoonnummer;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
-    public void setBeschrijving(String beschrijving) {
-        Beschrijving = beschrijving;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
