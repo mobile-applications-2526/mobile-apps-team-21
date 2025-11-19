@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
-@Document(collection = "groepen")
+@Document(collection = "groups")
 public class Group {
     
     @Id

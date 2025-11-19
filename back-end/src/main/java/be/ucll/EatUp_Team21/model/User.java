@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
-@Document(collection = "personen")
+@Document(collection = "users")
 public class User {
     
     @Id

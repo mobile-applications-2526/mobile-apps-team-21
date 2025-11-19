@@ -3,10 +3,12 @@ package be.ucll.EatUp_Team21.model;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+@Document(collection = "restaurants")
 public class Restaurant {
     
     @Id

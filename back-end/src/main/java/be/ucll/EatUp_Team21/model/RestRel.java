@@ -1,8 +1,11 @@
 package be.ucll.EatUp_Team21.model;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+@Document(collection = "restRels")
 public class RestRel {
     
     @Id
