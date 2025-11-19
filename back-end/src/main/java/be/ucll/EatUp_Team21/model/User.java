@@ -2,7 +2,6 @@ package be.ucll.EatUp_Team21.model;
 
 import java.util.List;
 
-import org.springframework.data.mongodb.core.aggregation.ComparisonOperators.Eq;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -107,8 +106,8 @@ public class User {
         return restaurantRelations;
     }
 
-    public void setRestaurantRelaties(List<RestRel> restaurantRelaties) {
-        restaurantRelations = restaurantRelations;
+    public void setRestaurantRelations(List<RestRel> restaurantRelations) {
+        this.restaurantRelations = restaurantRelations;
     }
 
     public void addRestaurantRelation(RestRel restRel) {

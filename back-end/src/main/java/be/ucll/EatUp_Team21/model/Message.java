@@ -2,7 +2,6 @@ package be.ucll.EatUp_Team21.model;
 
 import java.time.LocalDateTime;
 
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.persistence.*;
@@ -26,7 +25,7 @@ public class Message {
     @NotNull
     private Group group;
 
-    private boolean isEdited = false;
+    private boolean isEdited;
 
     public Message() {
     }
@@ -36,6 +35,7 @@ public class Message {
         this.timestamp = LocalDateTime.now();
         this.author = author;
         this.group = group;
+        this.isEdited = false;
     }
 
     public String getId() {
