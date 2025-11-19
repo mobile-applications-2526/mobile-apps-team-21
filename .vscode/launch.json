@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-EatUpTeam21Application<EatUp-Team21>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "be.ucll.EatUp_Team21.EatUpTeam21Application",
+            "projectName": "EatUp-Team21",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
