@@ -1,6 +1,9 @@
 package be.ucll.EatUp_Team21.model;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.time.LocalDateTime;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -24,6 +27,9 @@ public class Group {
     @DBRef
     private List<Restaurant> suggestedRestaurants;
 
+    // track when each member last visited this group (key = userId)
+    private Map<String, LocalDateTime> memberLastVisited = new HashMap<>();
+
     public Group() {
     }
 
@@ -45,6 +51,18 @@ public class Group {
 
     public List<Restaurant> getSuggestedRestaurants() {
         return suggestedRestaurants;
+    }
+
+    public Map<String, LocalDateTime> getMemberLastVisited() {
+        return memberLastVisited;
+    }
+
+    public void setMemberLastVisited(Map<String, LocalDateTime> memberLastVisited) {
+        this.memberLastVisited = memberLastVisited;
+    }
+
+    public void updateMemberLastVisited(String userId, LocalDateTime when) {
+        this.memberLastVisited.put(userId, when);
     }
 
     public void setName(String name) {
