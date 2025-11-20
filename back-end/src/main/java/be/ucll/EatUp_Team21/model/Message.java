@@ -2,56 +2,56 @@ package be.ucll.EatUp_Team21.model;
 
 import java.time.LocalDateTime;
 
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
-@Document(collection = "berichten")
-public class Bericht {
+@Document(collection = "messages")
+public class Message {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     @NotNull
-    private String tekst;
+    private String content;
 
     private LocalDateTime timestamp;
 
     @NotNull
-    private Persoon auteur;
+    private User author;
 
     @NotNull
-    private Groep groep;
+    private Group group;
 
-    private boolean isEdited = false;
+    private boolean isEdited;
 
-    public Bericht() {
+    public Message() {
     }
 
-    public Bericht(@NotNull String tekst, @NotNull Persoon auteur, Groep groep) {
-        this.tekst = tekst;
+    public Message(@NotNull String content, @NotNull User author, Group group) {
+        this.content = content;
         this.timestamp = LocalDateTime.now();
-        this.auteur = auteur;
-        this.groep = groep;
+        this.author = author;
+        this.group = group;
+        this.isEdited = false;
     }
 
     public String getId() {
         return id;
     }
 
-    public String getTekst() {
-        return tekst;
+    public String getContent() {
+        return content;
     }
 
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTekst(String tekst) {
-        this.tekst = tekst;
+    public void setContent(String content) {
+        this.content = content;
         this.timestamp = LocalDateTime.now();
         this.isEdited = true;
     }
