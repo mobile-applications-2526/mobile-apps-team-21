@@ -43,18 +43,4 @@ public class AuthController {
             throw new BadCredentialsException("Invalid credentials");
         }
     }
-
-    @GetMapping("/verify")
-    public ResponseEntity<?> verify(@RequestHeader(value = "Authorization", required = false) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.badRequest().body(java.util.Map.of("valid", false, "message", "Missing Bearer token"));
-        }
-        String token = authHeader.substring(7);
-        boolean valid = jwtUtil.validateToken(token);
-        if (!valid) {
-            return ResponseEntity.ok(java.util.Map.of("valid", false));
-        }
-        String username = jwtUtil.getUsernameFromToken(token);
-        return ResponseEntity.ok(java.util.Map.of("valid", true, "username", username));
-    }
 }
