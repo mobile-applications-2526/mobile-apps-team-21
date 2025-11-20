@@ -12,4 +12,12 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(message);
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
+        String message = ex.getMessage() != null ? ex.getMessage() : "An error occurred";
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(message);
+    }
 }
