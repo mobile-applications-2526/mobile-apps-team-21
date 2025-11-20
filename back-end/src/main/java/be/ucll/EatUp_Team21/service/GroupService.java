@@ -43,4 +43,8 @@ public class GroupService {
 
         throw new RuntimeException("User not authorized to access messages for this group");
     }
+
+    public Group getGroupByName(String groupName) {
+        return groupRepository.findByName(groupName);
+    }
 }

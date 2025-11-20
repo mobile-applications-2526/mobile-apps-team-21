@@ -41,5 +41,18 @@ public class UserService {
                 .toList();
     }
 
+	public boolean isUserMemberOfGroup(String senderEmail, String id) {
+        User user = userRepository.findUserByEmail(senderEmail);
+        if (user != null && user.getGroups() != null) {
+            return user.getGroups().stream()
+                    .anyMatch(group -> group.getId() != null && group.getId().equals(id));
+        }
+        return false;
+	}
+
+    public User getUserByEmail(String senderEmail) {
+        return userRepository.findUserByEmail(senderEmail);
+    }
+
 
 }
