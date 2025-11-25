@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import be.ucll.EatUp_Team21.controller.dto.GroupResponse;
 import be.ucll.EatUp_Team21.controller.dto.UserRequest;
 import be.ucll.EatUp_Team21.service.UserService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,10 +23,10 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/groups")
-    public List<GroupResponse> getUserGroups(@RequestBody UserRequest userReq ,Authentication param) {
-        if (userReq.email() != null && param.getName().equals(userReq.email()) == true) {
-            return userService.getUserGroups(userReq.email());
-        } 
+    public List<GroupResponse> getUserGroups(@RequestParam String email, Authentication param) {
+        if (email != null && param.getName().equals(email)) {
+            return userService.getUserGroups(email);
+        }
         throw new IllegalArgumentException("Email in request does not match authenticated user");
     }
 }
