@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import be.ucll.EatUp_Team21.controller.dto.GroupResponse;
+import be.ucll.EatUp_Team21.model.Group;
 import be.ucll.EatUp_Team21.model.User;
 import be.ucll.EatUp_Team21.repository.UserRepository;
 import be.ucll.EatUp_Team21.repository.MessageRepository;
@@ -54,5 +55,10 @@ public class UserService {
 
     public boolean userExists(String email) {
         return userRepository.findUserByEmail(email) != null;
+    }
+
+    public void addGroupToUser(User user, Group newGroup) {
+        user.addGroup(newGroup);
+        userRepository.save(user);
     }
 }

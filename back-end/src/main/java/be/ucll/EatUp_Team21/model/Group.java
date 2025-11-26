@@ -35,6 +35,9 @@ public class Group {
 
     public Group(@NotNull String name) {
         this.name = name;
+        this.members = new java.util.ArrayList<>();
+        this.suggestedRestaurants = new java.util.ArrayList<>();
+        this.memberLastVisited = new HashMap<>();
     }
 
     public String getId() {

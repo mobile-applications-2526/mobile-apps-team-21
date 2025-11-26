@@ -57,8 +57,9 @@ public class GroupService {
         User creator = userService.getUserByEmail(email);
         Group newGroup = new Group(req.name());
         newGroup.addMember(creator);
-        groupRepository.save(newGroup);
-        return new GroupResponse(newGroup.getId(), newGroup.getName(), 0);
+        Group group = groupRepository.save(newGroup);
+        userService.addGroupToUser(creator, group);
+        return new GroupResponse(group.getId(), group.getName(), 0);
     }
 
     public String addUserToGroup(String newUserEmail, String groupId, String adderEmail, String name) throws IllegalArgumentException {
@@ -77,6 +78,7 @@ public class GroupService {
         User newUser = userService.getUserByEmail(newUserEmail);
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new IllegalArgumentException("Group with id " + groupId + " does not exist"));
         group.addMember(newUser);
+        userService.addGroupToUser(newUser, group);
         groupRepository.save(group);
         return "User " + newUserEmail + " added to group " + group.getName();
     }
