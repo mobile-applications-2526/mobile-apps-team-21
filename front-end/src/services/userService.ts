@@ -1,10 +1,5 @@
-import { Capacitor } from '@capacitor/core';
 import { LoginResponse } from '../types/auth';
-
-const WEB_API_URL = import.meta.env.VITE_API_URL
-const ANDROID_API_URL = import.meta.env.VITE_ANDROID_API_URL;
-
-const API_URL: string = Capacitor.isNativePlatform() ? ANDROID_API_URL : WEB_API_URL;
+import { buildApiUrl } from '../utils/apiConfig';
 
 
 async function handleJson<T>(res: Response): Promise<T> {
@@ -19,7 +14,7 @@ async function handleJson<T>(res: Response): Promise<T> {
 
 export const UserService = {
   async login(email: string, password: string): Promise<LoginResponse> {
-    const res = await fetch(`${API_URL}/auth/login`, {
+    const res = await fetch(buildApiUrl('/auth/login'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })

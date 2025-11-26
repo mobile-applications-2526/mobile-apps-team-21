@@ -67,7 +67,7 @@ const Tabs: React.FC = () => (
       <Route path="/tabs/revisit" component={Revisit} />
       <Route path="/tabs/profile" component={Profile} />
     </IonRouterOutlet>
-    <IonTabBar slot="bottom">
+    <IonTabBar slot="bottom" className="tabs-bar">
       <IonTabButton tab="chats" href="/tabs/chats">
         <IonIcon aria-hidden="true" icon={chatbubblesOutline} />
         <IonLabel>Chats</IonLabel>

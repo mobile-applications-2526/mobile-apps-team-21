@@ -6,13 +6,38 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const TOKEN_KEY = 'auth_token';
 
+const decodeEmailFromToken = (token: string | null): string | null => {
+  if (!token) return null;
+  const parts = token.split('.');
+  if (parts.length < 2) return null;
+
+  try {
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
+    const globalAtob = typeof globalThis !== 'undefined' && typeof (globalThis as any).atob === 'function'
+      ? (globalThis as any).atob
+      : null;
+    if (!globalAtob) return null;
+    const decoded = globalAtob(padded);
+    const payload = JSON.parse(decoded);
+    return payload?.sub ?? payload?.email ?? null;
+  } catch (error) {
+    console.warn('Failed to decode auth token', error);
+    return null;
+  }
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const stored = localStorage.getItem(TOKEN_KEY);
-    if (stored) setToken(stored);
+    if (stored) {
+      setToken(stored);
+      setUserEmail(decodeEmailFromToken(stored));
+    }
     setLoading(false);
   }, []);
 
@@ -20,16 +45,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const data = await UserService.login(email, password);
     localStorage.setItem(TOKEN_KEY, data.token);
     setToken(data.token);
+    setUserEmail(email);
   }, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem(TOKEN_KEY);
     setToken(null);
+    setUserEmail(null);
   }, []);
 
   const value = useMemo(
-    () => ({ token, isAuthenticated: !!token, loading, login, logout }),
-    [token, loading, login, logout]
+    () => ({ token, isAuthenticated: !!token, loading, login, logout, userEmail }),
+    [token, loading, login, logout, userEmail]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,25 +1,45 @@
-import { useEffect, useState, useRef } from 'react';
-import { IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonItem, IonLabel, IonInput, IonList, IonFooter, IonAvatar } from '@ionic/react';
-import { Group, Message, Person, fetchMessages, sendMessage } from '../../services/GroupChatService';
+import { useCallback, useEffect, useState, useRef } from 'react';
+import { IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonInput, IonFooter, useIonToast, IonSpinner, IonIcon } from '@ionic/react';
+import { sendOutline, chevronBackOutline } from 'ionicons/icons';
+import { Group, Message, fetchMessages, sendMessage } from '../../services/GroupChatService';
 import './ChatModal.css';
 
 interface Props {
   isOpen: boolean;
   group?: Group;
   onDismiss: () => void;
-  currentUser: Person; // simplified current user
+  currentUserEmail: string;
+  reloadMessages?: () => Promise<void>;
 }
 
-const ChatModal: React.FC<Props> = ({ isOpen, group, onDismiss, currentUser }) => {
+const ChatModal: React.FC<Props> = ({ isOpen, group, onDismiss, currentUserEmail, reloadMessages }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [sending, setSending] = useState(false);
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const [present] = useIonToast();
+
+  const loadMessages = useCallback(async () => {
+    if (!group) return;
+    setLoading(true);
+    try {
+      const data = await fetchMessages(group);
+      setMessages(data);
+    } catch (error: any) {
+      present({ message: error?.message || 'Berichten laden mislukt', duration: 2500, color: 'danger' });
+    } finally {
+      setLoading(false);
+    }
+  }, [group, present]);
 
   useEffect(() => {
     if (group && isOpen) {
-      fetchMessages(group.id!).then(setMessages);
+      loadMessages();
+    } else {
+      setMessages([]);
     }
-  }, [group, isOpen]);
+  }, [group, isOpen, loadMessages]);
 
   useEffect(() => {
     // scroll to bottom on new messages
@@ -30,53 +50,110 @@ const ChatModal: React.FC<Props> = ({ isOpen, group, onDismiss, currentUser }) =
 
   async function handleSend() {
     if (!group || !input.trim()) return;
-    const msg = await sendMessage(group.id!, input.trim(), currentUser);
-    setMessages(prev => [...prev, msg]);
-    setInput('');
+    if (!currentUserEmail) {
+      present({ message: 'Je bent niet aangemeld', duration: 2000, color: 'danger' });
+      return;
+    }
+
+    try {
+      setSending(true);
+      await sendMessage(group, input.trim(), currentUserEmail);
+      setInput('');
+      await loadMessages();
+      if (reloadMessages) {
+        await reloadMessages();
+      }
+    } catch (error: any) {
+      present({ message: error?.message || 'Bericht versturen mislukt', duration: 2500, color: 'danger' });
+    } finally {
+      setSending(false);
+    }
   }
+
+  const memberLabel = group ? `${group.memberNames.length} members` : '';
 
   return (
     <IonModal isOpen={isOpen} onDidDismiss={onDismiss} className="chat-modal">
       <IonHeader>
-        <IonToolbar>
-          <IonTitle>{group?.naam}</IonTitle>
-          <IonButtons slot="end">
-            <IonButton onClick={onDismiss}>Close</IonButton>
+        <IonToolbar className="chat-toolbar">
+          <IonButtons slot="start">
+            <IonButton onClick={onDismiss} fill="clear" className="chat-back-button">
+              <IonIcon icon={chevronBackOutline} slot="icon-only" />
+            </IonButton>
           </IonButtons>
+          <IonTitle className="chat-title-container">
+            <div className="chat-title-block">
+              <span className="chat-title-text">{group?.name}</span>
+              {memberLabel && <span className="chat-subtitle">{memberLabel}</span>}
+            </div>
+          </IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent>
+      <IonContent className="chat-content" fullscreen>
         <div className="messages-wrapper" ref={contentRef}>
-          <IonList lines="none">
-            {messages.map(m => {
-              const mine = m.auteur.email === currentUser.email;
+          {loading ? (
+            <div className="messages-loading">
+              <IonSpinner name="dots" />
+            </div>
+          ) : messages.length === 0 ? (
+            <div className="no-messages">Nog geen berichten</div>
+          ) : (
+            messages.map((message) => {
+              const mine =
+                !!currentUserEmail &&
+                message.author.email?.toLowerCase() === currentUserEmail.toLowerCase();
+              const displayName = message.author.firstName || 'Onbekend';
+              const formattedTime = formatTime(message.timestamp);
+
               return (
-                <div key={m.id} className={`message-bubble ${mine ? 'mine' : ''}`}>
-                  <div className="msg-header">
-                    <IonAvatar className="avatar-mini"><span>{m.auteur.voornaam?.charAt(0)}</span></IonAvatar>
-                    <span className="author">{m.auteur.voornaam}</span>
-                    <span className="time">{new Date(m.timestamp || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                <div key={message.id} className={`message-row ${mine ? 'mine' : 'theirs'}`}>
+                  <div className={`message-bubble ${mine ? 'mine' : 'theirs'}`}>
+                    <div className="message-header">
+                      <span className="message-author">{displayName}</span>
+                      {formattedTime && <span className="message-time">{formattedTime}</span>}
+                    </div>
+                    <div className="message-body">{message.content}</div>
                   </div>
-                  <div className="msg-text">{m.tekst}</div>
                 </div>
               );
-            })}
-          </IonList>
+            })
+          )}
         </div>
       </IonContent>
-      <IonFooter>
+      <IonFooter className="chat-footer">
         <IonToolbar className="chat-input-bar">
-          <IonItem className="input-item" lines="none">
-            <IonLabel position="stacked" hidden>Message</IonLabel>
-            <IonInput value={input} placeholder="Type a message..." onIonChange={e => setInput(e.detail.value!)} />
-          </IonItem>
-          <IonButtons slot="end">
-            <IonButton color="success" onClick={handleSend}>Send</IonButton>
-          </IonButtons>
+          <div className="chat-compose">
+            <IonInput
+              value={input}
+              placeholder="Type a message..."
+              onIonChange={(e) => setInput(e.detail.value ?? '')}
+              className="chat-text-input"
+              clearInput
+            />
+            <IonButton
+              className="send-btn"
+              color="success"
+              disabled={sending || !input.trim()}
+              onClick={handleSend}
+            >
+              {sending ? <IonSpinner name="dots" /> : <IonIcon icon={sendOutline} />}
+            </IonButton>
+          </div>
         </IonToolbar>
       </IonFooter>
     </IonModal>
   );
 };
+
+function formatTime(timestamp?: string): string {
+  if (!timestamp) return '';
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return '';
+  return new Intl.DateTimeFormat('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).format(date);
+}
 
 export default ChatModal;

@@ -86,3 +86,10 @@ http://ionicframework.com/docs/theming/ */
   --ion-tab-bar-background: #ffffff;
   --ion-card-background: #ffffff;
 }
+
+.tabs-bar {
+  padding-bottom: 12px;
+  --padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+  --padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}

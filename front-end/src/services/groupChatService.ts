@@ -1,103 +1,155 @@
-// Basic service layer & interfaces reflecting backend models (Groep, Persoon, Bericht)
-// Uses placeholder endpoints; falls back to mock data if requests fail.
+import { authFetch } from '../context/AuthContext';
+import { Group, GroupCreationResult, Message } from '../models/groupChat';
+import { RawGroupResponse, RawMessage, RawUser } from '../types/groupChat';
+import { buildApiUrl } from '../utils/apiConfig';
 
-export interface Person {
-  id?: string;
-  naam: string; // last name
-  voornaam: string; // first name
-  email: string;
-  telefoonnummer?: string;
-}
-
-export interface Group {
-  id?: string;
-  naam: string;
-  leden?: Person[];
-  voorgesteldeRestaurants?: any[]; // not used right now
-}
-
-export interface Message {
-  id?: string;
-  tekst: string;
-  timestamp?: string; // ISO string
-  auteur: Person;
-  groep: string; // group id
-  isEdited?: boolean;
-}
-
-// Mock data (in-memory) used until backend endpoints exist.
-let mockGroups: Group[] = [
-  { id: 'g1', naam: 'Foodie Friends', leden: [{ id: 'p1', naam: 'Doe', voornaam: 'Emma', email: 'emma@example.com' }] },
-  { id: 'g2', naam: 'Uni Squad', leden: [{ id: 'p2', naam: 'Smith', voornaam: 'Tom', email: 'tom@example.com' }] },
-  { id: 'g3', naam: 'Family Dinner', leden: [{ id: 'p3', naam: 'Taylor', voornaam: 'Sarah', email: 'sarah@example.com' }] },
-  { id: 'g4', naam: 'Work Lunch', leden: [{ id: 'p4', naam: 'Brown', voornaam: 'Alex', email: 'alex@example.com' }] }
-];
-
-const mockMessages: Record<string, Message[]> = {
-  g1: [
-    { id: 'm1', tekst: 'La Piazza Italiana', auteur: mockGroups[0].leden![0], groep: 'g1', timestamp: new Date().toISOString() },
-    { id: 'm2', tekst: "Looks good! I'm available friday and saturday.", auteur: { id: 'p2', naam: 'Smith', voornaam: 'Tom', email: 'tom@example.com' }, groep: 'g1', timestamp: new Date().toISOString() }
-  ],
-  g2: [],
-  g3: [],
-  g4: []
-};
-
-const API_BASE = '/api';
-
-export async function fetchGroups(): Promise<Group[]> {
+async function handleJson<T>(res: Response): Promise<T> {
+  const text = await res.text();
+  if (!text) {
+    throw new Error('Empty response body');
+  }
   try {
-    const res = await fetch(`${API_BASE}/groups`);
-    if (!res.ok) throw new Error('No groups endpoint yet');
-    return await res.json();
-  } catch (e) {
-    return mockGroups;
+    return JSON.parse(text) as T;
+  } catch (error) {
+    throw new Error(text || 'Unexpected response from server');
   }
 }
 
-export async function createGroup(name: string, memberEmails: string[]): Promise<Group> {
-  const payload = { naam: name, ledenEmails: memberEmails };
+async function request(path: string, init?: RequestInit): Promise<Response> {
+  const absoluteUrl = buildApiUrl(path);
+
+  const response = await authFetch(absoluteUrl, init);
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => '');
+    const message = errorText || `Request failed (${response.status})`;
+    throw new Error(message);
+  }
+  return response;
+}
+
+async function fetchGroupMembers(groupId: string): Promise<string[]> {
   try {
-    const res = await fetch(`${API_BASE}/groups`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) throw new Error('Create group not implemented');
-    return await res.json();
+    const res = await request(`/groups/getMembers/${groupId}`);
+    return await handleJson<string[]>(res);
   } catch {
-    // mock create
-    const newGroup: Group = { id: `g${mockGroups.length + 1}`, naam: name, leden: memberEmails.map((e, i) => ({ id: `tmp${i}`, naam: '', voornaam: e.split('@')[0], email: e })) };
-    mockGroups = [newGroup, ...mockGroups];
-    mockMessages[newGroup.id!] = [];
-    return newGroup;
+    return [];
   }
 }
 
-export async function fetchMessages(groupId: string): Promise<Message[]> {
-  try {
-    const res = await fetch(`${API_BASE}/groups/${groupId}/messages`);
-    if (!res.ok) throw new Error('No messages endpoint yet');
-    return await res.json();
-  } catch {
-    return mockMessages[groupId] || [];
-  }
+function mapGroup(raw: RawGroupResponse, memberNames: string[]): Group {
+  return {
+    id: raw.id,
+    name: raw.name,
+    missedMessages: raw.missedMessages,
+    memberNames
+  };
 }
 
-export async function sendMessage(groupId: string, text: string, author: Person): Promise<Message> {
-  const payload = { tekst: text, groepId: groupId, auteurId: author.id };
-  try {
-    const res = await fetch(`${API_BASE}/groups/${groupId}/messages`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) throw new Error('Send message not implemented');
-    return await res.json();
-  } catch {
-    const msg: Message = { id: `m${Date.now()}`, tekst: text, auteur: author, groep: groupId, timestamp: new Date().toISOString() };
-    if (!mockMessages[groupId]) mockMessages[groupId] = [];
-    mockMessages[groupId].push(msg);
-    return msg;
-  }
+function mapMessage(raw: RawMessage): Message {
+  return {
+    id: raw.id,
+    content: raw.content,
+    timestamp: raw.timestamp ?? new Date().toISOString(),
+    author: {
+      id: raw.author?.id,
+      name: raw.author?.name,
+      firstName: raw.author?.firstName,
+      email: raw.author?.email
+    },
+    isEdited: Boolean(raw.isEdited ?? raw.edited)
+  };
 }
+
+export async function fetchGroups(userEmail: string): Promise<Group[]> {
+  if (!userEmail) {
+    throw new Error('Cannot load groups without a user email');
+  }
+
+  const res = await request(`/users/groups?email=${encodeURIComponent(userEmail)}`);
+  const rawGroups = await handleJson<RawGroupResponse[]>(res);
+
+  const groupsWithMembers = await Promise.all(
+    rawGroups.map(async (raw) => {
+      const members = await fetchGroupMembers(raw.id);
+      return mapGroup(raw, members);
+    })
+  );
+
+  return groupsWithMembers;
+}
+
+export async function createGroup(name: string, memberEmails: string[], currentUserEmail: string): Promise<GroupCreationResult> {
+  if (!name.trim()) {
+    throw new Error('Group name is required');
+  }
+  if (!currentUserEmail) {
+    throw new Error('Current user email is required');
+  }
+
+  const res = await request('/groups/create', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: name.trim() })
+  });
+
+  const created = await handleJson<RawGroupResponse>(res);
+
+  const failedInvites: string[] = [];
+  for (const email of memberEmails) {
+    const trimmed = email.trim();
+    if (!trimmed || trimmed.toLowerCase() === currentUserEmail.toLowerCase()) {
+      continue;
+    }
+
+    try {
+      await request('/groups/addUser', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          newUserEmail: trimmed,
+          groupId: created.id,
+          adderEmail: currentUserEmail
+        })
+      });
+    } catch (error) {
+      failedInvites.push(trimmed);
+    }
+  }
+
+  const memberNames = await fetchGroupMembers(created.id);
+  return {
+    group: mapGroup(created, memberNames),
+    failedInvites
+  };
+}
+
+export async function fetchMessages(group: Group): Promise<Message[]> {
+  const encodedName = encodeURIComponent(group.name);
+  const res = await request(`/groups/${encodedName}/messages`);
+  const rawMessages = await handleJson<RawMessage[]>(res);
+  return rawMessages.map(mapMessage);
+}
+
+export async function sendMessage(group: Group, content: string, senderEmail: string): Promise<void> {
+  if (!content.trim()) {
+    return;
+  }
+  if (!senderEmail) {
+    throw new Error('Cannot send a message without a sender email');
+  }
+
+  const encodedName = encodeURIComponent(group.name);
+  const url = `/messages/${encodedName}?${new URLSearchParams({ groupName: group.name }).toString()}`;
+
+  await request(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      content: content.trim(),
+      senderEmail,
+      groupId: group.id
+    })
+  });
+}
+
+export type { Group, Message, GroupCreationResult };

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -48,6 +50,19 @@ public class Message {
 
     public LocalDateTime getTimestamp() {
         return timestamp;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    @JsonIgnore
+    public Group getGroup() {
+        return group;
+    }
+
+    public boolean isEdited() {
+        return isEdited;
     }
 
     public void setContent(String content) {
