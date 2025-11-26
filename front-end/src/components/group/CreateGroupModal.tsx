@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonItem, IonLabel, IonInput, IonList, IonFooter } from '@ionic/react';
-import { createGroup, Group } from '../../services/groupChatService';
+import { createGroup, Group } from '../../services/GroupChatService';
 
 interface Props {
   isOpen: boolean;

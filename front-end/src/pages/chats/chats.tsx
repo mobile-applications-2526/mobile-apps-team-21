@@ -5,7 +5,7 @@ import './chats.css';
 import GroupCard from '../../components/group/GroupCard';
 import ChatModal from '../../components/group/ChatModal';
 import CreateGroupModal from '../../components/group/CreateGroupModal';
-import { Group, Person, fetchGroups } from '../../services/groupChatService';
+import { Group, Person, fetchGroups } from '../../services/GroupChatService';
 
 const CURRENT_USER: Person = { id: 'me', naam: 'Test', voornaam: 'Me', email: 'me@example.com' };
 

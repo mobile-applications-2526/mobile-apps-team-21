@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonItem, IonLabel, IonInput, IonList, IonFooter, IonAvatar } from '@ionic/react';
-import { Group, Message, Person, fetchMessages, sendMessage } from '../../services/groupChatService';
+import { Group, Message, Person, fetchMessages, sendMessage } from '../../services/GroupChatService';
 import './ChatModal.css';
 
 interface Props {

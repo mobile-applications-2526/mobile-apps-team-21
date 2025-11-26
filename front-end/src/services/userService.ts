@@ -1,17 +1,11 @@
 import { Capacitor } from '@capacitor/core';
+import { LoginResponse } from '../types/auth';
 
-const DEFAULT_WEB_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-const DEFAULT_ANDROID_API_URL = import.meta.env.VITE_ANDROID_API_URL || 'http://10.0.2.2:8080';
+const WEB_API_URL = import.meta.env.VITE_API_URL
+const ANDROID_API_URL = import.meta.env.VITE_ANDROID_API_URL;
 
-const API_URL: string = Capacitor.isNativePlatform() ? DEFAULT_ANDROID_API_URL : DEFAULT_WEB_API_URL;
+const API_URL: string = Capacitor.isNativePlatform() ? ANDROID_API_URL : WEB_API_URL;
 
-// const API_URL: string = 'http://10.0.2.2:8080';
-
-console.log(API_URL)
-
-export type LoginResponse = {
-  token: string;
-};
 
 async function handleJson<T>(res: Response): Promise<T> {
   const text = await res.text();
@@ -46,4 +40,3 @@ export const UserService = {
   }
 };
 
-export default UserService;

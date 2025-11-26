@@ -1,5 +1,5 @@
 import { IonCard, IonCardContent, IonBadge } from '@ionic/react';
-import { Group } from '../../services/groupChatService';
+import { Group } from '../../services/GroupChatService';
 import './GroupCard.css';
 
 interface Props {
