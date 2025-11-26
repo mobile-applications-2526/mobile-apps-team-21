@@ -43,4 +43,9 @@ public class GroupController {
     public String addUserToGroup(@RequestBody UserGroupRequest entity, Authentication auth) {
         return groupService.addUserToGroup(entity.newUserEmail(), entity.groupId(), entity.adderEmail(), auth.getName());
     }
+
+    @GetMapping("/getMembers/{groupId}")
+    public List<String> getGroupMembers(@PathVariable String groupId, Authentication auth) {
+        return groupService.getMembersByGroupId(groupId, auth.getName());
+    }
 }
