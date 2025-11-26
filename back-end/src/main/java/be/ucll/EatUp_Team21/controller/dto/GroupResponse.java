@@ -4,6 +4,5 @@ public record GroupResponse(
     String id,
     String name,
     int missedMessages
-) {
-    
+) { 
 }

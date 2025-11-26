@@ -52,6 +52,8 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
+        this.restaurantRelations = new java.util.ArrayList<>();
+        this.groups = new java.util.ArrayList<>();
     }
 
     public String getId() {

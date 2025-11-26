@@ -4,14 +4,17 @@ import java.util.List;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import be.ucll.EatUp_Team21.controller.dto.GroupResponse;
+import be.ucll.EatUp_Team21.controller.dto.RegisterRequest;
+import be.ucll.EatUp_Team21.controller.dto.RegisterResponse;
 import be.ucll.EatUp_Team21.model.Group;
 import be.ucll.EatUp_Team21.model.User;
 import be.ucll.EatUp_Team21.repository.UserRepository;
+import be.ucll.EatUp_Team21.security.JwtUtil;
 import be.ucll.EatUp_Team21.repository.MessageRepository;
+import be.ucll.EatUp_Team21.security.SecurityConfig;
 
 @Service
 public class UserService {
@@ -21,6 +24,12 @@ public class UserService {
 
     @Autowired
     private MessageRepository messageRepository;
+
+    @Autowired
+    private SecurityConfig securityConfig;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     public List<GroupResponse> getUserGroups(String email) {
         User user = userRepository.findUserByEmail(email);
@@ -54,5 +63,24 @@ public class UserService {
         return userRepository.findUserByEmail(senderEmail);
     }
 
+    public boolean userExists(String email) {
+        return userRepository.findUserByEmail(email) != null;
+    }
 
+    public void addGroupToUser(User user, Group newGroup) {
+        user.addGroup(newGroup);
+        userRepository.save(user);
+    }
+
+    public RegisterResponse registerUser(RegisterRequest req) {
+        if (userExists(req.email())) {
+            throw new IllegalArgumentException("User with email " + req.email() + " already exists");
+        }
+        User newUser = new User(req.name(), req.firstName(), req.phoneNumber(), req.email(), securityConfig.passwordEncoder().encode(req.password()));
+        userRepository.save(newUser);
+        //Generate token for newly registered user so they can be logged in immediately (implementation not shown here)
+        String token = jwtUtil.generateToken(newUser.getEmail());
+        return new RegisterResponse(newUser.getId(), token);
+
+    }
 }
