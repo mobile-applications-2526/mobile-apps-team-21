@@ -15,6 +15,9 @@ import Chats from './pages/chats/Chats';
 import Discover from './pages/discover/Discover';
 import Revisit from './pages/revisit/Revisit';
 import Profile from './pages/profile/Profile';
+import Login from './pages/auth/Login';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { IonSpinner } from '@ionic/react';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -49,47 +52,68 @@ import './theme/variables.css';
 
 setupIonicReact();
 
+// Small loading placeholder during auth init
+const Loading: React.FC = () => (
+  <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+    <IonSpinner name="crescent" />
+  </div>
+);
+
+const Tabs: React.FC = () => (
+  <IonTabs>
+    <IonRouterOutlet>
+      <Route exact path="/tabs/chats" component={Chats} />
+      <Route exact path="/tabs/discover" component={Discover} />
+      <Route path="/tabs/revisit" component={Revisit} />
+      <Route path="/tabs/profile" component={Profile} />
+    </IonRouterOutlet>
+    <IonTabBar slot="bottom">
+      <IonTabButton tab="chats" href="/tabs/chats">
+        <IonIcon aria-hidden="true" icon={chatbubblesOutline} />
+        <IonLabel>Chats</IonLabel>
+      </IonTabButton>
+      <IonTabButton tab="discover" href="/tabs/discover">
+        <IonIcon aria-hidden="true" icon={compassOutline} />
+        <IonLabel>Discover</IonLabel>
+      </IonTabButton>
+      <IonTabButton tab="revisit" href="/tabs/revisit">
+        <IonIcon aria-hidden="true" icon={timeOutline} />
+        <IonLabel>Revisit</IonLabel>
+      </IonTabButton>
+      <IonTabButton tab="profile" href="/tabs/profile">
+        <IonIcon aria-hidden="true" icon={personOutline} />
+        <IonLabel>Profile</IonLabel>
+      </IonTabButton>
+    </IonTabBar>
+  </IonTabs>
+);
+
+const RootRoutes: React.FC = () => {
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return <Loading />;
+  return (
+    <IonRouterOutlet>
+      <Route
+        exact
+        path="/login"
+        render={() => (isAuthenticated ? <Redirect to="/tabs/chats" /> : <Login />)}
+      />
+      <Route
+        path="/tabs"
+        render={() => (isAuthenticated ? <Tabs /> : <Redirect to="/login" />)}
+      />
+      <Route exact path="/" render={() => <Redirect to={isAuthenticated ? '/tabs/chats' : '/login'} />} />
+    </IonRouterOutlet>
+  );
+};
+
 const App: React.FC = () => (
   <IonApp>
-    <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route exact path="/chats">
-            <Chats />
-          </Route>
-          <Route exact path="/discover">
-            <Discover />
-          </Route>
-          <Route path="/revisit">
-            <Revisit />
-          </Route>
-          <Route path="/profile">
-            <Profile />
-          </Route>
-          <Route exact path="/">
-            <Redirect to="/chats" />
-          </Route>
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="chats" href="/chats">
-            <IonIcon aria-hidden="true" icon={chatbubblesOutline} />
-            <IonLabel>Chats</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="discover" href="/discover">
-            <IonIcon aria-hidden="true" icon={compassOutline} />
-            <IonLabel>Discover</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="revisit" href="/revisit">
-            <IonIcon aria-hidden="true" icon={timeOutline} />
-            <IonLabel>Revisit</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="profile" href="/profile">
-            <IonIcon aria-hidden="true" icon={personOutline} />
-            <IonLabel>Profile</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
-    </IonReactRouter>
+    <AuthProvider>
+      <IonReactRouter>
+        <RootRoutes />
+      </IonReactRouter>
+    </AuthProvider>
   </IonApp>
 );
 
