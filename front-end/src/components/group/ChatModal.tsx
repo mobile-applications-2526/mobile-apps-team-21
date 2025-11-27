@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
-import { IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonInput, IonFooter, useIonToast, IonSpinner, IonIcon } from '@ionic/react';
+import { IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonInput, IonFooter, useIonToast, IonSpinner, IonIcon, createAnimation, Animation } from '@ionic/react';
 import { sendOutline, chevronBackOutline } from 'ionicons/icons';
 import { Group, Message, fetchMessages, sendMessage } from '../../services/GroupChatService';
 import './ChatModal.css';
@@ -19,6 +19,33 @@ const ChatModal: React.FC<Props> = ({ isOpen, group, onDismiss, currentUserEmail
   const [sending, setSending] = useState(false);
   const contentRef = useRef<HTMLIonContentElement>(null);
   const [present] = useIonToast();
+
+  // Custom animation to slide in from the right (WhatsApp style)
+  const enterAnimation = (baseEl: HTMLElement): Animation => {
+    const root = baseEl.shadowRoot;
+
+    const backdropAnimation = createAnimation()
+      .addElement(root?.querySelector('ion-backdrop')!)
+      .fromTo('opacity', '0.01', 'var(--backdrop-opacity)');
+
+    const wrapperAnimation = createAnimation()
+      .addElement(root?.querySelector('.modal-wrapper')!)
+      .keyframes([
+        { offset: 0, opacity: '1', transform: 'translateX(100%)' },
+        { offset: 1, opacity: '1', transform: 'translateX(0)' }
+      ]);
+
+    return createAnimation()
+      .addElement(baseEl)
+      .easing('ease-in-out')
+      .duration(300)
+      .addAnimation([backdropAnimation, wrapperAnimation]);
+  };
+
+  // Custom animation to slide back out to the right
+  const leaveAnimation = (baseEl: HTMLElement): Animation => {
+    return enterAnimation(baseEl).direction('reverse');
+  };
 
   const loadMessages = useCallback(async () => {
     if (!group) return;
@@ -121,7 +148,7 @@ const ChatModal: React.FC<Props> = ({ isOpen, group, onDismiss, currentUserEmail
   const memberLabel = group ? `${group.memberNames.length} members` : '';
 
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={onDismiss} className="chat-modal">
+    <IonModal isOpen={isOpen} onDidDismiss={onDismiss} className="chat-modal" enterAnimation={enterAnimation} leaveAnimation={leaveAnimation}>
       <IonHeader>
         <IonToolbar className="chat-toolbar">
           <IonButtons slot="start">
