@@ -66,7 +66,7 @@ const Login: React.FC = () => {
                   inputmode="email"
                   placeholder="jouw@email.com"
                   value={email}
-                  onIonChange={(e) => setEmail(e.detail.value || '')}
+                  onIonInput={(e: any) => setEmail(e.detail?.value ?? '')}
                   required
                 />
               </IonItem>
@@ -77,7 +77,7 @@ const Login: React.FC = () => {
                   type="password"
                   placeholder="wachtwoord"
                   value={password}
-                  onIonChange={(e) => setPassword(e.detail.value || '')}
+                  onIonInput={(e: any) => setPassword(e.detail?.value ?? '')}
                   required
                 />
               </IonItem>
