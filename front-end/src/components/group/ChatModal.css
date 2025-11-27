@@ -123,8 +123,13 @@ ion-modal.chat-modal::part(content) {
   word-break: break-word;
 }
 
-.chat-footer {
+/* .chat-footer {
   background: transparent;
+} */
+
+.chat-modal ion-footer {
+  background: #f8f8f8;
+  z-index: 10;
 }
 
 .chat-input-bar {

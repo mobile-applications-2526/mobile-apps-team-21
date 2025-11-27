@@ -17,7 +17,7 @@ const ChatModal: React.FC<Props> = ({ isOpen, group, onDismiss, currentUserEmail
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
-  const contentRef = useRef<HTMLDivElement | null>(null);
+  const contentRef = useRef<HTMLIonContentElement>(null);
   const [present] = useIonToast();
 
   const loadMessages = useCallback(async () => {
@@ -33,6 +33,20 @@ const ChatModal: React.FC<Props> = ({ isOpen, group, onDismiss, currentUserEmail
     }
   }, [group, present]);
 
+  // Fetch messages without toggling the loading state. Useful after sending
+  // a message to avoid a visual flicker of the loading spinner.
+  const refreshSilently = useCallback(async (): Promise<Message[] | null> => {
+    if (!group) return null;
+    try {
+      const data = await fetchMessages(group);
+      return data;
+    } catch (error: any) {
+      // Fail silently here to avoid disrupting the user flow
+      console.error('Failed to refresh messages silently:', error);
+      return null;
+    }
+  }, [group]);
+
   useEffect(() => {
     if (group && isOpen) {
       loadMessages();
@@ -42,11 +56,10 @@ const ChatModal: React.FC<Props> = ({ isOpen, group, onDismiss, currentUserEmail
   }, [group, isOpen, loadMessages]);
 
   useEffect(() => {
-    // scroll to bottom on new messages
-    setTimeout(() => {
-      if (contentRef.current) contentRef.current.scrollTop = contentRef.current.scrollHeight;
-    }, 50);
-  }, [messages]);
+    if (isOpen) {
+      contentRef.current?.scrollToBottom(300);
+    }
+  }, [messages, isOpen]);
 
   async function handleSend() {
     if (!group || !input.trim()) return;
@@ -57,13 +70,48 @@ const ChatModal: React.FC<Props> = ({ isOpen, group, onDismiss, currentUserEmail
 
     try {
       setSending(true);
-      await sendMessage(group, input.trim(), currentUserEmail);
+      const text = input.trim();
       setInput('');
-      await loadMessages();
-      if (reloadMessages) {
-        await reloadMessages();
+
+      // Optimistic UI update: show the message immediately
+      const optimistic: Message = {
+        id: `temp-${Date.now()}`,
+        content: text,
+        timestamp: new Date().toISOString(),
+        author: {
+          email: currentUserEmail,
+          firstName: 'You'
+        },
+        isEdited: false
+      };
+      setMessages((prev) => [...prev, optimistic]);
+
+      // Send to backend
+      await sendMessage(group, text, currentUserEmail);
+
+      // Replace with server truth, but without flicker. We preserve the
+      // optimistic timestamp to avoid visible time jumps.
+      const serverData = await refreshSilently();
+      if (serverData) {
+        // Try to find the server-created message (match by author and content, prefer the latest)
+        const serverIndex = [...serverData]
+          .reverse()
+          .findIndex((m) =>
+            m.author.email?.toLowerCase() === currentUserEmail.toLowerCase() && m.content === text
+          );
+        if (serverIndex !== -1) {
+          const realIndex = serverData.length - 1 - serverIndex;
+          const serverMsg = serverData[realIndex];
+          const merged = serverData.map((m, idx) => (idx === realIndex ? { ...m, timestamp: optimistic.timestamp } : m));
+          setMessages(merged);
+        } else {
+          setMessages(serverData);
+        }
       }
+      if (reloadMessages) await reloadMessages();
     } catch (error: any) {
+      // Revert optimistic message if we added one
+      setMessages((prev) => prev.filter((m) => !m.id.startsWith('temp-')));
       present({ message: error?.message || 'Bericht versturen mislukt', duration: 2500, color: 'danger' });
     } finally {
       setSending(false);
@@ -89,8 +137,8 @@ const ChatModal: React.FC<Props> = ({ isOpen, group, onDismiss, currentUserEmail
           </IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="chat-content" fullscreen>
-        <div className="messages-wrapper" ref={contentRef}>
+      <IonContent className="chat-content" fullscreen ref={contentRef}>
+        <div className="messages-wrapper">
           {loading ? (
             <div className="messages-loading">
               <IonSpinner name="dots" />
@@ -102,7 +150,7 @@ const ChatModal: React.FC<Props> = ({ isOpen, group, onDismiss, currentUserEmail
               const mine =
                 !!currentUserEmail &&
                 message.author.email?.toLowerCase() === currentUserEmail.toLowerCase();
-              const displayName = message.author.firstName || 'Onbekend';
+              const displayName = mine ? 'You' : (message.author.firstName || 'Onbekend');
               const formattedTime = formatTime(message.timestamp);
 
               return (

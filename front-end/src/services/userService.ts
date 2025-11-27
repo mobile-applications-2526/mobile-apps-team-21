@@ -1,5 +1,6 @@
 import { LoginResponse } from '../types/auth';
 import { buildApiUrl } from '../utils/apiConfig';
+import { API_BASE_URL } from '../utils/apiConfig';
 
 
 async function handleJson<T>(res: Response): Promise<T> {
@@ -14,6 +15,8 @@ async function handleJson<T>(res: Response): Promise<T> {
 
 export const UserService = {
   async login(email: string, password: string): Promise<LoginResponse> {
+    // testing
+    console.log('API Base URL:', API_BASE_URL);
     const res = await fetch(buildApiUrl('/auth/login'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
