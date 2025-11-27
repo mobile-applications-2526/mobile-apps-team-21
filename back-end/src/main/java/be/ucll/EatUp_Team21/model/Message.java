@@ -55,4 +55,12 @@ public class Message {
         this.timestamp = LocalDateTime.now();
         this.isEdited = true;
     }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
 }

@@ -90,4 +90,17 @@ public class GroupService {
         }
         return group.getMembers().stream().map(member -> member.getFirstName() + " " + member.getName()).toList();
     }
+
+    public Group findByName(String name) {
+        Group group = groupRepository.findByName(name);
+        if (group == null) {
+            throw new IllegalArgumentException("Group with name " + name + " does not exist");
+        }
+        return group;
+    }
+
+    public void updateMemberLastVisited(Group group, User user) {
+        group.updateMemberLastVisited(user.getId(), LocalDateTime.now());
+        groupRepository.save(group);
+    }
 }
