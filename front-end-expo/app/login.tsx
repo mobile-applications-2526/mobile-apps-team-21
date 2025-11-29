@@ -3,7 +3,7 @@ import { StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Text, View } from '@/components/Themed';
 import { useAuth } from '@/components/AuthContext';
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 
 export default function LoginScreen() {
   const { login } = useAuth();
@@ -73,7 +73,10 @@ export default function LoginScreen() {
         </TouchableOpacity>
 
         <Text style={styles.register}>
-          Heb je nog geen account? <Text style={styles.registerLink}>Registreer hier</Text>
+          Heb je nog geen account?{' '}
+          <Link href={"/register" as any} asChild>
+            <Text style={styles.registerLink}>Registreer hier</Text>
+          </Link>
         </Text>
         </View>
       </View>

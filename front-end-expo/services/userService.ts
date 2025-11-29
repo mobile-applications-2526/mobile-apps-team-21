@@ -1,6 +1,7 @@
 import { buildApiUrl, API_BASE_URL } from '@/utils/apiConfig';
 
 export type LoginResponse = { token: string };
+export type RegisterResponse = { id: string; token: string };
 
 async function handleJson<T>(res: Response): Promise<T> {
   const text = await res.text();
@@ -36,5 +37,29 @@ export const UserService = {
     }
 
     return handleJson<LoginResponse>(res);
-  }
+  },
+
+  async register(payload: {
+    email: string;
+    password: string;
+    name: string;
+    firstName: string;
+    phoneNumber: string;
+  }): Promise<RegisterResponse> {
+    const res = await fetch(buildApiUrl('/users/register'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      let message = `Register failed (${res.status})`;
+      try {
+        const data = await handleJson<{ message?: string }>(res.clone());
+        if (data?.message) message = data.message;
+      } catch (_) {}
+      throw new Error(message);
+    }
+    return handleJson<RegisterResponse>(res);
+  },
 };
