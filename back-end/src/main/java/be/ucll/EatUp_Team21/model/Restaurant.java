@@ -1,8 +1,5 @@
 package be.ucll.EatUp_Team21.model;
 
-import java.util.List;
-
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.persistence.*;
@@ -19,19 +16,12 @@ public class Restaurant {
     private String name;
 
     @NotNull
-    public String adress;
+    private String adress;
+
+    private String phoneNumber;
 
     @NotNull
-    public String phoneNumber;
-
-    @NotNull
-    public String description;
-
-    @DBRef
-    private List<Group> group;
-
-    @DBRef
-    private List<RestRel> restRels;
+    private String description;
 
 
     public Restaurant() {
