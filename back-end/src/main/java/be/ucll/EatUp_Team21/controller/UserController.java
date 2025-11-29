@@ -12,6 +12,7 @@ import be.ucll.EatUp_Team21.controller.dto.GroupResponse;
 import be.ucll.EatUp_Team21.controller.dto.RegisterRequest;
 import be.ucll.EatUp_Team21.controller.dto.RegisterResponse;
 import be.ucll.EatUp_Team21.controller.dto.UserRequest;
+import be.ucll.EatUp_Team21.controller.dto.UserResponse;
 import be.ucll.EatUp_Team21.model.User;
 import be.ucll.EatUp_Team21.service.UserService;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 @RestController
@@ -40,4 +44,15 @@ public class UserController {
     public RegisterResponse registerUser(@RequestBody RegisterRequest req) {
         return userService.registerUser(req);
     }
+
+    @GetMapping()
+    public UserResponse getSelf(@RequestParam String email ,Authentication auth) {
+        return userService.getSelf(email, auth);
+    }
+
+    @PutMapping()
+    public List<String> changeCredentials(@RequestBody RegisterRequest req, @RequestParam String email, Authentication auth) {
+        return userService.modifySelf(req, auth.getName(), email);
+    }
+    
 }
