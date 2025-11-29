@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, View, Text, useColorScheme } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Text, View } from '@/components/Themed';
 import { useAuth } from '@/components/AuthContext';
 import { Link, useRouter } from 'expo-router';
+import Colors from '@/constants/Colors';
 
 export default function LoginScreen() {
   const { login } = useAuth();
   const router = useRouter();
+  const colorScheme = useColorScheme();
+  const theme = Colors[colorScheme ?? 'light'];
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -28,39 +30,41 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAwareScrollView
-      style={{ backgroundColor: '#f9fafb' }}
-      contentContainerStyle={styles.scrollContent}
+      style={{ backgroundColor: theme.background }}
+      contentContainerStyle={[styles.scrollContent, { backgroundColor: theme.background }]}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
       enableOnAndroid={true}
-      extraScrollHeight={90}
+      extraScrollHeight={80}
       enableAutomaticScroll={true}
     >
-      <View style={styles.page}>
-        <Text style={styles.title}>Eat Up</Text>
-        <Text style={styles.subtitle}>Ontdek restaurants samen met vrienden</Text>
+      <View style={[styles.page, { backgroundColor: theme.background }]}>
+        <Text style={[styles.title, { color: theme.text }]}>Eat Up</Text>
+        <Text style={[styles.subtitle, { color: theme.tabIconDefault }]}>Ontdek restaurants samen met vrienden</Text>
 
-        <View style={styles.card}>
-        <Text style={styles.welcome}>Welkom terug!</Text>
+        <View style={[styles.card, colorScheme === 'dark' ? styles.cardDark : null]}>
+        <Text style={[styles.welcome, colorScheme === 'dark' ? styles.textDark : null]}>Welkom terug!</Text>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>E-mail</Text>
+        <View style={[styles.inputGroup, colorScheme === 'dark' ? styles.cardDark : null]}>
+          <Text style={[styles.label, colorScheme === 'dark' ? styles.textDark : null]}>E-mail</Text>
           <TextInput
             style={styles.input}
             keyboardType="email-address"
             placeholder="jouw@email.com"
+            placeholderTextColor={colorScheme === 'dark' ? '#999' : '#999'}
             autoCapitalize="none"
             value={email}
             onChangeText={setEmail}
           />
         </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Wachtwoord</Text>
+        <View style={[styles.inputGroup, colorScheme === 'dark' ? styles.cardDark : null]}>
+          <Text style={[styles.label, colorScheme === 'dark' ? styles.textDark : null]}>Wachtwoord</Text>
           <TextInput
             style={styles.input}
             secureTextEntry
             placeholder="wachtwoord"
+            placeholderTextColor={colorScheme === 'dark' ? '#999' : '#999'}
             value={password}
             onChangeText={setPassword}
           />
@@ -72,7 +76,7 @@ export default function LoginScreen() {
           <Text style={styles.buttonText}>Inloggen</Text>
         </TouchableOpacity>
 
-        <Text style={styles.register}>
+        <Text style={[styles.register, colorScheme === 'dark' ? styles.textDark : null]}>
           Heb je nog geen account?{' '}
           <Link href={"/register" as any} asChild>
             <Text style={styles.registerLink}>Registreer hier</Text>
@@ -93,6 +97,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     justifyContent: 'center',
+    backgroundColor: '#f9fafb',
   },
   title: {
     textAlign: 'center',
@@ -167,5 +172,15 @@ const styles = StyleSheet.create({
   },
   registerLink: {
     color: '#4caf50',
+  },
+  cardDark: {
+    backgroundColor: '#1f2933',
+  },
+  textDark: {
+    color: '#ffffff',
+  },
+  inputDark: {
+    backgroundColor: '#2d3748',
+    color: '#ffffff',
   },
 });

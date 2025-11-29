@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, View, Text, useColorScheme } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Text, View } from '@/components/Themed';
 import { useAuth } from '@/components/AuthContext';
 import { UserService } from '@/services/userService';
 import { useRouter, Link } from 'expo-router';
+import Colors from '@/constants/Colors';
 
 export default function RegisterScreen() {
   const router = useRouter();
   const { login } = useAuth();
+  const colorScheme = useColorScheme();
+  const theme = Colors[colorScheme ?? 'light'];
 
   const [firstName, setFirstName] = useState('');
   const [name, setName] = useState('');
@@ -35,32 +37,32 @@ export default function RegisterScreen() {
 
   return (
     <KeyboardAwareScrollView
-      style={{ backgroundColor: '#f9fafb' }}
-      contentContainerStyle={styles.scrollContent}
+      style={{ backgroundColor: theme.background }}
+      contentContainerStyle={[styles.scrollContent, { backgroundColor: theme.background }]}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
       enableOnAndroid={true}
       extraScrollHeight={80}
       enableAutomaticScroll={true}
     >
-      <View style={styles.page}>
-        <Text style={styles.title}>Registreren</Text>
-        <Text style={styles.subtitle}>Maak je Eat Up account aan</Text>
+      <View style={[styles.page, { backgroundColor: theme.background }]}>
+        <Text style={[styles.title, { color: theme.text }]}>Registreren</Text>
+        <Text style={[styles.subtitle, { color: theme.tabIconDefault }]}>Maak je Eat Up account aan</Text>
 
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <View style={[styles.col, { marginRight: 8 }]}>
-              <Text style={styles.label}>Voornaam</Text>
-              <TextInput style={styles.input} value={firstName} onChangeText={setFirstName} placeholder="Voornaam" />
+        <View style={[styles.card, colorScheme === 'dark' ? styles.cardDark : null]}>
+          <View style={[styles.row, colorScheme === 'dark' ? styles.cardDark : null]}>
+            <View style={[styles.col, { marginRight: 8 }, colorScheme === 'dark' ? styles.cardDark : null]}>
+              <Text style={[styles.label, colorScheme === 'dark' ? styles.textDark : null]}>Voornaam</Text>
+              <TextInput style={styles.input} value={firstName} onChangeText={setFirstName} placeholder="Voornaam" placeholderTextColor={colorScheme === 'dark' ? '#999' : '#999'} />
             </View>
-            <View style={[styles.col, { marginLeft: 8 }]}>
-              <Text style={styles.label}>Naam</Text>
-              <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Naam" />
+            <View style={[styles.col, { marginLeft: 8 }, colorScheme === 'dark' ? styles.cardDark : null]}>
+              <Text style={[styles.label, colorScheme === 'dark' ? styles.textDark : null]}>Naam</Text>
+              <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Naam" placeholderTextColor={colorScheme === 'dark' ? '#999' : '#999'} />
             </View>
           </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>E-mail</Text>
+          <View style={[styles.inputGroup, colorScheme === 'dark' ? styles.cardDark : null]}>
+            <Text style={[styles.label, colorScheme === 'dark' ? styles.textDark : null]}>E-mail</Text>
             <TextInput
               style={styles.input}
               keyboardType="email-address"
@@ -68,23 +70,25 @@ export default function RegisterScreen() {
               value={email}
               onChangeText={setEmail}
               placeholder="jouw@email.com"
+              placeholderTextColor={colorScheme === 'dark' ? '#999' : '#999'}
             />
           </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Telefoonnummer</Text>
+          <View style={[styles.inputGroup, colorScheme === 'dark' ? styles.cardDark : null]}>
+            <Text style={[styles.label, colorScheme === 'dark' ? styles.textDark : null]}>Telefoonnummer</Text>
             <TextInput
               style={styles.input}
               keyboardType="phone-pad"
               value={phoneNumber}
               onChangeText={setPhoneNumber}
               placeholder="bv. 0470 12 34 56"
+              placeholderTextColor={colorScheme === 'dark' ? '#999' : '#999'}
             />
           </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Wachtwoord</Text>
-            <TextInput style={styles.input} secureTextEntry value={password} onChangeText={setPassword} placeholder="wachtwoord" />
+          <View style={[styles.inputGroup, colorScheme === 'dark' ? styles.cardDark : null]}>
+            <Text style={[styles.label, colorScheme === 'dark' ? styles.textDark : null]}>Wachtwoord</Text>
+            <TextInput style={styles.input} secureTextEntry value={password} onChangeText={setPassword} placeholder="wachtwoord" placeholderTextColor={colorScheme === 'dark' ? '#999' : '#999'} />
           </View>
 
           {error && <Text style={styles.error}>{error}</Text>}
@@ -93,7 +97,7 @@ export default function RegisterScreen() {
             <Text style={styles.buttonText}>Account aanmaken</Text>
           </TouchableOpacity>
 
-          <Text style={styles.register}>
+          <Text style={[styles.register, colorScheme === 'dark' ? styles.textDark : null]}>
             Heb je al een account?{' '}
             <Link href={"/login" as any} asChild>
               <Text style={styles.registerLink}>Inloggen</Text>
@@ -114,6 +118,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     justifyContent: 'center',
+    backgroundColor: '#f9fafb',
   },
   title: {
     textAlign: 'center',
@@ -188,5 +193,15 @@ const styles = StyleSheet.create({
   },
   registerLink: {
     color: '#4caf50',
+  },
+  cardDark: {
+    backgroundColor: '#1f2933',
+  },
+  textDark: {
+    color: '#ffffff',
+  },
+  inputDark: {
+    backgroundColor: '#2d3748',
+    color: '#ffffff',
   },
 });
