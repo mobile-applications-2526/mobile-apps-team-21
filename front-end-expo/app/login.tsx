@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View, Text, useColorScheme } from 'react-native';
+import { StyleSheet, View, Text, useColorScheme } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useAuth } from '@/components/AuthContext';
 import { Link, useRouter } from 'expo-router';
+import FormField from '@/components/FormField';
+import LoadingButton from '@/components/LoadingButton';
+import { validateLogin, mapLoginError } from '@/utils/validation';
 import Colors from '@/constants/Colors';
 
 export default function LoginScreen() {
@@ -17,12 +20,19 @@ export default function LoginScreen() {
 
   const onSubmit = async () => {
     setError(null);
+
+    const validationError = validateLogin(email, password);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setSubmitting(true);
     try {
       await login(email.trim(), password);
       router.replace('/(tabs)');
     } catch (err: any) {
-      setError(err?.message || 'Inloggen mislukt');
+      setError(mapLoginError(err?.message));
     } finally {
       setSubmitting(false);
     }
@@ -45,36 +55,25 @@ export default function LoginScreen() {
         <View style={[styles.card, colorScheme === 'dark' ? styles.cardDark : null]}>
         <Text style={[styles.welcome, colorScheme === 'dark' ? styles.textDark : null]}>Welkom terug!</Text>
 
-        <View style={[styles.inputGroup, colorScheme === 'dark' ? styles.cardDark : null]}>
-          <Text style={[styles.label, colorScheme === 'dark' ? styles.textDark : null]}>E-mail</Text>
-          <TextInput
-            style={styles.input}
-            keyboardType="email-address"
-            placeholder="jouw@email.com"
-            placeholderTextColor={colorScheme === 'dark' ? '#999' : '#999'}
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-          />
-        </View>
-
-        <View style={[styles.inputGroup, colorScheme === 'dark' ? styles.cardDark : null]}>
-          <Text style={[styles.label, colorScheme === 'dark' ? styles.textDark : null]}>Wachtwoord</Text>
-          <TextInput
-            style={styles.input}
-            secureTextEntry
-            placeholder="wachtwoord"
-            placeholderTextColor={colorScheme === 'dark' ? '#999' : '#999'}
-            value={password}
-            onChangeText={setPassword}
-          />
-        </View>
+        <FormField
+          label="E-mail"
+          value={email}
+          onChangeText={setEmail}
+          placeholder="jouw@email.com"
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <FormField
+          label="Wachtwoord"
+          value={password}
+          onChangeText={setPassword}
+          placeholder="wachtwoord"
+          secureTextEntry
+        />
 
         {error && <Text style={styles.error}>{error}</Text>}
 
-        <TouchableOpacity style={[styles.button, submitting && styles.buttonDisabled]} onPress={onSubmit} disabled={submitting}>
-          <Text style={styles.buttonText}>Inloggen</Text>
-        </TouchableOpacity>
+        <LoadingButton title="Inloggen" loading={submitting} onPress={onSubmit} />
 
         <Text style={[styles.register, colorScheme === 'dark' ? styles.textDark : null]}>
           Heb je nog geen account?{' '}
@@ -131,40 +130,12 @@ const styles = StyleSheet.create({
     color: '#1f2933',
     fontWeight: '600',
   },
-  inputGroup: {
-    marginVertical: 10,
-  },
-  label: {
-    marginBottom: 6,
-    color: '#1f2933',
-    fontWeight: '500',
-  },
-  input: {
-    backgroundColor: '#f9fafb',
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.05)',
-  },
+  // Removed per-field styles (now in FormField component)
   error: {
     color: '#ef5350',
     marginVertical: 8,
   },
-  button: {
-    backgroundColor: '#4caf50',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonDisabled: {
-    opacity: 0.7,
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontWeight: '600',
-  },
+  // Button styles moved to LoadingButton component
   register: {
     textAlign: 'center',
     marginTop: 12,
