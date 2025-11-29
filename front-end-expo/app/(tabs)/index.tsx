@@ -1,16 +1,21 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import { Text, View } from '@/components/Themed';
 
 export default function ChatsScreen() {
   return (
-    <View style={styles.container}>
+    <ScrollView style={{ backgroundColor: '#f9fafb' }} contentContainerStyle={styles.scrollContent} bounces={true}>
+      <View style={styles.container}>
       <Text style={styles.title}>Chats</Text>
       <Text>Replace with your Chats UI</Text>
-    </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollContent: {
+    flexGrow: 1,
+  },
   container: {
     flex: 1,
     alignItems: 'center',

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Text, View } from '@/components/Themed';
 import { useAuth } from '@/components/AuthContext';
 import { useRouter } from 'expo-router';
@@ -26,11 +27,20 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.page}>
-      <Text style={styles.title}>Eat Up</Text>
-      <Text style={styles.subtitle}>Ontdek restaurants samen met vrienden</Text>
+    <KeyboardAwareScrollView
+      style={{ backgroundColor: '#f9fafb' }}
+      contentContainerStyle={styles.scrollContent}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+      enableOnAndroid={true}
+      extraScrollHeight={90}
+      enableAutomaticScroll={true}
+    >
+      <View style={styles.page}>
+        <Text style={styles.title}>Eat Up</Text>
+        <Text style={styles.subtitle}>Ontdek restaurants samen met vrienden</Text>
 
-      <View style={styles.card}>
+        <View style={styles.card}>
         <Text style={styles.welcome}>Welkom terug!</Text>
 
         <View style={styles.inputGroup}>
@@ -65,22 +75,27 @@ export default function LoginScreen() {
         <Text style={styles.register}>
           Heb je nog geen account? <Text style={styles.registerLink}>Registreer hier</Text>
         </Text>
+        </View>
       </View>
-    </View>
+    </KeyboardAwareScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollContent: {
+    flexGrow: 1,
+    backgroundColor: '#f9fafb',
+  },
   page: {
     flex: 1,
-    backgroundColor: '#f9fafb',
     paddingHorizontal: 16,
+    justifyContent: 'center',
   },
   title: {
     textAlign: 'center',
     fontWeight: '700',
     color: '#1f2933',
-    marginTop: 192,
+    marginTop: 60,
     fontSize: 28,
   },
   subtitle: {

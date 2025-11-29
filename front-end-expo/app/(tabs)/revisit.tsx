@@ -1,16 +1,21 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import { Text, View } from '@/components/Themed';
 
 export default function RevisitScreen() {
   return (
-    <View style={styles.container}>
+    <ScrollView style={{ backgroundColor: '#f9fafb' }} contentContainerStyle={styles.scrollContent} bounces={true}>
+      <View style={styles.container}>
       <Text style={styles.title}>Revisit</Text>
       <Text>Replace with your Revisit UI</Text>
-    </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollContent: {
+    flexGrow: 1,
+  },
   container: {
     flex: 1,
     alignItems: 'center',

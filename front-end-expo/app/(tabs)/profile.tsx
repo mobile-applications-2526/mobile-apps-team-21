@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import { useAuth } from '@/components/AuthContext';
 import { useRouter } from 'expo-router';
@@ -13,17 +13,22 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={{ backgroundColor: '#f9fafb' }} contentContainerStyle={styles.scrollContent} bounces={true}>
+      <View style={styles.container}>
       <Text style={styles.title}>Profiel</Text>
       {userEmail && <Text style={styles.email}>{userEmail}</Text>}
       <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
         <Text style={styles.logoutText}>Uitloggen</Text>
       </TouchableOpacity>
-    </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollContent: {
+    flexGrow: 1,
+  },
   container: {
     flex: 1,
     alignItems: 'center',
