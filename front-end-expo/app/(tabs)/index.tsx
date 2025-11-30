@@ -29,6 +29,10 @@ export default function ChatsScreen() {
   const [messageSending, setMessageSending] = useState(false);
   const [messagesLoading, setMessagesLoading] = useState(false);
 
+  // 1. Create a reversed copy of your messages to work with Inverted mode
+  // Use useMemo ensures we don't re-calculate this on every small render
+  const invertedMessages = React.useMemo(() => [...messages].reverse(), [messages]);
+
   const loadGroups = async () => {
     if (!userEmail) { setLoading(false); return; }
     try {
@@ -180,27 +184,50 @@ export default function ChatsScreen() {
       </Modal>
 
       <Modal visible={!!chatGroup} animationType="slide">
-        <SafeAreaView style={[styles.chatContainer, isDark ? styles.containerDark : styles.container]} edges={['top','bottom']}>
-          <View style={[styles.chatHeaderWrap, isDark && styles.chatHeaderWrapDark]}>
+        {/* CHANGE 1: Use KeyboardAvoidingView as the ROOT container (No SafeAreaView wrapper) */}
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined} 
+          style={[styles.chatContainer, isDark ? styles.containerDark : styles.container]}
+        >
+          
+          {/* CHANGE 2: Add 'paddingTop: insets.top' to the Header manually */}
+          <View style={[
+            styles.chatHeaderWrap, 
+            isDark && styles.chatHeaderWrapDark,
+            { paddingTop: insets.top + 10 } 
+          ]}>
             <View style={styles.chatHeader}>
-            <TouchableOpacity onPress={() => setChatGroup(null)} style={styles.backTouch} accessibilityLabel="Ga terug" accessibilityRole="button">
-              <MaterialIcons name="arrow-back" size={24} color={isDark ? '#fff' : '#1f2933'} />
-            </TouchableOpacity>
-            <View style={styles.chatHeaderText}>
-              <Text style={[styles.chatTitle, isDark && styles.headerTitleDark]} numberOfLines={1}>{chatGroup?.name}</Text>
-              {chatGroup && <Text style={[styles.memberCount, isDark && styles.memberCountDark]}>{chatGroup.memberNames.length} members</Text>}
-            </View>
+              <TouchableOpacity onPress={() => setChatGroup(null)} style={styles.backTouch}>
+                <MaterialIcons name="arrow-back" size={24} color={isDark ? '#fff' : '#1f2933'} />
+              </TouchableOpacity>
+              <View style={styles.chatHeaderText}>
+                <Text style={[styles.chatTitle, isDark && styles.headerTitleDark]} numberOfLines={1}>{chatGroup?.name}</Text>
+                {chatGroup && <Text style={[styles.memberCount, isDark && styles.memberCountDark]}>{chatGroup.memberNames.length} members</Text>}
+              </View>
             </View>
           </View>
-          {messagesLoading ? <ActivityIndicator style={{ marginTop: 30 }} /> : (
+
+          {/* Messages List */}
+          {messagesLoading ? (
+            <ActivityIndicator style={{ marginTop: 30, flex: 1 }} />
+          ) : (
             <FlatList
-              data={messages}
+              inverted
+              data={invertedMessages}
               keyExtractor={m => m.id}
               renderItem={renderMessage}
-              contentContainerStyle={styles.messagesPad}
+              // contentContainerStyle: paddingBottom creates space at the visual TOP (latest messages)
+              contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16, paddingTop: 16 }} 
+              style={{ flex: 1 }} 
             />
           )}
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={[styles.sendRow, isDark && styles.sendRowDark, { bottom: (insets.bottom || 0) + 22 }] }>
+
+          {/* CHANGE 3: Add 'paddingBottom' to Input for safe area when keyboard is closed */}
+          <View style={[
+            styles.sendRow, 
+            isDark && styles.sendRowDark,
+            { paddingBottom: Platform.OS === 'ios' ? insets.bottom : 10 } 
+          ]}>
             <TextInput
               placeholder="Bericht"
               placeholderTextColor={isDark ? '#8894a0' : '#99a1ab'}
@@ -208,11 +235,15 @@ export default function ChatsScreen() {
               onChangeText={setMessageInput}
               style={[styles.input, styles.chatInput, isDark && styles.inputDark]}
             />
-            <TouchableOpacity disabled={messageSending || !messageInput.trim()} onPress={handleSendMessage} style={[styles.sendBtn, (messageSending || !messageInput.trim()) && styles.sendBtnDisabled]} accessibilityLabel="Verzend bericht" accessibilityRole="button">
+            <TouchableOpacity 
+              disabled={messageSending || !messageInput.trim()} 
+              onPress={handleSendMessage} 
+              style={[styles.sendBtn, (messageSending || !messageInput.trim()) && styles.sendBtnDisabled]}
+            >
               {messageSending ? <ActivityIndicator color="#fff" /> : <MaterialCommunityIcons name="send" size={24} color={isDark ? '#fff' : '#000'} />}
             </TouchableOpacity>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
+          </View>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );
@@ -251,7 +282,7 @@ const styles = StyleSheet.create({
   chatTitle: { fontSize: 20, fontWeight: '700', color: '#1f2933' },
   memberCount: { marginTop: 2, fontSize: 12, color: '#6a7282' },
   memberCountDark: { color: '#c4c9d1' },
-  messagesPad: { padding: 16, paddingBottom: 110 },
+  messagesPad: { padding: 16, paddingBottom: 16 },
   messageBubble: { marginBottom: 12, maxWidth: '80%', paddingHorizontal: 12, paddingVertical: 10, borderRadius: 18 },
   mine: { backgroundColor: '#4caf50', alignSelf: 'flex-end' },
   theirs: { backgroundColor: '#d1d9e2', alignSelf: 'flex-start' },
@@ -265,7 +296,7 @@ const styles = StyleSheet.create({
   messageText: { color: '#fff', fontSize: 14, lineHeight: 18 },
   messageTextTheirs: { color: '#1f2933' },
   optimistic: { color: '#fff', fontSize: 10, marginTop: 2 },
-  sendRow: { position: 'absolute', left: 0, right: 0, flexDirection: 'row', paddingHorizontal: 12, paddingVertical: 10, backgroundColor: 'transparent', borderTopWidth:1, borderTopColor:'rgba(0,0,0,0.08)' },
+  sendRow: { left: 0, right: 0, flexDirection: 'row', paddingHorizontal: 12, paddingVertical: 10, backgroundColor: 'transparent', borderTopWidth:1, borderTopColor:'rgba(0,0,0,0.08)' },
   sendRowDark: { backgroundColor: 'transparent', borderTopColor:'rgba(255,255,255,0.12)' },
   chatInput: { flex: 1, marginBottom: 0, marginRight: 10 },
   sendBtn: { backgroundColor: '#4caf50', paddingHorizontal: 20, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
