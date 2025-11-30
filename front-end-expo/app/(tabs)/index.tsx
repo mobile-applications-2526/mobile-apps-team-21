@@ -14,13 +14,21 @@ export default function ChatsScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const insets = useSafeAreaInsets();
+  
+  // Data State
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  
+  // UI State
   const [groupModalOpen, setGroupModalOpen] = useState(false);
+  const [chatGroup, setChatGroup] = useState<Group | null>(null);
+  
+  // Animation State
   const fadeAnim = useState(new Animated.Value(0))[0];
   const cardAnim = useState(new Animated.Value(40))[0];
-  const [chatGroup, setChatGroup] = useState<Group | null>(null);
+
+  // Form State
   const [newGroupName, setNewGroupName] = useState('');
   const [inviteEmails, setInviteEmails] = useState('');
   const [groupError, setGroupError] = useState('');
@@ -29,8 +37,7 @@ export default function ChatsScreen() {
   const [messageSending, setMessageSending] = useState(false);
   const [messagesLoading, setMessagesLoading] = useState(false);
 
-  // 1. Create a reversed copy of your messages to work with Inverted mode
-  // Use useMemo ensures we don't re-calculate this on every small render
+  // Memoized Messages
   const invertedMessages = React.useMemo(() => [...messages].reverse(), [messages]);
 
   const loadGroups = async () => {
@@ -184,13 +191,11 @@ export default function ChatsScreen() {
       </Modal>
 
       <Modal visible={!!chatGroup} animationType="slide">
-        {/* CHANGE 1: Use KeyboardAvoidingView as the ROOT container (No SafeAreaView wrapper) */}
         <KeyboardAvoidingView 
           behavior={Platform.OS === 'ios' ? 'padding' : undefined} 
           style={[styles.chatContainer, isDark ? styles.containerDark : styles.container]}
         >
           
-          {/* CHANGE 2: Add 'paddingTop: insets.top' to the Header manually */}
           <View style={[
             styles.chatHeaderWrap, 
             isDark && styles.chatHeaderWrapDark,
@@ -216,13 +221,15 @@ export default function ChatsScreen() {
               data={invertedMessages}
               keyExtractor={m => m.id}
               renderItem={renderMessage}
-              // contentContainerStyle: paddingBottom creates space at the visual TOP (latest messages)
               contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16, paddingTop: 16 }} 
-              style={{ flex: 1 }} 
+              style={{ flex: 1 }}
+              
+              // NEW: This enables the swipe-to-dismiss functionality
+              // keyboardDismissMode="interactive" 
+              keyboardDismissMode="interactive"
             />
           )}
 
-          {/* CHANGE 3: Add 'paddingBottom' to Input for safe area when keyboard is closed */}
           <View style={[
             styles.sendRow, 
             isDark && styles.sendRowDark,
