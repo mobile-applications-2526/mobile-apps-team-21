@@ -28,8 +28,9 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Chats',
+          headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Ionicons name="chatbubbles-outline" color={color} size={24}/>
+            <Ionicons name="chatbubbles-outline" color={color} size={24} />
           ),
         }}
       />
