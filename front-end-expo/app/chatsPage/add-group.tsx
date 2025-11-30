@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -9,6 +9,10 @@ import { createGroup } from '@/services/groupChatService';
 export default function AddGroupScreen() {
   const router = useRouter();
   const { token, userEmail } = useAuth();
+  
+  // Dark Mode Logic
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   
   const [groupName, setGroupName] = useState('');
   const [inviteEmails, setInviteEmails] = useState('');
@@ -40,34 +44,34 @@ export default function AddGroupScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, isDark && styles.containerDark]} edges={['top']}>
        <Stack.Screen options={{ headerShown: false }} />
        
-       <View style={styles.header}>
+       <View style={[styles.header, isDark && styles.headerDark]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <MaterialIcons name="arrow-back" size={24} color="#1f2933" />
+          <MaterialIcons name="arrow-back" size={24} color={isDark ? '#fff' : '#1f2933'} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Nieuwe Groep</Text>
+        <Text style={[styles.headerTitle, isDark && styles.headerTitleDark]}>Nieuwe Groep</Text>
         <View style={{width: 32}} />
        </View>
 
        <View style={styles.form}>
-         <Text style={styles.label}>Naam van de groep</Text>
+         <Text style={[styles.label, isDark && styles.labelDark]}>Naam van de groep</Text>
          <TextInput 
-           style={styles.input} 
+           style={[styles.input, isDark && styles.inputDark]} 
            placeholder="Bijv. Project Team"
            value={groupName}
            onChangeText={setGroupName}
-           placeholderTextColor="#99a1ab"
+           placeholderTextColor={isDark ? '#8894a0' : '#99a1ab'}
          />
 
-         <Text style={styles.label}>Uitnodigen (emails, komma gescheiden)</Text>
+         <Text style={[styles.label, isDark && styles.labelDark]}>Uitnodigen (emails, komma gescheiden)</Text>
          <TextInput 
-           style={styles.input} 
+           style={[styles.input, isDark && styles.inputDark]} 
            placeholder="jan@test.com, piet@test.com"
            value={inviteEmails}
            onChangeText={setInviteEmails}
-           placeholderTextColor="#99a1ab"
+           placeholderTextColor={isDark ? '#8894a0' : '#99a1ab'}
            autoCapitalize="none"
            keyboardType="email-address"
          />
@@ -92,6 +96,8 @@ export default function AddGroupScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f7fa' },
+  containerDark: { backgroundColor: '#12181f' },
+  
   header: { 
     flexDirection: 'row', 
     alignItems: 'center', 
@@ -101,10 +107,19 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0,0,0,0.05)'
   },
+  headerDark: {
+    borderBottomColor: 'rgba(255,255,255,0.1)'
+  },
+  
   headerTitle: { fontSize: 18, fontWeight: '700', color: '#1f2933' },
+  headerTitleDark: { color: '#ffffff' },
+  
   backButton: { padding: 4 },
   form: { padding: 24 },
+  
   label: { fontSize: 14, fontWeight: '600', color: '#1f2933', marginBottom: 8, marginTop: 16 },
+  labelDark: { color: '#ffffff' },
+  
   input: { 
     backgroundColor: '#ffffff', 
     borderRadius: 12, 
@@ -115,7 +130,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e1e4e8'
   },
+  inputDark: {
+    backgroundColor: '#25323d',
+    color: '#ffffff',
+    borderColor: '#405060'
+  },
+  
   errorText: { color: '#d32f2f', marginTop: 16, fontWeight: '500' },
+  
   createButton: { 
     backgroundColor: '#4caf50', 
     borderRadius: 14, 
