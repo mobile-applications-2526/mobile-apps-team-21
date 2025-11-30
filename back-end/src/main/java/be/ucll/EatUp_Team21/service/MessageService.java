@@ -1,6 +1,7 @@
 package be.ucll.EatUp_Team21.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import be.ucll.EatUp_Team21.controller.dto.MessageRequest;
@@ -19,7 +20,11 @@ public class MessageService {
     @Autowired
     private UserService userService;
 
-    public String writeMessage(String groupName, MessageRequest mesReq) {
+    public Message writeMessage(String groupName, MessageRequest mesReq, Authentication auth) {
+        // method accepts Authentication for compatibility; not required by current implementation
+        if (auth == null) {
+            // no-op, parameter intentionally unused
+        }
         Group group = groupService.getGroupByName(groupName);
         if (group == null) {
             throw new IllegalArgumentException("Group with name " + groupName + " does not exist");
@@ -38,8 +43,6 @@ public class MessageService {
             group
         );
         messageRepository.save(message);
-        return "Message sent successfully";
+        return message;
     }
-
-
 }

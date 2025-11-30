@@ -1,6 +1,7 @@
 package be.ucll.EatUp_Team21.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import be.ucll.EatUp_Team21.controller.dto.GroupRequest;
 import be.ucll.EatUp_Team21.controller.dto.GroupResponse;
 import be.ucll.EatUp_Team21.model.Group;
 import be.ucll.EatUp_Team21.model.Message;
+import be.ucll.EatUp_Team21.model.Restaurant;
 import be.ucll.EatUp_Team21.model.User;
 import be.ucll.EatUp_Team21.repository.GroupRepository;
 import be.ucll.EatUp_Team21.repository.MessageRepository;
@@ -27,6 +29,9 @@ public class GroupService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RestaurantService restaurantService;
 
     public List<Message> getMessagesForGroupAndUser(String name, String userEmail) {
         Group group = groupRepository.findByName(name);
@@ -89,5 +94,56 @@ public class GroupService {
             throw new IllegalArgumentException("User with email " + name + " is not a member of the group");
         }
         return group.getMembers().stream().map(member -> member.getFirstName() + " " + member.getName()).toList();
+    }
+
+    public Group findByName(String name) {
+        Group group = groupRepository.findByName(name);
+        if (group == null) {
+            throw new IllegalArgumentException("Group with name " + name + " does not exist");
+        }
+        return group;
+    }
+
+    public void updateMemberLastVisited(Group group, User user) {
+        group.updateMemberLastVisited(user.getId(), LocalDateTime.now());
+        groupRepository.save(group);
+    }
+
+    public String suggestRestaurantToGroup(String restId, String groupId, String name) {
+        if(!userService.userExists(name)) 
+            throw new IllegalArgumentException("User does not exist");
+        if(!restaurantService.restaurantexistsById(restId))
+            throw new IllegalArgumentException("Restaurant with id " + restId + " does not exist.");
+        if(!groupExistsById(groupId))
+            throw new IllegalArgumentException("Group with id " + groupId + " does not exist.");
+        Restaurant restaurant = restaurantService.getRestaurantById(restId);
+        Group group = getGroupById(groupId);
+        List<GroupResponse> userGroups = userService.getUserGroups(name);
+        boolean pass = false;
+        for(GroupResponse elem : userGroups){
+            if (elem.id().equals(groupId)) pass = true;
+        }
+        if(!pass) 
+            throw new IllegalArgumentException("User should be member of the group.");
+        boolean resIn = false;
+        for(Restaurant res : group.getSuggestedRestaurants()){
+            if(res.getId().equals(restId)) resIn = true;
+        }
+        if(resIn) 
+            return "Restaurant has already been suggested to this group.";
+        group.addSuggestedRestaurant(restaurant);
+        groupRepository.save(group);
+        return "Restaurant succesfully suggested.";
+    }
+
+    private Group getGroupById(String groupId) {
+        Optional<Group> gr = groupRepository.findById(groupId);
+        if(gr.isPresent())
+            return gr.get();
+        throw new IllegalArgumentException("Group does not exist");
+    }
+
+    private boolean groupExistsById(String groupId) {
+        return groupRepository.existsById(groupId);
     }
 }

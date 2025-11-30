@@ -13,10 +13,10 @@ public class RestRel {
     private String id;
 
     @NotNull
-    public User user;
+    private User user;
 
     @NotNull
-    public Restaurant restaurant;
+    private Restaurant restaurant;
 
     private Float rating;
 

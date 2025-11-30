@@ -48,4 +48,9 @@ public class GroupController {
     public List<String> getGroupMembers(@PathVariable String groupId, Authentication auth) {
         return groupService.getMembersByGroupId(groupId, auth.getName());
     }
+
+    @PutMapping("/restaurant")
+    public String suggestRestaurant(@RequestParam String restId, @RequestParam String groupId, Authentication auth) {
+        return groupService.suggestRestaurantToGroup(restId, groupId, auth.getName());
+    }
 }
