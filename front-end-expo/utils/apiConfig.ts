@@ -19,3 +19,11 @@ export const buildApiUrl = (path: string = ''): string => {
   const normalizedPath = path.replace(/^\//, '');
   return normalizedPath ? `${base}/${normalizedPath}` : base;
 };
+
+// --- NEW: WebSocket URL Helper ---
+export const getWebSocketUrl = (): string => {
+  // Replace http/https with ws/wss and append /ws (your backend endpoint)
+  const base = API_BASE_URL.replace(/\/$/, '');
+  const wsBase = base.replace(/^http/, 'ws');
+  return `${wsBase}/ws`;
+};
