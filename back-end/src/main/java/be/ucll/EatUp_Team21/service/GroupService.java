@@ -82,6 +82,9 @@ public class GroupService {
         }
         User newUser = userService.getUserByEmail(newUserEmail);
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new IllegalArgumentException("Group with id " + groupId + " does not exist"));
+        for(User u : group.getMembers()){
+            if(u.getId().equals(newUser.getId())) return "User is already a member of this group.";
+        }
         group.addMember(newUser);
         userService.addGroupToUser(newUser, group);
         groupRepository.save(group);
