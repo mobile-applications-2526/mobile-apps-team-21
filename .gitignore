@@ -1,3 +1,6 @@
 # ignore android and ios inside front-end
 front-end/android/
 front-end/ios/
+
+.idea/
+.vscode/
