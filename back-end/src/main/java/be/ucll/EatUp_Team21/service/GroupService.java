@@ -93,7 +93,7 @@ public class GroupService {
 
     public List<String> getMembersByGroupId(String groupId, String name) throws IllegalArgumentException {
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new IllegalArgumentException("Group with id " + groupId + " does not exist"));
-        if (!userService.isUserMemberOfGroup(name, groupId.toString())) {
+        if (!userService.isUserMemberOfGroup(name, groupId)) {
             throw new IllegalArgumentException("User with email " + name + " is not a member of the group");
         }
         return group.getMembers().stream().map(member -> member.getFirstName() + " " + member.getName()).toList();
