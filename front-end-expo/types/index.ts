@@ -48,3 +48,19 @@ export interface GroupCreationResult {
   group: Group;
   failedInvites: string[];
 }
+
+export interface Restaurant{
+  id: string,
+  name: string,
+  adress: string,
+  phoneNumber: string,
+  description: string
+}
+
+export interface RawRestaurant{
+  id: string,
+  name: string,
+  adress?: string,
+  phoneNumber?: string,
+  description?: string
+}

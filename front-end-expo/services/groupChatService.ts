@@ -1,5 +1,5 @@
 import { buildApiUrl } from '@/utils/apiConfig';
-import { Group, GroupCreationResult, Message, RawGroupResponse, RawMessage } from '@/types/groupChat';
+import { Group, GroupCreationResult, Message, RawGroupResponse, RawMessage } from '@/types';
 
 async function handleJson<T>(res: Response): Promise<T> {
   const text = await res.text();
