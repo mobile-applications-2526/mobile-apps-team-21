@@ -4,8 +4,9 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
+  View,
 } from "react-native";
-import { Text, View } from "@/components/Themed";
+import { Text } from "@/components/Themed";
 import React, { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect, useRouter } from "expo-router";
@@ -79,7 +80,7 @@ export default function DiscoverScreen() {
           }
           ListEmptyComponent={
             <Text style={[styles.empty, isDark && styles.emptyDark]}>
-              Geen groepen gevonden.
+              Geen restaurants gevonden.
             </Text>
           }
         />
@@ -89,8 +90,8 @@ export default function DiscoverScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f5f7fa" },
-  containerDark: { backgroundColor: "#12181f" },
+  container: { flex: 1, backgroundColor: '#f5f7fa' },
+  containerDark: { backgroundColor: '#12181f' },
   header: {
     flexDirection: "row",
     alignItems: "center",

@@ -10,7 +10,6 @@ interface Props {
 const RestaurantCard: React.FC<Props> = ({ restaurant }) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const theme = Colors[colorScheme ?? 'light'];
 
   return (
     <TouchableOpacity style={[styles.card, isDark && styles.cardDark]} onPress={() => null} activeOpacity={0.7}>
