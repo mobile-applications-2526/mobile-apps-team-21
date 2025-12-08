@@ -1,21 +1,27 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
-import Colors from '@/constants/Colors';
 import { Restaurant } from '@/types';
 import { Link } from 'expo-router';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 interface Props {
   restaurant: Restaurant;
+  onRecommend: () => void;
 }
 
-const RestaurantCard: React.FC<Props> = ({ restaurant }) => {
+const RestaurantCard: React.FC<Props> = ({ restaurant, onRecommend }) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
   return (
-    <TouchableOpacity style={[styles.card, isDark && styles.cardDark]} onPress={() => null} activeOpacity={0.7}>
+    <TouchableOpacity style={[styles.card, isDark && styles.cardDark]} activeOpacity={0.7}>
       <View style={styles.headerRow}>
-        <Text style={[styles.title, isDark && styles.textDark]} numberOfLines={1}>{restaurant.name}</Text>
+        <View style={styles.nameRow}>
+          <Text style={[styles.title, isDark && styles.textDark]} numberOfLines={1}>{restaurant.name}</Text>
+          <TouchableOpacity onPress={onRecommend}>
+            <MaterialIcons name="recommend" size={30} color={isDark ? '#ffffff' : '#1f2933'} />
+          </TouchableOpacity>
+        </View>
         <Text style={[styles.text, isDark && styles.textDark]}>{restaurant.adress}</Text>
         <Text style={[styles.text, isDark && styles.textDark]}>{restaurant.description}</Text>
         <Text style={[styles.contact, isDark && styles.contactDark]}>Contact</Text>
@@ -41,6 +47,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1f2933',
   },
   headerRow: { flexDirection: 'column', alignItems: 'flex-start', rowGap: 8 },
+  nameRow: { flexDirection: 'row', alignItems: 'center', columnGap: 6 },
   title: { flex: 1, fontSize: 18, fontWeight: '600', color: '#1f2933' },
   text: {color: '#1f2933' },
   textDark: { color: '#ffffff' },
