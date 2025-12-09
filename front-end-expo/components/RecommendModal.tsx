@@ -75,20 +75,20 @@ export default function RecommendModal({ visible, groups, dark = false, title = 
           <Text style={[styles.title, dark && styles.titleDark]}>{title}</Text>
 
           {groups.length === 0 ? (
-            <Text style={[styles.empty, dark && styles.emptyDark]}>Je zit nog in geen groepen.</Text>
+            <Text style={[styles.empty, dark && styles.emptyDark]}>You are not a member of any groups.</Text>
           ) : (
             <View style={styles.listWrap}>
               {groups.map((g) => (
                 <TouchableOpacity key={g.id} style={styles.groupRow} onPress={() => onPressGroup(g)} disabled={busy}>
                   <Text style={[styles.groupName, dark && styles.groupNameDark]}>{g.name}</Text>
-                  <Text style={[styles.groupMeta, dark && styles.groupMetaDark]}>{g.memberNames?.length || 0} leden</Text>
+                  <Text style={[styles.groupMeta, dark && styles.groupMetaDark]}>{g.memberNames?.length || 0} members</Text>
                 </TouchableOpacity>
               ))}
             </View>
           )}
 
           <TouchableOpacity style={styles.cancel} onPress={handleClose} disabled={busy}>
-            <Text style={[styles.cancelText, dark && styles.cancelTextDark]}>Annuleren</Text>
+            <Text style={[styles.cancelText, dark && styles.cancelTextDark]}>Cancel</Text>
           </TouchableOpacity>
         </Animated.View>
       </Animated.View>
