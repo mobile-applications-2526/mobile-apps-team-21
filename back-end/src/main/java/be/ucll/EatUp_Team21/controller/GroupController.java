@@ -12,6 +12,7 @@ import be.ucll.EatUp_Team21.controller.dto.GroupResponse;
 import be.ucll.EatUp_Team21.controller.dto.UserGroupRequest;
 import be.ucll.EatUp_Team21.controller.dto.UserRequest;
 import be.ucll.EatUp_Team21.model.Message;
+import be.ucll.EatUp_Team21.model.Restaurant;
 import be.ucll.EatUp_Team21.service.GroupService;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,4 +54,10 @@ public class GroupController {
     public String suggestRestaurant(@RequestParam String restId, @RequestParam String groupId, Authentication auth) {
         return groupService.suggestRestaurantToGroup(restId, groupId, auth.getName());
     }
+
+    @GetMapping("/restaurant")
+    public List<Restaurant> getSuggestedRestaurants(@RequestParam String groupId, Authentication auth) {
+        return groupService.getSuggestedRestaurants(groupId, auth.getName());
+    }
+    
 }

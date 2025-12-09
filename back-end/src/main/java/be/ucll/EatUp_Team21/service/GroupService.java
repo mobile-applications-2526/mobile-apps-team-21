@@ -149,4 +149,21 @@ public class GroupService {
     private boolean groupExistsById(String groupId) {
         return groupRepository.existsById(groupId);
     }
+
+    public List<Restaurant> getSuggestedRestaurants(String groupId, String name) {
+        if(!userService.userExists(name)) 
+            throw new IllegalArgumentException("User does not exist");
+        if(!userInGroup(groupId, name))
+            throw new IllegalArgumentException("User is not a member of this group.");
+        Group group = getGroupById(groupId);
+        return group.getSuggestedRestaurants();
+    }
+
+    private boolean userInGroup(String groupId, String name) {
+        Group group = getGroupById(groupId);
+        for(User u : group.getMembers()){
+            if(u.getEmail().equals(name)) return true;
+        }
+        return false;
+    }
 }
