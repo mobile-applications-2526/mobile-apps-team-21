@@ -1,5 +1,5 @@
 import { buildApiUrl } from '@/utils/apiConfig';
-import { Group, GroupCreationResult, Message, RawGroupResponse, RawMessage } from '@/types/groupChat';
+import { Group, GroupCreationResult, Message, RawGroupResponse, RawMessage, Restaurant } from '@/types';
 
 async function handleJson<T>(res: Response): Promise<T> {
   const text = await res.text();
@@ -98,6 +98,25 @@ export async function sendMessage(group: Group, content: string, senderEmail: st
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ content: content.trim(), senderEmail, groupId: group.id })
   }, token);
+}
+
+export async function recommendRestaurantToGroup(group: Group, restaurant: Restaurant, token?: string): Promise<String> {
+  if(!token) throw new Error('No authentication');
+  try {
+    const encodedRestId = encodeURIComponent(restaurant.id);
+    const encodedGroupId = encodeURIComponent(group.id);
+    const url = `/groups/restaurant?restId=${encodedRestId}&groupId=${encodedGroupId}`;
+    const res = await request(url, {
+      method: 'PUT'
+    }, token)
+    const text = await handleJson<string>(res)
+    return text;
+  } catch (err: any) {
+    // If the server returned a meaningful message (e.g. "Restaurant has already been suggested to this group."),
+    // `request()` throws an Error with that message. We catch and return it so callers can display it gracefully.
+    if (err instanceof Error) return err.message;
+    return String(err);
+  }
 }
 
 export type { Group, Message, GroupCreationResult };
