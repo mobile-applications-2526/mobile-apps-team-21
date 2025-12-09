@@ -7,6 +7,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useAuth } from '@/components/AuthContext';
 import { Group } from '@/services/groupChatService';
 import { useChatWebSocket, OptimisticMessage } from '@/hooks/useChatWebSocket';
+import RestaurantOverviewModal from '@/components/modals/RestaurantOverviewModal';
 
 export default function ChatScreen() {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function ChatScreen() {
   const isDark = colorScheme === 'dark';
 
   const [messageInput, setMessageInput] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
 
   const chatGroup = useMemo(() => {
     try {
@@ -56,6 +58,14 @@ export default function ChatScreen() {
 
   if (!chatGroup) return <ActivityIndicator style={{flex:1}} />;
 
+  const openRestaurantsModal = () => {
+    setModalVisible(true)
+  }
+
+  const closeRestaurantModal = () => {
+    setModalVisible(false)
+  }
+
   return (
     <SafeAreaView style={[styles.container, isDark && styles.containerDark]} edges={['top', 'bottom']}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -70,6 +80,9 @@ export default function ChatScreen() {
               <Text style={[styles.chatTitle, isDark && styles.headerTitleDark]} numberOfLines={1}>{chatGroup.name}</Text>
               <Text style={[styles.memberCount, isDark && styles.memberCountDark]}>{chatGroup.memberNames.length} members</Text>
             </View>
+            <TouchableOpacity onPress={() => openRestaurantsModal()}>
+              <MaterialIcons name="restaurant" size={24} color={isDark ? '#fff' : '#1f2933'} />
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -105,6 +118,12 @@ export default function ChatScreen() {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+      <RestaurantOverviewModal
+        visible={modalVisible}
+        group={chatGroup}
+        dark={isDark}
+        onRequestClose={() => closeRestaurantModal()}
+      />
     </SafeAreaView>
   );
 }

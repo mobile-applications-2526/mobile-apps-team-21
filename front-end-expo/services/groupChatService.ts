@@ -100,7 +100,7 @@ export async function sendMessage(group: Group, content: string, senderEmail: st
   }, token);
 }
 
-export async function recommendRestaurantToGroup(group: Group, restaurant: Restaurant, token?: string): Promise<String> {
+export async function recommendRestaurantToGroup(group: Group, restaurant: Restaurant, token?: string): Promise<string> {
   if(!token) throw new Error('No authentication');
   try {
     const encodedRestId = encodeURIComponent(restaurant.id);
@@ -116,6 +116,19 @@ export async function recommendRestaurantToGroup(group: Group, restaurant: Resta
     // `request()` throws an Error with that message. We catch and return it so callers can display it gracefully.
     if (err instanceof Error) return err.message;
     return String(err);
+  }
+}
+
+export async function fetchRecommendedRestaurants(group: Group, token?: string): Promise<Restaurant[]> {
+  if(!token) throw new Error('No authentication');
+  try{
+    const encodedGroupId = encodeURIComponent(group.id);
+    const url = `/groups/restaurant?groupId=${encodedGroupId}`;
+    const res = await request(url, undefined, token);
+    const restaurants = await handleJson<Restaurant[]>(res);
+    return restaurants;
+  } catch (e: any){
+    return [];
   }
 }
 
