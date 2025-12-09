@@ -17,7 +17,7 @@ import { Group, Restaurant } from "@/types";
 import RestaurantCard from "@/components/restaurant/RestaurantCard";
 import { fetchGroups, recommendRestaurantToGroup } from "@/services/groupChatService";
 import Feedback from "@/components/Feedback";
-import RecommendModal from "@/components/RecommendModal";
+import RecommendModal from "@/components/modals/RecommendModal";
 
 export default function DiscoverScreen() {
   const router = useRouter();
