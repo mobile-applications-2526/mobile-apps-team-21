@@ -19,7 +19,8 @@ import { useAuth } from "@/components/AuthContext";
 import { fetchRestaurants } from "@/services/restaurantService";
 import { Group, Restaurant } from "@/types";
 import RestaurantCard from "@/components/restaurant/RestaurantCard";
-import { fetchGroups } from "@/services/groupChatService";
+import { fetchGroups, recommendRestaurantToGroup } from "@/services/groupChatService";
+import Feedback from "@/components/Feedback";
 
 export default function DiscoverScreen() {
   const router = useRouter();
@@ -40,6 +41,7 @@ export default function DiscoverScreen() {
 
   const backdropAnim = useRef(new Animated.Value(0)).current;
   const contentAnim = useRef(new Animated.Value(40)).current; // translateY
+  const [feedback, setFeedback] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   const loadRestaurants = async () => {
     if (!userEmail) {
@@ -129,6 +131,14 @@ export default function DiscoverScreen() {
     });
   };
 
+  // feedback state is rendered by the reusable <Feedback /> component
+
+  const recommendRestaurant = async ({group}: {group: Group}) => {
+    if (!restaurantToRecommend) return;
+    const res = await recommendRestaurantToGroup(group, restaurantToRecommend, token || undefined);
+    return res
+  };
+
   const renderRestaurant = ({ item }: { item: Restaurant }) => (
     <RestaurantCard restaurant={item} onRecommend={() => openModal(item)} />
   );
@@ -188,16 +198,18 @@ export default function DiscoverScreen() {
                 keyExtractor={(g) => g.id}
                 renderItem={({ item }) => (
                   <TouchableOpacity
-                    style={[styles.groupItem, isDark && styles.groupItemDark]}
-                    onPress={() => {
-                      // animate close then show confirmation
-                      closeModal(() =>
-                        Alert.alert(
-                          "Aanbevolen",
-                          `Aanbevolen ${restaurantToRecommend?.name} in ${item.name}`
-                        )
-                      );
+                    onPress={async () => {
+                      if (restaurantToRecommend) {
+                        const res = await recommendRestaurant({ group: item });
+                        closeModal(() =>
+                          setFeedback({
+                            message: typeof res === "string" ? res : res?.toString() ?? "Aanbeveling verzonden.",
+                            type: typeof res === "string" && res.toLowerCase().includes("error") ? "error" : "success",
+                          })
+                        );
+                      }
                     }}
+                    style={[styles.groupElem]}
                   >
                     <Text style={[styles.groupName, isDark && styles.groupNameDark]}>{item.name}</Text>
                     <Text style={[styles.groupMeta, isDark && styles.groupMetaDark]}>{item.memberNames?.length || 0} leden</Text>
@@ -212,6 +224,14 @@ export default function DiscoverScreen() {
           </Animated.View>
         </Animated.View>
       </Modal>
+      {/* In-app feedback toast */}
+      <Feedback
+        visible={Boolean(feedback)}
+        message={feedback?.message ?? ""}
+        type={feedback?.type ?? "success"}
+        onHide={() => setFeedback(null)}
+        dark={isDark}
+      />
     </SafeAreaView>
   );
 }
@@ -269,8 +289,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  groupElem: {paddingVertical: 8},
   groupItemDark: { borderBottomColor: "#1f2937" },
-  groupName: { fontSize: 16, color: "#111827" },
+  groupName: { fontSize: 16, color: "#111827"},
   groupNameDark: { color: "#e6eef6" },
   groupMeta: { fontSize: 12, color: "#6b7280" },
   groupMetaDark: { color: "#94a3b8" },
@@ -282,4 +303,28 @@ const styles = StyleSheet.create({
   cancelButtonText: { color: "#ef4444", fontWeight: "700" },
   cancelButtonTextDark: { color: "#ff9b9b" },
   modalBackdropDark: { backgroundColor: "rgba(0,0,0,0.6)" },
+  /* feedback toast */
+  feedback: {
+    position: "absolute",
+    left: 16,
+    right: 16,
+    bottom: 34,
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    minHeight: 56,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+  },
+  feedbackText: { color: "#07203b", fontWeight: "700", fontSize: 16 },
+  feedbackTextDark: { color: "#eaf6ff" },
+  feedbackSuccess: { backgroundColor: "#d1fae5" },
+  feedbackError: { backgroundColor: "#fee2e2" },
+  feedbackSuccessDark: { backgroundColor: "#07351f" },
+  feedbackErrorDark: { backgroundColor: "#3b0f0f" },
 });

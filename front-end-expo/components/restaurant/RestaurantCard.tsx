@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import { Restaurant } from '@/types';
 import { Link } from 'expo-router';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Entypo from '@expo/vector-icons/Entypo';
 
 interface Props {
   restaurant: Restaurant;
@@ -19,7 +19,7 @@ const RestaurantCard: React.FC<Props> = ({ restaurant, onRecommend }) => {
         <View style={styles.nameRow}>
           <Text style={[styles.title, isDark && styles.textDark]} numberOfLines={1}>{restaurant.name}</Text>
           <TouchableOpacity onPress={onRecommend}>
-            <MaterialIcons name="recommend" size={30} color={isDark ? '#ffffff' : '#1f2933'} />
+            <Entypo name="add-to-list" size={30} color={isDark ? '#ffffff' : '#1f2933'} />
           </TouchableOpacity>
         </View>
         <Text style={[styles.text, isDark && styles.textDark]}>{restaurant.adress}</Text>
