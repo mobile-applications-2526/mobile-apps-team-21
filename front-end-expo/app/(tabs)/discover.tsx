@@ -4,13 +4,12 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
-  View,
-  TouchableOpacity,
+  View
 } from "react-native";
 import { Text } from "@/components/Themed";
-import React, { useCallback, useState, useRef } from "react";
+import React, { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useFocusEffect, useRouter } from "expo-router";
+import { useFocusEffect} from "expo-router";
 import { useAuth } from "@/components/AuthContext";
 import { fetchRestaurants } from "@/services/restaurantService";
 import { Group, Restaurant } from "@/types";
@@ -20,7 +19,6 @@ import Feedback from "@/components/Feedback";
 import RecommendModal from "@/components/modals/RecommendModal";
 
 export default function DiscoverScreen() {
-  const router = useRouter();
   const { token, userEmail } = useAuth();
 
   // Dark Mode Logic

@@ -64,3 +64,11 @@ export interface RawRestaurant{
   phoneNumber?: string,
   description?: string
 }
+
+export interface SuggestedRestaurant {
+  id: string;
+  restaurant: Restaurant;
+  recommenderEmail: string;
+  voters: string[];
+  recommendedAt?: string;
+}
