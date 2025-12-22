@@ -26,7 +26,7 @@ public class Group {
     private List<User> members;
 
     @DBRef
-    private List<Restaurant> suggestedRestaurants = new ArrayList<Restaurant>();
+    private List<SuggestedRestaurant> suggestedRestaurants = new ArrayList<>();
 
     // track when each member last visited this group (key = userId)
     private Map<String, LocalDateTime> memberLastVisited = new HashMap<>();
@@ -53,7 +53,7 @@ public class Group {
         return members;
     }
 
-    public List<Restaurant> getSuggestedRestaurants() {
+    public List<SuggestedRestaurant> getSuggestedRestaurants() {
         return suggestedRestaurants;
     }
 
@@ -77,7 +77,7 @@ public class Group {
         this.members = members;
     }
 
-    public void setSuggestedRestaurants(List<Restaurant> suggestedRestaurants) {
+    public void setSuggestedRestaurants(List<SuggestedRestaurant> suggestedRestaurants) {
         this.suggestedRestaurants = suggestedRestaurants;
     }
 
@@ -85,7 +85,7 @@ public class Group {
         this.members.add(member);
     }
 
-    public void addSuggestedRestaurant(Restaurant suggestedRestaurant) {
+    public void addSuggestedRestaurant(SuggestedRestaurant suggestedRestaurant) {
         this.suggestedRestaurants.add(suggestedRestaurant);
     }
 }
