@@ -112,6 +112,17 @@ public class GroupService {
         groupRepository.save(group);
     }
 
+    /**
+     * Update last-visited for a given group id and username (email).
+     * Exposed for controllers to update when a user explicitly "leaves" a group.
+     */
+    public void updateMemberLastVisitedByGroupId(String groupId, String userEmail) {
+        Group group = getGroupById(groupId);
+        User user = userService.getUserByEmail(userEmail);
+        if (user == null) throw new IllegalArgumentException("User does not exist");
+        updateMemberLastVisited(group, user);
+    }
+
     public String suggestRestaurantToGroup(String restId, String groupId, String name) {
         if(!userService.userExists(name)) 
             throw new IllegalArgumentException("User does not exist");
