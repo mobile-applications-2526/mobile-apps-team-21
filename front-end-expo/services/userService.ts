@@ -2,9 +2,11 @@ import { buildApiUrl, API_BASE_URL } from '@/utils/apiConfig';
 
 export type LoginResponse = { token: string };
 export type RegisterResponse = { id: string; token: string };
+export type UserProfile = { id: string; name: string; firstname: string; phoneNumber: string; email: string };
 
 async function handleJson<T>(res: Response): Promise<T> {
   const text = await res.text();
+
   try {
     return JSON.parse(text) as T;
   } catch {
@@ -62,4 +64,12 @@ export const UserService = {
     }
     return handleJson<RegisterResponse>(res);
   },
+
+  async getProfile(email: string, token: string): Promise<UserProfile> {
+    const res = await fetch(buildApiUrl(`/users?email=${encodeURIComponent(email)}`), {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('Failed to fetch profile');
+    return handleJson<UserProfile>(res);
+  }
 };

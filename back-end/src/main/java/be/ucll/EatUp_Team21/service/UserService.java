@@ -48,7 +48,7 @@ public class UserService {
                         // isn't supported by java.util.Date)
                         lastVisited = LocalDateTime.of(1970, 1, 1, 0, 0);
                     }
-                    long missed = messageRepository.countByGroup_IdAndTimestampAfter(group.getId(), lastVisited);
+                    long missed = messageRepository.countByGroup_IdAndTimestampAfterAndAuthor_IdNot(group.getId(), lastVisited, user.getId());
                     return new GroupResponse(group.getId(), group.getName(), (int) missed);
                 })
                 .toList();
@@ -99,6 +99,7 @@ public class UserService {
             throw new IllegalArgumentException("User does not exist");
         }
         return new UserResponse(
+                user.getId(),
                 user.getName(),
                 user.getFirstName(),
                 user.getPhoneNumber(),

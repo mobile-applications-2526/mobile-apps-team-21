@@ -5,10 +5,11 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { useAuth } from '@/components/AuthContext';
 import GroupCard from '@/components/group/GroupCard';
 import { Group, fetchGroups } from '@/services/groupChatService';
+import { useGroupsNotifications } from '@/hooks/useGroupsNotifications';
 
 export default function GroupsScreen() {
   const router = useRouter();
-  const { token, userEmail } = useAuth();
+  const { token, userEmail, userId } = useAuth();
   
   // Dark Mode Logic
   const colorScheme = useColorScheme();
@@ -43,7 +44,21 @@ export default function GroupsScreen() {
     setRefreshing(false);
   }, [token, userEmail]);
 
+  const handleMessageReceived = useCallback((groupId: string) => {
+    setGroups(prevGroups => prevGroups.map(g => {
+      if (g.id === groupId) {
+        return { ...g, missedMessages: (g.missedMessages || 0) + 1 };
+      }
+      return g;
+    }));
+  }, []);
+
+  useGroupsNotifications(groups, token, userId, handleMessageReceived);
+
   const openChat = (group: Group) => {
+    // Optimistic update: clear missed messages
+    setGroups(prev => prev.map(g => g.id === group.id ? { ...g, missedMessages: 0 } : g));
+
     router.push({
       pathname: '/chatsPage/chat', // Ensure this path matches your file structure (e.g., /chat or /chatsPage/chat)
       params: { groupData: JSON.stringify(group) }
