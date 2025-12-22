@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
@@ -7,6 +7,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useAuth } from '@/components/AuthContext';
 import { Group } from '@/services/groupChatService';
 import { useChatWebSocket, OptimisticMessage } from '@/hooks/useChatWebSocket';
+import { buildApiUrl } from '@/utils/apiConfig';
 import RestaurantOverviewModal from '@/components/modals/RestaurantOverviewModal';
 
 export default function ChatScreen() {
@@ -66,6 +67,29 @@ export default function ChatScreen() {
     setModalVisible(false)
   }
 
+  // Call backend to mark this user's last-visited when leaving the chat
+  const leaveGroupBackend = async () => {
+    if (!chatGroup || !token) return;
+    try {
+      await fetch(buildApiUrl(`/groups/${chatGroup.id}/leave`), {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+    } catch (e) {
+      console.warn('Failed to call leave endpoint', e);
+    }
+  };
+
+  // Ensure we call leave on unmount/navigation away
+  useEffect(() => {
+    return () => {
+      void leaveGroupBackend();
+    };
+  }, [chatGroup, token]);
+
   return (
     <SafeAreaView style={[styles.container, isDark && styles.containerDark]} edges={['top', 'bottom']}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -73,7 +97,7 @@ export default function ChatScreen() {
       <KeyboardAvoidingView behavior={'height'} style={{ flex: 1 }}>
         <View style={[styles.chatHeaderWrap, isDark && styles.chatHeaderWrapDark]}>
           <View style={styles.chatHeader}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.backTouch}>
+            <TouchableOpacity onPress={async () => { leaveGroupBackend(); router.back(); }} style={styles.backTouch}>
               <MaterialIcons name="arrow-back" size={24} color={isDark ? '#fff' : '#1f2933'} />
             </TouchableOpacity>
             <View style={styles.chatHeaderText}>

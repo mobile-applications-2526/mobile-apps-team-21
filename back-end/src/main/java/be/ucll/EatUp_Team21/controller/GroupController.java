@@ -60,4 +60,10 @@ public class GroupController {
         return groupService.getSuggestedRestaurants(groupId, auth.getName());
     }
     
+    @PostMapping("/{groupId}/leave")
+    public void leaveGroup(@PathVariable String groupId, Authentication auth) {
+        // update last visited timestamp for this user in this group
+        groupService.updateMemberLastVisitedByGroupId(groupId, auth.getName());
+    }
+    
 }
