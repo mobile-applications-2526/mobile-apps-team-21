@@ -118,14 +118,21 @@ export default function RestaurantOverviewModal({
     );
 
 const toFeedback = (res: unknown, successDefault: string) => {
-    console.log('toFeedback input:', res, 'type:', typeof res);
-    // Treat as success unless it's an actual Error or a string starting with "Error"
+    // Check if it's an Error object
     if (res instanceof Error) {
+        // If error message contains "success", treat as success
+        if (res.message.toLowerCase().includes('success') || res.message.toLowerCase().includes('successful')) {
+            return { message: res.message, type: 'success' as const };
+        }
         return { message: res.message, type: 'error' as const };
     }
-    if (typeof res === 'string' && /^error\b/i.test(res)) {
-        const cleaned = res.replace(/^error:\s*/i, '').trim();
-        return { message: cleaned || 'Something went wrong', type: 'error' as const };
+    // Check if it's a string
+    if (typeof res === 'string') {
+        const lower = res.toLowerCase();
+        if (lower.startsWith('error')) {
+            return { message: res.replace(/^error:\s*/i, '').trim(), type: 'error' as const };
+        }
+        else return { message: res, type: 'success' as const };
     }
     return { message: successDefault, type: 'success' as const };
 };
@@ -134,7 +141,7 @@ const toFeedback = (res: unknown, successDefault: string) => {
         try {
             const res = await voteSuggestion(group.id, s.id, token || undefined);
             await loadRestaurants();
-            setFeedback(toFeedback(res, 'Voted.'));
+            setFeedback(toFeedback(res, 'Voted'));
         } catch (e) {
             console.warn('vote failed', e);
             setFeedback({ message: e instanceof Error ? e.message : 'Vote failed', type: 'error' });

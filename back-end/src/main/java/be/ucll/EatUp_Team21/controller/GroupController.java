@@ -78,8 +78,8 @@ public class GroupController {
     }
 
     @DeleteMapping("/{groupId}/suggestions/{suggestionId}")
-    public void removeSuggestion(@PathVariable String groupId, @PathVariable String suggestionId, Authentication auth) {
-        groupService.removeSuggestion(groupId, suggestionId, auth.getName());
+    public String removeSuggestion(@PathVariable String groupId, @PathVariable String suggestionId, Authentication auth) {
+        return groupService.removeSuggestion(groupId, suggestionId, auth.getName());
     }
     
     @PostMapping("/{groupId}/leave")

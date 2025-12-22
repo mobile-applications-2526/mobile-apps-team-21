@@ -211,10 +211,10 @@ public class GroupService {
         }
         if (!found) throw new IllegalArgumentException("Suggestion not found");
         groupRepository.save(group);
-        return "Vote removed.";
+        return "Vote removed";
     }
 
-    public void removeSuggestion(String groupId, String suggestionId, String userEmail) {
+    public String removeSuggestion(String groupId, String suggestionId, String userEmail) {
         Group group = getGroupById(groupId);
         SuggestedRestaurant toRemove = null;
         for (SuggestedRestaurant s : group.getSuggestedRestaurants()) {
@@ -231,6 +231,7 @@ public class GroupService {
         group.getSuggestedRestaurants().remove(toRemove);
         suggestedRestaurantRepository.deleteById(toRemove.getId());
         groupRepository.save(group);
+        return "Suggestion succesfully removed";
     }
 
     private boolean userInGroup(String groupId, String name) {
