@@ -23,7 +23,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.fatboye.frontendexpo"
+      "package": "com.fatboye.frontendexpo",
+      "googleServicesFile": "./android/app/google-services.json"
     },
     "web": {
       "bundler": "metro",

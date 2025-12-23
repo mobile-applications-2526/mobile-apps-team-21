@@ -2,6 +2,7 @@ package be.ucll.EatUp_Team21.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,9 @@ import be.ucll.EatUp_Team21.repository.MessageRepository;
 import be.ucll.EatUp_Team21.repository.SuggestedRestaurantRepository;
 import be.ucll.EatUp_Team21.repository.UserRepository;
 
-
 @Service
 public class GroupService {
-  
+
     @Autowired
     private GroupRepository groupRepository;
 
@@ -38,6 +38,9 @@ public class GroupService {
 
     @Autowired
     private SuggestedRestaurantRepository suggestedRestaurantRepository;
+
+    @Autowired
+    private NotificationService notificationService;
 
     public List<Message> getMessagesForGroupAndUser(String name, String userEmail) {
         Group group = groupRepository.findByName(name);
@@ -73,7 +76,8 @@ public class GroupService {
         return new GroupResponse(group.getId(), group.getName(), 0);
     }
 
-    public String addUserToGroup(String newUserEmail, String groupId, String adderEmail, String name) throws IllegalArgumentException {
+    public String addUserToGroup(String newUserEmail, String groupId, String adderEmail, String name)
+            throws IllegalArgumentException {
         if (!userService.userExists(newUserEmail)) {
             throw new IllegalArgumentException("User with email " + newUserEmail + " does not exist");
         }
@@ -87,9 +91,11 @@ public class GroupService {
             throw new IllegalArgumentException("Authenticated user does not match adder email");
         }
         User newUser = userService.getUserByEmail(newUserEmail);
-        Group group = groupRepository.findById(groupId).orElseThrow(() -> new IllegalArgumentException("Group with id " + groupId + " does not exist"));
-        for(User u : group.getMembers()){
-            if(u.getId().equals(newUser.getId())) return "User is already a member of this group.";
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("Group with id " + groupId + " does not exist"));
+        for (User u : group.getMembers()) {
+            if (u.getId().equals(newUser.getId()))
+                return "User is already a member of this group.";
         }
         group.addMember(newUser);
         userService.addGroupToUser(newUser, group);
@@ -98,7 +104,8 @@ public class GroupService {
     }
 
     public List<String> getMembersByGroupId(String groupId, String name) throws IllegalArgumentException {
-        Group group = groupRepository.findById(groupId).orElseThrow(() -> new IllegalArgumentException("Group with id " + groupId + " does not exist"));
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("Group with id " + groupId + " does not exist"));
         if (!userService.isUserMemberOfGroup(name, groupId)) {
             throw new IllegalArgumentException("User with email " + name + " is not a member of the group");
         }
@@ -125,31 +132,36 @@ public class GroupService {
     public void updateMemberLastVisitedByGroupId(String groupId, String userEmail) {
         Group group = getGroupById(groupId);
         User user = userService.getUserByEmail(userEmail);
-        if (user == null) throw new IllegalArgumentException("User does not exist");
+        if (user == null)
+            throw new IllegalArgumentException("User does not exist");
         updateMemberLastVisited(group, user);
     }
 
     public String suggestRestaurantToGroup(String restId, String groupId, String name) {
-        if(!userService.userExists(name)) 
+        if (!userService.userExists(name))
             throw new IllegalArgumentException("User does not exist");
-        if(!restaurantService.restaurantexistsById(restId))
+        if (!restaurantService.restaurantexistsById(restId))
             throw new IllegalArgumentException("Restaurant with id " + restId + " does not exist.");
-        if(!groupExistsById(groupId))
+        if (!groupExistsById(groupId))
             throw new IllegalArgumentException("Group with id " + groupId + " does not exist.");
         Restaurant restaurant = restaurantService.getRestaurantById(restId);
         Group group = getGroupById(groupId);
         List<GroupResponse> userGroups = userService.getUserGroups(name);
         boolean pass = false;
-        for(GroupResponse elem : userGroups){
-            if (elem.id().equals(groupId)) pass = true;
+        for (GroupResponse elem : userGroups) {
+            if (elem.id().equals(groupId))
+                pass = true;
         }
-        if(!pass) 
+        if (!pass)
             throw new IllegalArgumentException("User should be member of the group.");
         boolean resIn = false;
-        for(SuggestedRestaurant s : group.getSuggestedRestaurants()){
-            if(s.getRestaurant() != null && s.getRestaurant().getId().equals(restId)) { resIn = true; break; }
+        for (SuggestedRestaurant s : group.getSuggestedRestaurants()) {
+            if (s.getRestaurant() != null && s.getRestaurant().getId().equals(restId)) {
+                resIn = true;
+                break;
+            }
         }
-        if(resIn)
+        if (resIn)
             return "Restaurant has already been suggested to this group.";
         SuggestedRestaurant s = new SuggestedRestaurant(restaurant, name);
         suggestedRestaurantRepository.save(s);
@@ -160,7 +172,7 @@ public class GroupService {
 
     private Group getGroupById(String groupId) {
         Optional<Group> gr = groupRepository.findById(groupId);
-        if(gr.isPresent())
+        if (gr.isPresent())
             return gr.get();
         throw new IllegalArgumentException("Group does not exist");
     }
@@ -170,17 +182,19 @@ public class GroupService {
     }
 
     public List<SuggestedRestaurant> getSuggestedRestaurants(String groupId, String name) {
-        if(!userService.userExists(name)) 
+        if (!userService.userExists(name))
             throw new IllegalArgumentException("User does not exist");
-        if(!userInGroup(groupId, name))
+        if (!userInGroup(groupId, name))
             throw new IllegalArgumentException("User is not a member of this group.");
         Group group = getGroupById(groupId);
         return group.getSuggestedRestaurants();
     }
 
     public String voteSuggestion(String groupId, String suggestionId, String userEmail) {
-        if (!userService.userExists(userEmail)) throw new IllegalArgumentException("User does not exist");
-        if (!userInGroup(groupId, userEmail)) throw new IllegalArgumentException("User is not a member of this group.");
+        if (!userService.userExists(userEmail))
+            throw new IllegalArgumentException("User does not exist");
+        if (!userInGroup(groupId, userEmail))
+            throw new IllegalArgumentException("User is not a member of this group.");
         Group group = getGroupById(groupId);
         boolean found = false;
         for (SuggestedRestaurant s : group.getSuggestedRestaurants()) {
@@ -191,14 +205,39 @@ public class GroupService {
                 break;
             }
         }
-        if (!found) throw new IllegalArgumentException("Suggestion not found");
+        if (!found)
+            throw new IllegalArgumentException("Suggestion not found");
         groupRepository.save(group);
+        SuggestedRestaurant s = group.getSuggestedRestaurants().stream().filter(sug -> sug.getId().equals(suggestionId))
+                .findFirst().orElse(null);
+        sendThreshholdNotification(group, s);
         return "Vote Succesfull";
     }
 
+    private void sendThreshholdNotification(Group group, SuggestedRestaurant suggestion) {
+        List<String> memberEmails = group.getMembers().stream()
+                .map(User::getEmail)
+                .collect(Collectors.toList());
+
+        // Check if threshold is reached
+        if (notificationService.checkVotingThreshold(
+                suggestion.getVoters().size(),
+                memberEmails.size())) {
+            // Send push notification to all group members
+            notificationService.notifyGroupMembersAboutThreshold(
+                    group.getId(),
+                    suggestion.getRestaurant().getName(),
+                    memberEmails,
+                    suggestion.getVoters().size(),
+                    memberEmails.size());
+        }
+    }
+
     public String unvoteSuggestion(String groupId, String suggestionId, String userEmail) {
-        if (!userService.userExists(userEmail)) throw new IllegalArgumentException("User does not exist");
-        if (!userInGroup(groupId, userEmail)) throw new IllegalArgumentException("User is not a member of this group.");
+        if (!userService.userExists(userEmail))
+            throw new IllegalArgumentException("User does not exist");
+        if (!userInGroup(groupId, userEmail))
+            throw new IllegalArgumentException("User is not a member of this group.");
         Group group = getGroupById(groupId);
         boolean found = false;
         for (SuggestedRestaurant s : group.getSuggestedRestaurants()) {
@@ -209,7 +248,8 @@ public class GroupService {
                 break;
             }
         }
-        if (!found) throw new IllegalArgumentException("Suggestion not found");
+        if (!found)
+            throw new IllegalArgumentException("Suggestion not found");
         groupRepository.save(group);
         return "Vote removed";
     }
@@ -223,7 +263,8 @@ public class GroupService {
                 break;
             }
         }
-        if (toRemove == null) throw new IllegalArgumentException("Suggestion not found");
+        if (toRemove == null)
+            throw new IllegalArgumentException("Suggestion not found");
         // only recommender may remove
         if (!userEmail.equals(toRemove.getRecommenderEmail())) {
             throw new IllegalArgumentException("Only the recommender can unrecommend this restaurant");
@@ -236,8 +277,9 @@ public class GroupService {
 
     private boolean userInGroup(String groupId, String name) {
         Group group = getGroupById(groupId);
-        for(User u : group.getMembers()){
-            if(u.getEmail().equals(name)) return true;
+        for (User u : group.getMembers()) {
+            if (u.getEmail().equals(name))
+                return true;
         }
         return false;
     }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "90263320466",
+    "project_id": "eat-up-c0028",
+    "storage_bucket": "eat-up-c0028.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:90263320466:android:e976577a165893f1a9b34b",
+        "android_client_info": {
+          "package_name": "com.fatboye.frontendexpo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1L2hMr-yi5RUQ8I4sGuRfli6V02ByKl8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

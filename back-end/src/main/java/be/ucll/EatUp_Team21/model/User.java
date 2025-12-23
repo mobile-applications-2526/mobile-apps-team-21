@@ -42,6 +42,9 @@ public class User {
     @DBRef 
     private List<RestRel> restaurantRelations;
 
+    // Expo Push Token for sending push notifications
+    private String expoPushToken;
+
     public User() {
     }
 
@@ -147,5 +150,13 @@ public class User {
         } else {
             return "Groep niet gevonden.";
         }
+    }
+
+    public String getExpoPushToken() {
+        return expoPushToken;
+    }
+
+    public void setExpoPushToken(String expoPushToken) {
+        this.expoPushToken = expoPushToken;
     }
 }
