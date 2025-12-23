@@ -1,10 +1,17 @@
 import { buildApiUrl } from '@/utils/apiConfig';
-import { Group, GroupCreationResult, Message, RawGroupResponse, RawMessage, Restaurant } from '@/types';
+import { Group, GroupCreationResult, Message, RawGroupResponse, RawMessage, Restaurant, SuggestedRestaurant } from '@/types';
 
 async function handleJson<T>(res: Response): Promise<T> {
   const text = await res.text();
-  if (!text) throw new Error('Empty response body');
-  try { return JSON.parse(text) as T; } catch { throw new Error(text || 'Unexpected response'); }
+  if (!text) {
+    return '' as T;
+  }
+  try {
+    return JSON.parse(text);
+  } catch {
+    // If JSON parse fails, return text as-is (for plain string responses)
+    return text as T;
+  }
 }
 
 async function request(path: string, init?: RequestInit, token?: string): Promise<Response> {
@@ -119,16 +126,49 @@ export async function recommendRestaurantToGroup(group: Group, restaurant: Resta
   }
 }
 
-export async function fetchRecommendedRestaurants(group: Group, token?: string): Promise<Restaurant[]> {
+export async function fetchRecommendedRestaurants(group: Group, token?: string): Promise<SuggestedRestaurant[]> {
   if(!token) throw new Error('No authentication');
   try{
     const encodedGroupId = encodeURIComponent(group.id);
     const url = `/groups/restaurant?groupId=${encodedGroupId}`;
     const res = await request(url, undefined, token);
-    const restaurants = await handleJson<Restaurant[]>(res);
-    return restaurants;
+    const suggestions = await handleJson<SuggestedRestaurant[]>(res);
+    return suggestions;
   } catch (e: any){
     return [];
+  }
+}
+
+export async function voteSuggestion(groupId: string, suggestionId: string, token?: string): Promise<string> {
+  if (!token) throw new Error('No authentication');
+  try { 
+    const resp =  await request(`/groups/${encodeURIComponent(groupId)}/suggestions/${encodeURIComponent(suggestionId)}/vote`, { method: 'POST' }, token);
+    const result = await handleJson<string>(resp);
+    return result;
+  } catch (e: any){
+    return e;
+  }
+}
+
+export async function unvoteSuggestion(groupId: string, suggestionId: string, token?: string): Promise<string> {
+  try{
+    if (!token) throw new Error('No authentication');
+    const resp = await request(`/groups/${encodeURIComponent(groupId)}/suggestions/${encodeURIComponent(suggestionId)}/unvote`, { method: 'POST' }, token);
+    const result = await handleJson<string>(resp);
+    return result;
+  } catch (e: any){
+    return e;
+  }
+}
+
+export async function removeSuggestion(groupId: string, suggestionId: string, token?: string): Promise<string> {
+  try{
+    if (!token) throw new Error('No authentication');
+    const resp = await request(`/groups/${encodeURIComponent(groupId)}/suggestions/${encodeURIComponent(suggestionId)}`, { method: 'DELETE' }, token);
+    const result = await handleJson<string>(resp);
+    return result;
+  } catch (e: any){
+    return e;
   }
 }
 

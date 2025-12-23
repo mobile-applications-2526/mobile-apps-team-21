@@ -1,9 +1,11 @@
-import { Group, Restaurant } from "@/types";
+import { Group, SuggestedRestaurant } from "@/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Animated, Easing, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAuth } from "../AuthContext";
 import { useFocusEffect } from "expo-router";
-import { fetchRecommendedRestaurants } from "@/services/groupChatService";
+import { fetchRecommendedRestaurants, removeSuggestion, unvoteSuggestion, voteSuggestion } from "@/services/groupChatService";
+import Feedback from "../Feedback";
+import Foundation from '@expo/vector-icons/Foundation';
 
 type Props = {
     visible: boolean;
@@ -25,12 +27,15 @@ export default function RestaurantOverviewModal({
     const [localVisible, setLocalVisible] = useState(visible);
     const [busy, setBusy] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [restaurants, setRestaurants] = useState<Restaurant[]>([])
+    const [restaurants, setRestaurants] = useState<SuggestedRestaurant[]>([])
     const [refreshing, setRefreshing] = useState(false)
+
+    const [feedback, setFeedback] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
     useEffect(() => {
         if (visible) {
             setLocalVisible(true);
+            loadRestaurants();
             Animated.parallel([
                 Animated.timing(backdrop, {
                     toValue: 1,
@@ -113,6 +118,59 @@ export default function RestaurantOverviewModal({
         }, [token, userEmail])
     );
 
+const toFeedback = (res: unknown, successDefault: string) => {
+    // Check if it's an Error object
+    if (res instanceof Error) {
+        // If error message contains "success", treat as success
+        if (res.message.toLowerCase().includes('success') || res.message.toLowerCase().includes('successful')) {
+            return { message: res.message, type: 'success' as const };
+        }
+        return { message: res.message, type: 'error' as const };
+    }
+    // Check if it's a string
+    if (typeof res === 'string') {
+        const lower = res.toLowerCase();
+        if (lower.startsWith('error')) {
+            return { message: res.replace(/^error:\s*/i, '').trim(), type: 'error' as const };
+        }
+        else return { message: res, type: 'success' as const };
+    }
+    return { message: successDefault, type: 'success' as const };
+};
+
+    const vote = async (s: SuggestedRestaurant) => {
+        try {
+            const res = await voteSuggestion(group.id, s.id, token || undefined);
+            await loadRestaurants();
+            setFeedback(toFeedback(res, 'Voted'));
+        } catch (e) {
+            console.warn('vote failed', e);
+            setFeedback({ message: e instanceof Error ? e.message : 'Vote failed', type: 'error' });
+        }
+    };
+
+    const unvote = async (s: SuggestedRestaurant) => {
+        try {
+            const res = await unvoteSuggestion(group.id, s.id, token || undefined);
+            await loadRestaurants();
+            setFeedback(toFeedback(res, 'Unvoted'));
+        } catch (e) {
+            console.warn('unvote failed', e);
+            setFeedback({ message: e instanceof Error ? e.message : 'Unvote failed', type: 'error' });
+        }
+    };
+
+    const remove = async (s: SuggestedRestaurant) => {
+        try {
+            const res = await removeSuggestion(group.id, s.id, token || undefined);
+            await loadRestaurants();
+            setFeedback(toFeedback(res, 'Suggestion removed.'));
+        } catch (e) {
+            console.warn('remove failed', e);
+            setFeedback({ message: e instanceof Error ? e.message : 'Remove failed', type: 'error' });
+        }
+    };
+
     if (!localVisible) return null;
 
     return (
@@ -125,9 +183,28 @@ export default function RestaurantOverviewModal({
                         <Text style={[styles.empty, dark && styles.emptyDark]}>No restaurants have been recommended yet.</Text>
                     ) : (
                         <View style={styles.listWrap}>
-                            {restaurants.map((r) => (
-                                <View key={r.id} style={styles.restaurantRow}>
-                                    <Text style={[styles.restaurantName, dark && styles.restaurantNameDark]}>{r.name}</Text>
+                            {restaurants.map((s) => (
+                                <View key={s.id} style={styles.restaurantRow}>
+                                    <View style={{ flex: 1 }}>
+                                        <Text style={[styles.restaurantName, dark && styles.restaurantNameDark]}>{s.restaurant.name}</Text>
+                                        <Text style={[styles.restaurantMeta, dark && styles.restaurantMetaDark]}>{s.voters.length} vote(s)</Text>
+                                    </View>
+                                    <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 18}}>
+                                        {s.recommenderEmail === userEmail && (
+                                            <TouchableOpacity onPress={async () => { setBusy(true); await remove(s); setBusy(false); }}>
+                                                <Foundation name="minus-circle" size={24} color={dark ? '#ff9b9b' : '#ef4444'} />
+                                            </TouchableOpacity>
+                                        )}
+                                        {s.voters.includes(userEmail || '') ? (
+                                            <TouchableOpacity onPress={async () => { setBusy(true); await unvote(s); setBusy(false); }}>
+                                                <Foundation name="dislike" size={24} color={dark ? '#ff9b9b' : '#ef4444'} />
+                                            </TouchableOpacity>
+                                        ) : (
+                                            <TouchableOpacity onPress={async () => { setBusy(true); await vote(s); setBusy(false); }}>
+                                                <Foundation name="like" size={24} color={dark ? '#1bf32dff' : '#0fd51fff'} />                                            
+                                            </TouchableOpacity>
+                                        )}
+                                    </View>
                                 </View>
                             ))}
                         </View>
@@ -136,8 +213,17 @@ export default function RestaurantOverviewModal({
                 <TouchableOpacity style={styles.cancel} onPress={handleClose} disabled={busy}>
                     <Text style={[styles.cancelText, dark && styles.cancelTextDark]}>Close</Text>
                 </TouchableOpacity>
+
+            
                 </Animated.View>
             </Animated.View>
+            <Feedback
+                visible={Boolean(feedback)}
+                message={String(feedback?.message ?? "")}
+                type={feedback?.type ?? "success"}
+                onHide={() => setFeedback(null)}
+                dark={dark}
+            />
         </Modal>
     )
 }
@@ -172,4 +258,6 @@ const styles = StyleSheet.create({
   cancel: { marginTop: 12, paddingVertical: 10, alignItems: 'center' },
   cancelText: { color: '#ef4444', fontWeight: '700' },
   cancelTextDark: { color: '#ff9b9b' },
+  forText: { color: '#0fd51fff', fontWeight: '700' },
+  forTextDark: { color: '#1bf32dff' }
 });

@@ -9,12 +9,15 @@ import org.springframework.stereotype.Service;
 
 import be.ucll.EatUp_Team21.controller.dto.GroupRequest;
 import be.ucll.EatUp_Team21.controller.dto.GroupResponse;
+import be.ucll.EatUp_Team21.controller.dto.SuggestedRestaurantResponse;
 import be.ucll.EatUp_Team21.model.Group;
 import be.ucll.EatUp_Team21.model.Message;
 import be.ucll.EatUp_Team21.model.Restaurant;
+import be.ucll.EatUp_Team21.model.SuggestedRestaurant;
 import be.ucll.EatUp_Team21.model.User;
 import be.ucll.EatUp_Team21.repository.GroupRepository;
 import be.ucll.EatUp_Team21.repository.MessageRepository;
+import be.ucll.EatUp_Team21.repository.SuggestedRestaurantRepository;
 import be.ucll.EatUp_Team21.repository.UserRepository;
 
 
@@ -32,6 +35,9 @@ public class GroupService {
 
     @Autowired
     private RestaurantService restaurantService;
+
+    @Autowired
+    private SuggestedRestaurantRepository suggestedRestaurantRepository;
 
     public List<Message> getMessagesForGroupAndUser(String name, String userEmail) {
         Group group = groupRepository.findByName(name);
@@ -140,12 +146,14 @@ public class GroupService {
         if(!pass) 
             throw new IllegalArgumentException("User should be member of the group.");
         boolean resIn = false;
-        for(Restaurant res : group.getSuggestedRestaurants()){
-            if(res.getId().equals(restId)) resIn = true;
+        for(SuggestedRestaurant s : group.getSuggestedRestaurants()){
+            if(s.getRestaurant() != null && s.getRestaurant().getId().equals(restId)) { resIn = true; break; }
         }
-        if(resIn) 
+        if(resIn)
             return "Restaurant has already been suggested to this group.";
-        group.addSuggestedRestaurant(restaurant);
+        SuggestedRestaurant s = new SuggestedRestaurant(restaurant, name);
+        suggestedRestaurantRepository.save(s);
+        group.addSuggestedRestaurant(s);
         groupRepository.save(group);
         return "Restaurant succesfully suggested.";
     }
@@ -161,13 +169,69 @@ public class GroupService {
         return groupRepository.existsById(groupId);
     }
 
-    public List<Restaurant> getSuggestedRestaurants(String groupId, String name) {
+    public List<SuggestedRestaurant> getSuggestedRestaurants(String groupId, String name) {
         if(!userService.userExists(name)) 
             throw new IllegalArgumentException("User does not exist");
         if(!userInGroup(groupId, name))
             throw new IllegalArgumentException("User is not a member of this group.");
         Group group = getGroupById(groupId);
         return group.getSuggestedRestaurants();
+    }
+
+    public String voteSuggestion(String groupId, String suggestionId, String userEmail) {
+        if (!userService.userExists(userEmail)) throw new IllegalArgumentException("User does not exist");
+        if (!userInGroup(groupId, userEmail)) throw new IllegalArgumentException("User is not a member of this group.");
+        Group group = getGroupById(groupId);
+        boolean found = false;
+        for (SuggestedRestaurant s : group.getSuggestedRestaurants()) {
+            if (s.getId() != null && s.getId().equals(suggestionId)) {
+                s.addVoter(userEmail);
+                found = true;
+                suggestedRestaurantRepository.save(s);
+                break;
+            }
+        }
+        if (!found) throw new IllegalArgumentException("Suggestion not found");
+        groupRepository.save(group);
+        return "Vote Succesfull";
+    }
+
+    public String unvoteSuggestion(String groupId, String suggestionId, String userEmail) {
+        if (!userService.userExists(userEmail)) throw new IllegalArgumentException("User does not exist");
+        if (!userInGroup(groupId, userEmail)) throw new IllegalArgumentException("User is not a member of this group.");
+        Group group = getGroupById(groupId);
+        boolean found = false;
+        for (SuggestedRestaurant s : group.getSuggestedRestaurants()) {
+            if (s.getId() != null && s.getId().equals(suggestionId)) {
+                s.removeVoter(userEmail);
+                found = true;
+                suggestedRestaurantRepository.save(s);
+                break;
+            }
+        }
+        if (!found) throw new IllegalArgumentException("Suggestion not found");
+        groupRepository.save(group);
+        return "Vote removed";
+    }
+
+    public String removeSuggestion(String groupId, String suggestionId, String userEmail) {
+        Group group = getGroupById(groupId);
+        SuggestedRestaurant toRemove = null;
+        for (SuggestedRestaurant s : group.getSuggestedRestaurants()) {
+            if (s.getId() != null && s.getId().equals(suggestionId)) {
+                toRemove = s;
+                break;
+            }
+        }
+        if (toRemove == null) throw new IllegalArgumentException("Suggestion not found");
+        // only recommender may remove
+        if (!userEmail.equals(toRemove.getRecommenderEmail())) {
+            throw new IllegalArgumentException("Only the recommender can unrecommend this restaurant");
+        }
+        group.getSuggestedRestaurants().remove(toRemove);
+        suggestedRestaurantRepository.deleteById(toRemove.getId());
+        groupRepository.save(group);
+        return "Suggestion succesfully removed";
     }
 
     private boolean userInGroup(String groupId, String name) {

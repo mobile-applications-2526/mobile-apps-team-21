@@ -1,6 +1,7 @@
 package be.ucll.EatUp_Team21.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import be.ucll.EatUp_Team21.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -13,8 +14,11 @@ import be.ucll.EatUp_Team21.controller.dto.UserGroupRequest;
 import be.ucll.EatUp_Team21.controller.dto.UserRequest;
 import be.ucll.EatUp_Team21.model.Message;
 import be.ucll.EatUp_Team21.model.Restaurant;
+import be.ucll.EatUp_Team21.model.SuggestedRestaurant;
+import be.ucll.EatUp_Team21.controller.dto.SuggestedRestaurantResponse;
 import be.ucll.EatUp_Team21.service.GroupService;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,8 +60,26 @@ public class GroupController {
     }
 
     @GetMapping("/restaurant")
-    public List<Restaurant> getSuggestedRestaurants(@RequestParam String groupId, Authentication auth) {
-        return groupService.getSuggestedRestaurants(groupId, auth.getName());
+    public List<SuggestedRestaurantResponse> getSuggestedRestaurants(@RequestParam String groupId, Authentication auth) {
+        var suggestions = groupService.getSuggestedRestaurants(groupId, auth.getName());
+        return suggestions.stream().map(s -> new SuggestedRestaurantResponse(
+            s.getId(), s.getRestaurant(), s.getRecommenderEmail(), s.getVoters(), s.getRecommendedAt()
+        )).collect(Collectors.toList());
+    }
+
+    @PostMapping("/{groupId}/suggestions/{suggestionId}/vote")
+    public String voteSuggestion(@PathVariable String groupId, @PathVariable String suggestionId, Authentication auth) {
+        return groupService.voteSuggestion(groupId, suggestionId, auth.getName());
+    }
+
+    @PostMapping("/{groupId}/suggestions/{suggestionId}/unvote")
+    public String unvoteSuggestion(@PathVariable String groupId, @PathVariable String suggestionId, Authentication auth) {
+        return groupService.unvoteSuggestion(groupId, suggestionId, auth.getName());
+    }
+
+    @DeleteMapping("/{groupId}/suggestions/{suggestionId}")
+    public String removeSuggestion(@PathVariable String groupId, @PathVariable String suggestionId, Authentication auth) {
+        return groupService.removeSuggestion(groupId, suggestionId, auth.getName());
     }
     
     @PostMapping("/{groupId}/leave")
