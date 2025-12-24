@@ -13,6 +13,7 @@ import be.ucll.EatUp_Team21.controller.dto.RegisterRequest;
 import be.ucll.EatUp_Team21.controller.dto.RegisterResponse;
 import be.ucll.EatUp_Team21.controller.dto.UserRequest;
 import be.ucll.EatUp_Team21.controller.dto.UserResponse;
+import be.ucll.EatUp_Team21.controller.dto.RestRelResponse;
 import be.ucll.EatUp_Team21.model.User;
 import be.ucll.EatUp_Team21.service.UserService;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,6 +54,22 @@ public class UserController {
     @PutMapping()
     public List<String> changeCredentials(@RequestBody RegisterRequest req, @RequestParam String email, Authentication auth) {
         return userService.modifySelf(req, auth.getName(), email);
+    }
+
+    @GetMapping("/visited")
+    public List<RestRelResponse> getVisitedRestaurants(@RequestParam String email, Authentication auth) {
+        if (!email.equals(auth.getName())) {
+            throw new IllegalArgumentException("Bad Credentials for request");
+        }
+        return userService.getVisitedRestaurants(email);
+    }
+
+    @GetMapping("/favorites")
+    public List<RestRelResponse> getFavoriteRestaurants(@RequestParam String email, Authentication auth) {
+        if (!email.equals(auth.getName())) {
+            throw new IllegalArgumentException("Bad Credentials for request");
+        }
+        return userService.getFavoriteRestaurants(email);
     }
     
 }

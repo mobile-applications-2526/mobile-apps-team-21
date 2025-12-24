@@ -18,7 +18,10 @@ import be.ucll.EatUp_Team21.repository.GroupRepository;
 import be.ucll.EatUp_Team21.repository.MessageRepository;
 import be.ucll.EatUp_Team21.repository.UserRepository;
 import be.ucll.EatUp_Team21.repository.RestaurantRepository;
+import be.ucll.EatUp_Team21.repository.RestRelRepository;
 import be.ucll.EatUp_Team21.model.Restaurant;
+import be.ucll.EatUp_Team21.model.RestRel;
+import java.time.LocalDate;
 
 @Component
 public class DatabaseSeeder implements CommandLineRunner {
@@ -27,15 +30,17 @@ public class DatabaseSeeder implements CommandLineRunner {
 	private final GroupRepository groupRepository;
 	private final MessageRepository messageRepository;
 	private final RestaurantRepository restaurantRepository;
+	private final RestRelRepository restRelRepository;
 
 	private static final Logger logger = LoggerFactory.getLogger(DatabaseSeeder.class);
 
 	public DatabaseSeeder(UserRepository userRepository, GroupRepository groupRepository,
-			MessageRepository messageRepository, RestaurantRepository restaurantRepository) {
+			MessageRepository messageRepository, RestaurantRepository restaurantRepository, RestRelRepository restRelRepository) {
 		this.userRepository = userRepository;
 		this.groupRepository = groupRepository;
 		this.messageRepository = messageRepository;
 		this.restaurantRepository = restaurantRepository;
+		this.restRelRepository = restRelRepository;
 	}
 
 	@Override
@@ -152,6 +157,42 @@ public class DatabaseSeeder implements CommandLineRunner {
 		} catch (Exception ex) {
 			// don't fail seeding overall if restaurants can't be saved; log warning
 			logger.warn("Failed to seed restaurants: {}", ex.getMessage());
+		}
+
+		// seed RestRels (visited/favorite)
+		if (restRelRepository.count() == 0) {
+			List<User> users = userRepository.findAll();
+			List<Restaurant> restaurants = restaurantRepository.findAll();
+			List<RestRel> restRels = new ArrayList<>();
+			Random rnd = new Random(42);
+
+			if (!users.isEmpty() && !restaurants.isEmpty()) {
+				for (User u : users) {
+					// Add 1-3 visited restaurants
+					int visitedCount = 1 + rnd.nextInt(3);
+					for (int i = 0; i < visitedCount; i++) {
+						Restaurant r = restaurants.get(rnd.nextInt(restaurants.size()));
+						RestRel rr = new RestRel(u, r);
+						rr.setVisitDate(LocalDate.now().minusDays(rnd.nextInt(365)));
+						// Randomly make it favorite
+						if (rnd.nextBoolean()) {
+							rr.setFavorite(true);
+						}
+						restRels.add(rr);
+					}
+				}
+				restRelRepository.saveAll(restRels);
+				
+				// Update users with relations
+				for (User u : users) {
+					List<RestRel> userRels = restRels.stream().filter(rr -> rr.getUser().getId().equals(u.getId())).toList();
+					u.setRestaurantRelations(userRels);
+					userRepository.save(u);
+				}
+				logger.info("Seeded {} restaurant relations", restRels.size());
+			}
+		} else {
+			logger.info("RestRels already present, skipping seeding");
 		}
 	}
 }

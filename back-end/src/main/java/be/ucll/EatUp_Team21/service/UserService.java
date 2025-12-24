@@ -12,8 +12,10 @@ import be.ucll.EatUp_Team21.controller.dto.GroupResponse;
 import be.ucll.EatUp_Team21.controller.dto.RegisterRequest;
 import be.ucll.EatUp_Team21.controller.dto.RegisterResponse;
 import be.ucll.EatUp_Team21.controller.dto.UserResponse;
+import be.ucll.EatUp_Team21.controller.dto.RestRelResponse;
 import be.ucll.EatUp_Team21.model.Group;
 import be.ucll.EatUp_Team21.model.User;
+import be.ucll.EatUp_Team21.model.RestRel;
 import be.ucll.EatUp_Team21.repository.UserRepository;
 import be.ucll.EatUp_Team21.security.JwtUtil;
 import be.ucll.EatUp_Team21.repository.MessageRepository;
@@ -98,11 +100,39 @@ public class UserService {
         if (user == null) {
             throw new IllegalArgumentException("User does not exist");
         }
+
+        int visitedCount = 0;
+        int favoriteCount = 0;
+        if (user.getRestaurantRelations() != null) {
+            visitedCount = (int) user.getRestaurantRelations().stream().filter(r -> r.getVisitDate() != null).count();
+            favoriteCount = (int) user.getRestaurantRelations().stream().filter(RestRel::isFavorite).count();
+        }
+
         return new UserResponse(
                 user.getName(),
                 user.getFirstName(),
                 user.getPhoneNumber(),
-                user.getEmail());
+                user.getEmail(),
+                visitedCount,
+                favoriteCount);
+    }
+
+    public List<RestRelResponse> getVisitedRestaurants(String email) {
+        User user = userRepository.findUserByEmail(email);
+        if (user.getRestaurantRelations() == null) return new ArrayList<>();
+        return user.getRestaurantRelations().stream()
+            .filter(r -> r.getVisitDate() != null)
+            .map(r -> new RestRelResponse(r.getRestaurant().getName(), r.getRestaurant().getAdress(), r.getVisitDate(), r.isFavorite()))
+            .toList();
+    }
+
+    public List<RestRelResponse> getFavoriteRestaurants(String email) {
+        User user = userRepository.findUserByEmail(email);
+        if (user.getRestaurantRelations() == null) return new ArrayList<>();
+        return user.getRestaurantRelations().stream()
+            .filter(RestRel::isFavorite)
+            .map(r -> new RestRelResponse(r.getRestaurant().getName(), r.getRestaurant().getAdress(), r.getVisitDate(), r.isFavorite()))
+            .toList();
     }
 
     public List<String> modifySelf(RegisterRequest req, String name, String email) {

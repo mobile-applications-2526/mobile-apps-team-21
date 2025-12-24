@@ -4,6 +4,8 @@ public record UserResponse(
     String name,
     String firstname,
     String phoneNumber,
-    String email
+    String email,
+    int visitedRestaurantsCount,
+    int favoriteRestaurantsCount
 ) {
 } 

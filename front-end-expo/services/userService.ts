@@ -1,4 +1,5 @@
 import { buildApiUrl, API_BASE_URL } from '@/utils/apiConfig';
+import { RawUser, RestRelResponse } from '@/types';
 
 export type LoginResponse = { token: string };
 export type RegisterResponse = { id: string; token: string };
@@ -61,5 +62,29 @@ export const UserService = {
       throw new Error(message);
     }
     return handleJson<RegisterResponse>(res);
+  },
+
+  async getSelf(email: string, token: string): Promise<RawUser> {
+    const res = await fetch(buildApiUrl(`/users?email=${encodeURIComponent(email)}`), {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('Failed to fetch user profile');
+    return handleJson<RawUser>(res);
+  },
+
+  async getVisitedRestaurants(email: string, token: string): Promise<RestRelResponse[]> {
+    const res = await fetch(buildApiUrl(`/users/visited?email=${encodeURIComponent(email)}`), {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('Failed to fetch visited restaurants');
+    return handleJson<RestRelResponse[]>(res);
+  },
+
+  async getFavoriteRestaurants(email: string, token: string): Promise<RestRelResponse[]> {
+    const res = await fetch(buildApiUrl(`/users/favorites?email=${encodeURIComponent(email)}`), {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('Failed to fetch favorite restaurants');
+    return handleJson<RestRelResponse[]>(res);
   },
 };
