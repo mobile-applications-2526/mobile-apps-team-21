@@ -3,8 +3,9 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useRef} from 'react';
 import 'react-native-reanimated';
+import * as Notifications from 'expo-notifications';
 
 import { useColorScheme } from '@/components/useColorScheme';
 import { AuthProvider } from '@/components/AuthContext';
@@ -24,6 +25,9 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
+  const notificationListener = useRef<any>(null);
+  const responseListener = useRef<any>(null);
+
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
@@ -34,6 +38,29 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  useEffect(() => {
+    // Listen for notifications while app is in foreground
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      console.log('Notification received:', notification);
+    });
+
+    // Handle notification tap
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      const data = response.notification.request.content.data;
+      
+      // Navigate to group chat or restaurant details
+      if (data.groupId && data.type === 'voting_threshold_reached') {
+        // Navigate to your group chat screen
+        // router.push(`/chatsPage/chat?groupId=${data.groupId}`);
+      }
+    });
+
+    return () => {
+      notificationListener.current?.remove();
+      responseListener.current?.remove();
+    };
+  }, []);
 
   if (!loaded) {
     return null;

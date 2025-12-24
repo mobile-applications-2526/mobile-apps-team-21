@@ -1,8 +1,10 @@
 package be.ucll.EatUp_Team21.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.method.P;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,16 +17,15 @@ import be.ucll.EatUp_Team21.controller.dto.UserRequest;
 import be.ucll.EatUp_Team21.controller.dto.UserResponse;
 import be.ucll.EatUp_Team21.controller.dto.RestRelResponse;
 import be.ucll.EatUp_Team21.model.User;
+import be.ucll.EatUp_Team21.service.NotificationService;
 import be.ucll.EatUp_Team21.service.UserService;
 import org.springframework.web.bind.annotation.RequestBody;
-
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
-
 
 @RestController
 @RequestMapping("/users")
@@ -32,6 +33,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @GetMapping("/groups")
     public List<GroupResponse> getUserGroups(@RequestParam String email, Authentication param) {
@@ -47,12 +51,13 @@ public class UserController {
     }
 
     @GetMapping()
-    public UserResponse getSelf(@RequestParam String email ,Authentication auth) {
+    public UserResponse getSelf(@RequestParam String email, Authentication auth) {
         return userService.getSelf(email, auth);
     }
 
     @PutMapping()
-    public List<String> changeCredentials(@RequestBody RegisterRequest req, @RequestParam String email, Authentication auth) {
+    public List<String> changeCredentials(@RequestBody RegisterRequest req, @RequestParam String email,
+            Authentication auth) {
         return userService.modifySelf(req, auth.getName(), email);
     }
 
@@ -72,4 +77,16 @@ public class UserController {
         return userService.getFavoriteRestaurants(email);
     }
     
+    @PostMapping("/push-token")
+    public ResponseEntity<?> updatePushToken(
+            @RequestBody Map<String, String> body,
+            Authentication authHeader) {
+        String pushToken = body.get("pushToken");
+        String email = authHeader.getName(); // Your JWT extraction logic
+
+        notificationService.updateUserPushToken(email, pushToken);
+
+        return ResponseEntity.ok().body(Map.of("message", "Push token updated"));
+    }
+
 }

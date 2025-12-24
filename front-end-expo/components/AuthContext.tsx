@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authFetch, UserService } from '@/services/userService';
+import { registerForPushNotificationsAsync, sendPushTokenToBackend } from '@/services/pushNotificationService';
 
 export type AuthContextType = {
   token: string | null;
@@ -32,6 +33,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     })();
   }, []);
+
+  // push notification useffect, registreet push notification token
+  // registreert die vervolgens op backend
+  useEffect(() => {
+  if (userEmail && token) {
+    registerForPushNotificationsAsync().then(pushToken => {
+      console.log(pushToken)
+      if (pushToken) {
+        sendPushTokenToBackend(pushToken, token);
+      }
+    });
+  }
+  }, [userEmail, token]);
 
   const login = useCallback(async (email: string, password: string) => {
     const data = await UserService.login(email, password);
