@@ -1,5 +1,7 @@
 package be.ucll.EatUp_Team21.model;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.persistence.*;
@@ -21,6 +23,12 @@ public class RestRel {
     private Float rating;
 
     private boolean wantsToGo = false;
+
+    private boolean isFavorite = false;
+
+    private boolean hasVisited = false;
+
+    private LocalDateTime visitedDate;
 
     public RestRel() {
     }
@@ -67,5 +75,34 @@ public class RestRel {
 
     public void doesNotWantToGo() {
         this.wantsToGo = false;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.isFavorite = favorite;
+    }
+
+    public boolean hasVisited() {
+        return hasVisited;
+    }
+
+    public void setHasVisited(boolean hasVisited) {
+        this.hasVisited = hasVisited;
+    }
+
+    public LocalDateTime getVisitedDate() {
+        return visitedDate;
+    }
+
+    public void setVisitedDate(LocalDateTime visitedDate) {
+        this.visitedDate = visitedDate;
+    }
+
+    public void markAsVisited() {
+        this.hasVisited = true;
+        this.visitedDate = LocalDateTime.now();
     }
 }

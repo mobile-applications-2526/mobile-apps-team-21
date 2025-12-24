@@ -81,6 +81,11 @@ function RootLayoutNav() {
           <Stack.Screen name="register" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="profilePages/edit-profile" options={{ headerShown: false }} />
+          <Stack.Screen name="profilePages/visited-restaurants" options={{ headerShown: false }} />
+          <Stack.Screen name="profilePages/favorite-restaurants" options={{ headerShown: false }} />
+          <Stack.Screen name="profilePages/privacy" options={{ headerShown: false }} />
+          <Stack.Screen name="profilePages/help-support" options={{ headerShown: false }} />
         </Stack>
       </ThemeProvider>
     </AuthProvider>

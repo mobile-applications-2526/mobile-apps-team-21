@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import be.ucll.EatUp_Team21.controller.dto.GroupResponse;
+import be.ucll.EatUp_Team21.controller.dto.ProfileStatsResponse;
 import be.ucll.EatUp_Team21.controller.dto.RegisterRequest;
 import be.ucll.EatUp_Team21.controller.dto.RegisterResponse;
+import be.ucll.EatUp_Team21.controller.dto.RestaurantRelationResponse;
 import be.ucll.EatUp_Team21.controller.dto.UserRequest;
 import be.ucll.EatUp_Team21.controller.dto.UserResponse;
 import be.ucll.EatUp_Team21.model.User;
@@ -70,6 +72,40 @@ public class UserController {
         notificationService.updateUserPushToken(email, pushToken);
 
         return ResponseEntity.ok().body(Map.of("message", "Push token updated"));
+    }
+
+    // Get profile statistics (visited and favorite restaurant counts)
+    @GetMapping("/profile/stats")
+    public ProfileStatsResponse getProfileStats(Authentication auth) {
+        return userService.getProfileStats(auth.getName());
+    }
+
+    // Get visited restaurants
+    @GetMapping("/restaurants/visited")
+    public List<RestaurantRelationResponse> getVisitedRestaurants(Authentication auth) {
+        return userService.getVisitedRestaurants(auth.getName());
+    }
+
+    // Get favorite restaurants
+    @GetMapping("/restaurants/favorites")
+    public List<RestaurantRelationResponse> getFavoriteRestaurants(Authentication auth) {
+        return userService.getFavoriteRestaurants(auth.getName());
+    }
+
+    // Toggle favorite status for a restaurant
+    @PostMapping("/restaurants/{restaurantId}/favorite")
+    public RestaurantRelationResponse toggleFavorite(
+            @PathVariable String restaurantId,
+            Authentication auth) {
+        return userService.toggleFavorite(auth.getName(), restaurantId);
+    }
+
+    // Mark a restaurant as visited
+    @PostMapping("/restaurants/{restaurantId}/visited")
+    public RestaurantRelationResponse markAsVisited(
+            @PathVariable String restaurantId,
+            Authentication auth) {
+        return userService.markAsVisited(auth.getName(), restaurantId);
     }
 
 }

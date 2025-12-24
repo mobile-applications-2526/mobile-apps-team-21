@@ -72,3 +72,29 @@ export interface SuggestedRestaurant {
   voters: string[];
   recommendedAt?: string;
 }
+
+// User profile types
+export interface UserProfile {
+  name: string;
+  firstname: string;
+  phoneNumber: string | null;
+  email: string;
+}
+
+export interface ProfileStats {
+  totalVisitedRestaurants: number;
+  totalFavoriteRestaurants: number;
+}
+
+export interface RestaurantRelation {
+  id: string;
+  restaurantId: string;
+  restaurantName: string;
+  restaurantAddress: string;
+  restaurantDescription: string;
+  restaurantPhoneNumber: string;
+  rating: number | null;
+  isFavorite: boolean;
+  hasVisited: boolean;
+  visitedDate: string | null;
+}

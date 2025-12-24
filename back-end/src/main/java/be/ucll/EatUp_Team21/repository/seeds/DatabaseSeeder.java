@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.time.LocalDateTime;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -13,9 +14,11 @@ import org.slf4j.LoggerFactory;
 
 import be.ucll.EatUp_Team21.model.Group;
 import be.ucll.EatUp_Team21.model.Message;
+import be.ucll.EatUp_Team21.model.RestRel;
 import be.ucll.EatUp_Team21.model.User;
 import be.ucll.EatUp_Team21.repository.GroupRepository;
 import be.ucll.EatUp_Team21.repository.MessageRepository;
+import be.ucll.EatUp_Team21.repository.RestRelRepository;
 import be.ucll.EatUp_Team21.repository.UserRepository;
 import be.ucll.EatUp_Team21.repository.RestaurantRepository;
 import be.ucll.EatUp_Team21.model.Restaurant;
@@ -27,15 +30,18 @@ public class DatabaseSeeder implements CommandLineRunner {
 	private final GroupRepository groupRepository;
 	private final MessageRepository messageRepository;
 	private final RestaurantRepository restaurantRepository;
+	private final RestRelRepository restRelRepository;
 
 	private static final Logger logger = LoggerFactory.getLogger(DatabaseSeeder.class);
 
 	public DatabaseSeeder(UserRepository userRepository, GroupRepository groupRepository,
-			MessageRepository messageRepository, RestaurantRepository restaurantRepository) {
+			MessageRepository messageRepository, RestaurantRepository restaurantRepository,
+			RestRelRepository restRelRepository) {
 		this.userRepository = userRepository;
 		this.groupRepository = groupRepository;
 		this.messageRepository = messageRepository;
 		this.restaurantRepository = restaurantRepository;
+		this.restRelRepository = restRelRepository;
 	}
 
 	@Override
@@ -152,6 +158,57 @@ public class DatabaseSeeder implements CommandLineRunner {
 		} catch (Exception ex) {
 			// don't fail seeding overall if restaurants can't be saved; log warning
 			logger.warn("Failed to seed restaurants: {}", ex.getMessage());
+		}
+
+		// seed restaurant relations (visited and favorites) for each user
+		try {
+			if (restRelRepository.count() == 0) {
+				List<User> users = userRepository.findAll();
+				List<Restaurant> restaurants = restaurantRepository.findAll();
+				
+				if (!users.isEmpty() && !restaurants.isEmpty()) {
+					Random rnd = new Random(42);
+					
+					for (User user : users) {
+						List<RestRel> userRelations = new ArrayList<>();
+						
+						// Each user gets 1 visited restaurant and 1 favorite restaurant
+						// Pick random restaurants for each
+						Restaurant visitedRestaurant = restaurants.get(rnd.nextInt(restaurants.size()));
+						Restaurant favoriteRestaurant = restaurants.get(rnd.nextInt(restaurants.size()));
+						
+						// Create visited relation
+						RestRel visitedRel = new RestRel(user, visitedRestaurant);
+						visitedRel.setHasVisited(true);
+						// Random date in the past 30 days
+						visitedRel.setVisitedDate(LocalDateTime.now().minusDays(rnd.nextInt(30) + 1));
+						visitedRel.setRating(3.0f + rnd.nextFloat() * 2.0f); // Rating between 3.0 and 5.0
+						visitedRel = restRelRepository.save(visitedRel);
+						userRelations.add(visitedRel);
+						
+						// Create favorite relation (if different restaurant)
+						if (!favoriteRestaurant.getId().equals(visitedRestaurant.getId())) {
+							RestRel favoriteRel = new RestRel(user, favoriteRestaurant);
+							favoriteRel.setFavorite(true);
+							favoriteRel = restRelRepository.save(favoriteRel);
+							userRelations.add(favoriteRel);
+						} else {
+							// If same restaurant, mark it as both visited and favorite
+							visitedRel.setFavorite(true);
+							restRelRepository.save(visitedRel);
+						}
+						
+						user.setRestaurantRelations(userRelations);
+						userRepository.save(user);
+					}
+					
+					logger.info("Seeded restaurant relations for {} users", users.size());
+				}
+			} else {
+				logger.info("Restaurant relations already present, skipping relation seeding");
+			}
+		} catch (Exception ex) {
+			logger.warn("Failed to seed restaurant relations: {}", ex.getMessage());
 		}
 	}
 }
