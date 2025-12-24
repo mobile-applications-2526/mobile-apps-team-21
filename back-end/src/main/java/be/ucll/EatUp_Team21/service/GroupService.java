@@ -219,17 +219,23 @@ public class GroupService {
                 .map(User::getEmail)
                 .collect(Collectors.toList());
 
+        // Do nothing if suggestion already closed for notifications
+        if (suggestion == null || suggestion.isClosed()) return;
+
         // Check if threshold is reached
         if (notificationService.checkVotingThreshold(
-                suggestion.getVoters().size(),
-                memberEmails.size())) {
+            suggestion.getVoters().size(),
+            memberEmails.size())) {
             // Send push notification to all group members
             notificationService.notifyGroupMembersAboutThreshold(
-                    group.getId(),
-                    suggestion.getRestaurant().getName(),
-                    memberEmails,
-                    suggestion.getVoters().size(),
-                    memberEmails.size());
+                group.getId(),
+                suggestion.getRestaurant().getName(),
+                memberEmails,
+                suggestion.getVoters().size(),
+                memberEmails.size());
+            // mark suggestion as closed so we don't spam further notifications
+            suggestion.setClosed(true);
+            suggestedRestaurantRepository.save(suggestion);
         }
     }
 

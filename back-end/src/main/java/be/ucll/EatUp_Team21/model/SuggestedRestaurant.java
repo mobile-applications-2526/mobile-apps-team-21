@@ -26,6 +26,8 @@ public class SuggestedRestaurant {
     private List<String> voters = new ArrayList<>();
 
     private LocalDateTime recommendedAt = LocalDateTime.now();
+    // when true, no further threshold notifications will be sent for this suggestion
+    private boolean closed = false;
 
     public SuggestedRestaurant() {}
 
@@ -34,6 +36,7 @@ public class SuggestedRestaurant {
         this.recommenderEmail = recommenderEmail;
         this.voters = new ArrayList<>();
         this.recommendedAt = LocalDateTime.now();
+        this.closed = false;
     }
 
     public String getId() { return id; }
@@ -41,12 +44,14 @@ public class SuggestedRestaurant {
     public String getRecommenderEmail() { return recommenderEmail; }
     public List<String> getVoters() { return voters; }
     public LocalDateTime getRecommendedAt() { return recommendedAt; }
+    public boolean isClosed() { return closed; }
 
     public void setId(String id) { this.id = id; }
     public void setRestaurant(Restaurant restaurant) { this.restaurant = restaurant; }
     public void setRecommenderEmail(String recommenderEmail) { this.recommenderEmail = recommenderEmail; }
     public void setVoters(List<String> voters) { this.voters = voters; }
     public void setRecommendedAt(LocalDateTime when) { this.recommendedAt = when; }
+    public void setClosed(boolean closed) { this.closed = closed; }
 
     public void addVoter(String email) {
         if (email == null) return;
