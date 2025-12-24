@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:90263320466:android:e976577a165893f1a9b34b",
+        "mobilesdk_app_id": "1:90263320466:android:7920cecff8ec39f3a9b34b",
         "android_client_info": {
-          "package_name": "com.fatboye.frontendexpo"
+          "package_name": "com.eatup.frontend"
         }
       },
       "oauth_client": [],

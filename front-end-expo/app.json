@@ -23,7 +23,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.fatboye.frontendexpo",
+      "package": "com.eatup.frontend",
       "googleServicesFile": "./android/app/google-services.json"
     },
     "web": {
@@ -37,12 +37,12 @@
     "experiments": {
       "typedRoutes": true
     },
+    "owner": "eat-up",
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "bd33cd7e-754b-41d8-8ee9-513ae2da3714"
+        "projectId": "8b489512-29cf-43ff-acee-1b9f68971832"
       }
-    },
-    "owner": "fatboye"
+    }
   }
 }
