@@ -1,7 +1,6 @@
 import {
   StyleSheet,
   useColorScheme,
-  ActivityIndicator,
   FlatList,
   RefreshControl,
   View
@@ -17,6 +16,7 @@ import RestaurantCard from "@/components/restaurant/RestaurantCard";
 import { fetchGroups, recommendRestaurantToGroup } from "@/services/groupChatService";
 import Feedback from "@/components/Feedback";
 import RecommendModal from "@/components/modals/RecommendModal";
+import LoadingScreen from "@/components/LoadingScreen";
 
 export default function DiscoverScreen() {
   const { token, userEmail } = useAuth();
@@ -109,7 +109,7 @@ export default function DiscoverScreen() {
       </View>
 
       {loading ? (
-        <ActivityIndicator style={{ marginTop: 40 }} />
+        <LoadingScreen style={{ marginTop: 40 }} />
       ) : (
         <FlatList
           data={restaurants}

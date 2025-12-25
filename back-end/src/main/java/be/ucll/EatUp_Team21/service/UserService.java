@@ -1,7 +1,10 @@
 package be.ucll.EatUp_Team21.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +15,14 @@ import be.ucll.EatUp_Team21.controller.dto.GroupResponse;
 import be.ucll.EatUp_Team21.controller.dto.RegisterRequest;
 import be.ucll.EatUp_Team21.controller.dto.RegisterResponse;
 import be.ucll.EatUp_Team21.controller.dto.UserResponse;
+import be.ucll.EatUp_Team21.controller.dto.RestRelResponse;
 import be.ucll.EatUp_Team21.model.Group;
 import be.ucll.EatUp_Team21.model.User;
+import be.ucll.EatUp_Team21.model.Restaurant;
+import be.ucll.EatUp_Team21.model.RestRel;
 import be.ucll.EatUp_Team21.repository.UserRepository;
+import be.ucll.EatUp_Team21.repository.RestRelRepository;
+import be.ucll.EatUp_Team21.repository.RestaurantRepository;
 import be.ucll.EatUp_Team21.security.JwtUtil;
 import be.ucll.EatUp_Team21.repository.MessageRepository;
 import be.ucll.EatUp_Team21.security.SecurityConfig;
@@ -27,6 +35,12 @@ public class UserService {
 
     @Autowired
     private MessageRepository messageRepository;
+
+    @Autowired
+    private RestRelRepository restRelRepository;
+
+    @Autowired
+    private RestaurantRepository restaurantRepository;
 
     @Autowired
     private SecurityConfig securityConfig;
@@ -98,11 +112,39 @@ public class UserService {
         if (user == null) {
             throw new IllegalArgumentException("User does not exist");
         }
+
+        int visitedCount = 0;
+        int favoriteCount = 0;
+        if (user.getRestaurantRelations() != null) {
+            visitedCount = (int) user.getRestaurantRelations().stream().filter(r -> r.getVisitDate() != null).count();
+            favoriteCount = (int) user.getRestaurantRelations().stream().filter(RestRel::isFavorite).count();
+        }
+
         return new UserResponse(
                 user.getName(),
                 user.getFirstName(),
                 user.getPhoneNumber(),
-                user.getEmail());
+                user.getEmail(),
+                visitedCount,
+                favoriteCount);
+    }
+
+    public List<RestRelResponse> getVisitedRestaurants(String email) {
+        User user = userRepository.findUserByEmail(email);
+        if (user.getRestaurantRelations() == null) return new ArrayList<>();
+        return user.getRestaurantRelations().stream()
+            .filter(r -> r.getVisitDate() != null)
+            .map(r -> new RestRelResponse(r.getRestaurant().getId(), r.getRestaurant().getName(), r.getRestaurant().getAdress(), r.getVisitDate(), r.isFavorite(), r.getRating() >= 0 ? r.getRating() : null))
+            .toList();
+    }
+
+    public List<RestRelResponse> getFavoriteRestaurants(String email) {
+        User user = userRepository.findUserByEmail(email);
+        if (user.getRestaurantRelations() == null) return new ArrayList<>();
+        return user.getRestaurantRelations().stream()
+            .filter(RestRel::isFavorite)
+            .map(r -> new RestRelResponse(r.getRestaurant().getId(), r.getRestaurant().getName(), r.getRestaurant().getAdress(), r.getVisitDate(), r.isFavorite(), r.getRating() >= 0 ? r.getRating() : null))
+            .toList();
     }
 
     public List<String> modifySelf(RegisterRequest req, String name, String email) {
@@ -134,5 +176,125 @@ public class UserService {
         }
         userRepository.save(user);
         return res;
+    }
+
+    public boolean toggleFavorite(String email, String restaurantId) {
+        User user = userRepository.findUserByEmail(email);
+        if (user == null) {
+            throw new IllegalArgumentException("User does not exist");
+        }
+        
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+            .orElseThrow(() -> new IllegalArgumentException("Restaurant does not exist"));
+        
+        // Find existing relation or create new one
+        RestRel relation = findOrCreateRestRel(user, restaurant);
+        
+        // Toggle favorite status
+        relation.setFavorite(!relation.isFavorite());
+        restRelRepository.save(relation);
+        
+        // Make sure the relation is in the user's list
+        if (!user.getRestaurantRelations().contains(relation)) {
+            user.addRestaurantRelation(relation);
+            userRepository.save(user);
+        }
+        
+        return relation.isFavorite();
+    }
+
+    public String toggleVisited(String email, String restaurantId) {
+        User user = userRepository.findUserByEmail(email);
+        if (user == null) {
+            throw new IllegalArgumentException("User does not exist");
+        }
+        
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+            .orElseThrow(() -> new IllegalArgumentException("Restaurant does not exist"));
+        
+        // Find existing relation or create new one
+        RestRel relation = findOrCreateRestRel(user, restaurant);
+        
+        // Toggle visited status
+        if (relation.getVisitDate() != null) {
+            relation.setVisitDate(null);
+        } else {
+            relation.setVisitDate(LocalDate.now());
+        }
+        restRelRepository.save(relation);
+        
+        // Make sure the relation is in the user's list
+        if (!user.getRestaurantRelations().contains(relation)) {
+            user.addRestaurantRelation(relation);
+            userRepository.save(user);
+        }
+        
+        return relation.getVisitDate() != null ? relation.getVisitDate().toString() : null;
+    }
+
+    public Map<String, Object> getRestaurantStatus(String email, String restaurantId) {
+        User user = userRepository.findUserByEmail(email);
+        if (user == null) {
+            throw new IllegalArgumentException("User does not exist");
+        }
+        
+        Map<String, Object> status = new HashMap<>();
+        status.put("isFavorite", false);
+        status.put("visitDate", "");
+        status.put("rating", null);
+        
+        if (user.getRestaurantRelations() != null) {
+            for (RestRel rel : user.getRestaurantRelations()) {
+                if (rel.getRestaurant() != null && rel.getRestaurant().getId().equals(restaurantId)) {
+                    status.put("isFavorite", rel.isFavorite());
+                    status.put("visitDate", rel.getVisitDate() != null ? rel.getVisitDate().toString() : "");
+                    status.put("rating", rel.getRating() >= 0 ? rel.getRating() : null);
+                    break;
+                }
+            }
+        }
+        
+        return status;
+    }
+
+    public Float setRating(String email, String restaurantId, Float rating) {
+        User user = userRepository.findUserByEmail(email);
+        if (user == null) {
+            throw new IllegalArgumentException("User does not exist");
+        }
+        
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+            .orElseThrow(() -> new IllegalArgumentException("Restaurant does not exist"));
+        
+        // Find existing relation or create new one
+        RestRel relation = findOrCreateRestRel(user, restaurant);
+        
+        // Set rating
+        relation.setRating(rating);
+        restRelRepository.save(relation);
+        
+        // Make sure the relation is in the user's list
+        if (!user.getRestaurantRelations().contains(relation)) {
+            user.addRestaurantRelation(relation);
+            userRepository.save(user);
+        }
+        
+        return relation.getRating() >= 0 ? relation.getRating() : null;
+    }
+
+    private RestRel findOrCreateRestRel(User user, Restaurant restaurant) {
+        // Check if relation already exists
+        if (user.getRestaurantRelations() != null) {
+            for (RestRel rel : user.getRestaurantRelations()) {
+                if (rel.getRestaurant() != null && rel.getRestaurant().getId().equals(restaurant.getId())) {
+                    return rel;
+                }
+            }
+        }
+        
+        // Create new relation
+        RestRel newRel = new RestRel(user, restaurant);
+        restRelRepository.save(newRel);
+        return newRel;
     }
 }

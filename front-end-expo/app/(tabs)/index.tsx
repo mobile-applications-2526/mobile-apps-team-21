@@ -1,10 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, RefreshControl, ActivityIndicator, TouchableOpacity, useColorScheme } from 'react-native';
+import { View, Text, StyleSheet, FlatList, RefreshControl, TouchableOpacity, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect } from 'expo-router'; 
 import { useAuth } from '@/components/AuthContext';
 import GroupCard from '@/components/group/GroupCard';
 import { Group, fetchGroups } from '@/services/groupChatService';
+import LoadingScreen from '@/components/LoadingScreen';
 
 export default function GroupsScreen() {
   const router = useRouter();
@@ -65,7 +66,7 @@ export default function GroupsScreen() {
         </TouchableOpacity>
       </View>
       
-      {loading ? <ActivityIndicator style={{ marginTop: 40 }} /> : (
+      {loading ? <LoadingScreen style={{ marginTop: 40 }} /> : (
         <FlatList
           data={groups}
           keyExtractor={g => g.id}

@@ -172,4 +172,13 @@ export async function removeSuggestion(groupId: string, suggestionId: string, to
   }
 }
 
+export async function leaveGroup(groupId: string, token?: string): Promise<void> {
+  if (!token) throw new Error('No authentication');
+  try {
+    await request(`/groups/${groupId}/leave`, { method: 'POST' }, token);
+  } catch (e) {
+    console.warn('Failed to call leave endpoint', e);
+  }
+}
+
 export type { Group, Message, GroupCreationResult };

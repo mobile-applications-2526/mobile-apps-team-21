@@ -4,6 +4,23 @@ export type RawUser = {
   firstName?: string;
   email?: string;
   phoneNumber?: string;
+  visitedRestaurantsCount?: number;
+  favoriteRestaurantsCount?: number;
+};
+
+export type RestRelResponse = {
+  restaurantId: string;
+  restaurantName: string;
+  restaurantAddress: string;
+  visitDate: string;
+  isFavorite: boolean;
+  rating: number | null;
+};
+
+export type RestaurantStatus = {
+  isFavorite: boolean;
+  visitDate: string;
+  rating: number | null;
 };
 
 export type RawGroupResponse = {
