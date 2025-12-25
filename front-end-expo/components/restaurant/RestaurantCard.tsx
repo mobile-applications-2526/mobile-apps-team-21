@@ -1,39 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import { Restaurant } from '@/types';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import Entypo from '@expo/vector-icons/Entypo';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/components/AuthContext';
 import { UserService } from '@/services/userService';
-import { RatingModal } from '@/components/modals/RatingModal';
 
 interface Props {
   restaurant: Restaurant;
   onRecommend: () => void;
   onStatusChange?: () => void;
+  visitedRestaurantIds?: string[];
 }
 
-const RestaurantCard: React.FC<Props> = ({ restaurant, onRecommend, onStatusChange }) => {
+const RestaurantCard: React.FC<Props> = ({ restaurant, onRecommend, onStatusChange, visitedRestaurantIds }) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const { token } = useAuth();
+  const router = useRouter();
   
   const [isFavorite, setIsFavorite] = useState(false);
-  const [isVisited, setIsVisited] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showRatingModal, setShowRatingModal] = useState(false);
+
+  // Check if restaurant is visited based on group visits
+  const isVisited = visitedRestaurantIds?.includes(restaurant.id) ?? false;
 
   useEffect(() => {
-    loadStatus();
+    loadFavoriteStatus();
   }, [restaurant.id, token]);
 
-  const loadStatus = async () => {
+  const loadFavoriteStatus = async () => {
     if (!token) return;
     try {
       const status = await UserService.getRestaurantStatus(restaurant.id, token);
       setIsFavorite(status.isFavorite);
-      setIsVisited(!!status.visitDate);
     } catch (error) {
       console.error('Failed to load restaurant status:', error);
     }
@@ -53,52 +54,11 @@ const RestaurantCard: React.FC<Props> = ({ restaurant, onRecommend, onStatusChan
     }
   };
 
-  const handleToggleVisited = async () => {
-    if (!token || loading) return;
-    
-    // If already visited, just toggle it off (unmark)
+  const handleVisitedPress = () => {
     if (isVisited) {
-      setLoading(true);
-      try {
-        const result = await UserService.toggleVisited(restaurant.id, token);
-        setIsVisited(!!result.visitDate);
-        onStatusChange?.();
-      } catch (error) {
-        console.error('Failed to toggle visited:', error);
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      // If not visited, first mark as visited then show rating modal
-      setLoading(true);
-      try {
-        const result = await UserService.toggleVisited(restaurant.id, token);
-        setIsVisited(!!result.visitDate);
-        onStatusChange?.();
-        // Show rating modal after marking as visited
-        if (result.visitDate) {
-          setShowRatingModal(true);
-        }
-      } catch (error) {
-        console.error('Failed to toggle visited:', error);
-      } finally {
-        setLoading(false);
-      }
+      // Navigate to revisit page when clicked
+      router.push('/(tabs)/revisit');
     }
-  };
-
-  const handleSubmitRating = async (rating: number) => {
-    if (!token) return;
-    try {
-      await UserService.setRating(restaurant.id, rating, token);
-      setShowRatingModal(false);
-    } catch (error) {
-      console.error('Failed to submit rating:', error);
-    }
-  };
-
-  const handleSkipRating = () => {
-    setShowRatingModal(false);
   };
 
   return (
@@ -125,36 +85,18 @@ const RestaurantCard: React.FC<Props> = ({ restaurant, onRecommend, onStatusChan
         <Link href={`tel:${restaurant.phoneNumber}`} style={[styles.link, isDark && styles.linkDark]}>{restaurant.phoneNumber}</Link>
       </View>
       
-      {/* Visited button at bottom right */}
-      <TouchableOpacity 
-        style={[
-          styles.visitedButton, 
-          isVisited ? styles.visitedButtonActive : (isDark ? styles.visitedButtonDark : styles.visitedButtonLight)
-        ]} 
-        onPress={handleToggleVisited}
-        disabled={loading}
-      >
-        <Ionicons 
-          name={isVisited ? "checkmark-circle" : "checkmark-circle-outline"} 
-          size={16} 
-          color={isVisited ? "#ffffff" : (isDark ? '#8894a0' : '#6a7282')} 
-        />
-        <Text style={[
-          styles.visitedButtonText, 
-          isVisited ? styles.visitedButtonTextActive : (isDark ? styles.visitedButtonTextDark : styles.visitedButtonTextLight)
-        ]}>
-          {isVisited ? 'Visited' : 'Mark visited'}
-        </Text>
-      </TouchableOpacity>
-
-      {/* Rating Modal */}
-      <RatingModal
-        visible={showRatingModal}
-        restaurantName={restaurant.name}
-        onSubmit={handleSubmitRating}
-        onSkip={handleSkipRating}
-        onClose={handleSkipRating}
-      />
+      {/* Visited badge - only shown when restaurant is visited, navigates to revisit page */}
+      {isVisited && (
+        <TouchableOpacity 
+          style={[styles.visitedButton, styles.visitedButtonActive]} 
+          onPress={handleVisitedPress}
+        >
+          <Ionicons name="checkmark-circle" size={16} color="#ffffff" />
+          <Text style={[styles.visitedButtonText, styles.visitedButtonTextActive]}>
+            Visited
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -198,24 +140,12 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     gap: 4,
   },
-  visitedButtonLight: {
-    backgroundColor: '#f0f0f0',
-  },
-  visitedButtonDark: {
-    backgroundColor: '#2d3a47',
-  },
   visitedButtonActive: {
     backgroundColor: '#4caf50',
   },
   visitedButtonText: {
     fontSize: 12,
     fontWeight: '600',
-  },
-  visitedButtonTextLight: {
-    color: '#6a7282',
-  },
-  visitedButtonTextDark: {
-    color: '#8894a0',
   },
   visitedButtonTextActive: {
     color: '#ffffff',

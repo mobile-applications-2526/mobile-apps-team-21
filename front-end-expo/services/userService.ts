@@ -1,5 +1,5 @@
 import { buildApiUrl, API_BASE_URL } from '@/utils/apiConfig';
-import { RawUser, RestRelResponse, RestaurantStatus } from '@/types';
+import { RawUser, RestRelResponse, RestaurantStatus, GroupVisitResponse, UpdateGroupVisitRequest, UniqueVisitedRestaurant } from '@/types';
 
 export type LoginResponse = { token: string };
 export type RegisterResponse = { id: string; token: string };
@@ -72,12 +72,20 @@ export const UserService = {
     return handleJson<RawUser>(res);
   },
 
-  async getVisitedRestaurants(email: string, token: string): Promise<RestRelResponse[]> {
-    const res = await fetch(buildApiUrl(`/users/visited?email=${encodeURIComponent(email)}`), {
+  async getUniqueVisitedRestaurants(token: string): Promise<UniqueVisitedRestaurant[]> {
+    const res = await fetch(buildApiUrl('/visits/unique'), {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (!res.ok) throw new Error('Failed to fetch visited restaurants');
-    return handleJson<RestRelResponse[]>(res);
+    return handleJson<UniqueVisitedRestaurant[]>(res);
+  },
+
+  async getVisitedRestaurantIds(token: string): Promise<string[]> {
+    const res = await fetch(buildApiUrl('/visits/visited-ids'), {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('Failed to fetch visited restaurant IDs');
+    return handleJson<string[]>(res);
   },
 
   async getFavoriteRestaurants(email: string, token: string): Promise<RestRelResponse[]> {
@@ -95,15 +103,6 @@ export const UserService = {
     });
     if (!res.ok) throw new Error('Failed to toggle favorite');
     return handleJson<{ isFavorite: boolean }>(res);
-  },
-
-  async toggleVisited(restaurantId: string, token: string): Promise<{ visitDate: string }> {
-    const res = await fetch(buildApiUrl(`/users/restaurants/${restaurantId}/visited`), {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    if (!res.ok) throw new Error('Failed to toggle visited');
-    return handleJson<{ visitDate: string }>(res);
   },
 
   async getRestaurantStatus(restaurantId: string, token: string): Promise<RestaurantStatus> {
@@ -150,5 +149,40 @@ export const UserService = {
     });
     if (!res.ok) throw new Error('Failed to update profile');
     return handleJson<RawUser>(res);
+  },
+
+  // Group Visits (Revisit page)
+  async getGroupVisits(token: string): Promise<GroupVisitResponse[]> {
+    const res = await fetch(buildApiUrl('/visits'), {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('Failed to fetch group visits');
+    return handleJson<GroupVisitResponse[]>(res);
+  },
+
+  async getReceiptImage(visitId: string, token: string): Promise<string | null> {
+    const res = await fetch(buildApiUrl(`/visits/${visitId}/receipt`), {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) return null;
+    const data = await handleJson<{ receiptImage: string }>(res);
+    return data.receiptImage;
+  },
+
+  async updateGroupVisit(
+    visitId: string,
+    data: UpdateGroupVisitRequest,
+    token: string
+  ): Promise<GroupVisitResponse> {
+    const res = await fetch(buildApiUrl(`/visits/${visitId}`), {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error('Failed to update group visit');
+    return handleJson<GroupVisitResponse>(res);
   },
 };

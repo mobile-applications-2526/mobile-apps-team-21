@@ -2,17 +2,17 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, FlatList, View, Text, useColorScheme, TouchableOpacity } from 'react-native';
 import { useAuth } from '@/components/AuthContext';
 import { UserService } from '@/services/userService';
-import { RestRelResponse } from '@/types';
+import { UniqueVisitedRestaurant } from '@/types';
 import { Ionicons } from '@expo/vector-icons';
 import { RatingModal } from '@/components/modals/RatingModal';
 import Colors from '@/constants/Colors';
 import LoadingScreen from '@/components/LoadingScreen';
 
 export default function VisitedRestaurantsScreen() {
-  const { userEmail, token } = useAuth();
-  const [restaurants, setRestaurants] = useState<RestRelResponse[]>([]);
+  const { token } = useAuth();
+  const [restaurants, setRestaurants] = useState<UniqueVisitedRestaurant[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedRestaurant, setSelectedRestaurant] = useState<RestRelResponse | null>(null);
+  const [selectedRestaurant, setSelectedRestaurant] = useState<UniqueVisitedRestaurant | null>(null);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -26,9 +26,10 @@ export default function VisitedRestaurantsScreen() {
   }, []);
 
   const loadRestaurants = async () => {
-    if (!userEmail || !token) return;
+    if (!token) return;
     try {
-      const data = await UserService.getVisitedRestaurants(userEmail, token);
+      // Fetch unique visited restaurants from group visits
+      const data = await UserService.getUniqueVisitedRestaurants(token);
       setRestaurants(data);
     } catch (error) {
       console.error(error);
@@ -37,7 +38,7 @@ export default function VisitedRestaurantsScreen() {
     }
   };
 
-  const handleCardPress = (restaurant: RestRelResponse) => {
+  const handleCardPress = (restaurant: UniqueVisitedRestaurant) => {
     setSelectedRestaurant(restaurant);
     setShowRatingModal(true);
   };
@@ -64,6 +65,17 @@ export default function VisitedRestaurantsScreen() {
   const handleCloseModal = () => {
     setShowRatingModal(false);
     setSelectedRestaurant(null);
+  };
+
+  // Format date for display
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
   };
 
   const renderStars = (rating: number | null) => {
@@ -111,7 +123,7 @@ export default function VisitedRestaurantsScreen() {
             <Text style={[styles.address, { color: textColor, opacity: 0.7 }]}>{item.restaurantAddress}</Text>
             {item.visitDate && (
               <Text style={[styles.date, { color: textColor, opacity: 0.5 }]}>
-                Visited on: {item.visitDate}
+                Last visited: {formatDate(item.visitDate)}
               </Text>
             )}
             {item.rating === null && (
@@ -132,6 +144,9 @@ export default function VisitedRestaurantsScreen() {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Text style={{ color: textColor }}>No visited restaurants yet.</Text>
+            <Text style={{ color: textColor, opacity: 0.6, marginTop: 8, textAlign: 'center' }}>
+              Visit restaurants with your groups to see them here!
+            </Text>
           </View>
         }
         contentContainerStyle={styles.listContent}

@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect} from "expo-router";
 import { useAuth } from "@/components/AuthContext";
 import { fetchRestaurants } from "@/services/restaurantService";
+import { UserService } from "@/services/userService";
 import { Group, Restaurant } from "@/types";
 import RestaurantCard from "@/components/restaurant/RestaurantCard";
 import { fetchGroups, recommendRestaurantToGroup } from "@/services/groupChatService";
@@ -27,6 +28,7 @@ export default function DiscoverScreen() {
 
   const [groups, setGroups] = useState<Group[]>([]);
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [visitedRestaurantIds, setVisitedRestaurantIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   // Modal animation state: `modalVisible` controls Modal mount.
@@ -51,6 +53,16 @@ export default function DiscoverScreen() {
     }
   };
 
+  const loadVisitedRestaurantIds = async () => {
+    if (!token) return;
+    try {
+      const ids = await UserService.getVisitedRestaurantIds(token);
+      setVisitedRestaurantIds(ids);
+    } catch (e) {
+      console.warn('Failed to load visited restaurant IDs:', e);
+    }
+  };
+
   const loadGroups = async () => {
     if (!userEmail) {
       setLoading(false);
@@ -70,12 +82,13 @@ export default function DiscoverScreen() {
     useCallback(() => {
       loadRestaurants();
       loadGroups();
+      loadVisitedRestaurantIds();
     }, [token, userEmail])
   );
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await loadRestaurants();
+    await Promise.all([loadRestaurants(), loadVisitedRestaurantIds()]);
     setRefreshing(false);
   }, [token, userEmail]);
 
@@ -94,7 +107,11 @@ export default function DiscoverScreen() {
   };
 
   const renderRestaurant = ({ item }: { item: Restaurant }) => (
-    <RestaurantCard restaurant={item} onRecommend={() => openModal(item)} />
+    <RestaurantCard 
+      restaurant={item} 
+      onRecommend={() => openModal(item)} 
+      visitedRestaurantIds={visitedRestaurantIds}
+    />
   );
 
   return (

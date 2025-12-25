@@ -57,14 +57,6 @@ public class UserController {
         return userService.modifySelf(req, auth.getName(), email);
     }
 
-    @GetMapping("/visited")
-    public List<RestRelResponse> getVisitedRestaurants(@RequestParam String email, Authentication auth) {
-        if (!email.equals(auth.getName())) {
-            throw new IllegalArgumentException("Bad Credentials for request");
-        }
-        return userService.getVisitedRestaurants(email);
-    }
-
     @GetMapping("/favorites")
     public List<RestRelResponse> getFavoriteRestaurants(@RequestParam String email, Authentication auth) {
         if (!email.equals(auth.getName())) {
@@ -92,15 +84,6 @@ public class UserController {
         String email = auth.getName();
         boolean isFavorite = userService.toggleFavorite(email, restaurantId);
         return ResponseEntity.ok().body(Map.of("isFavorite", isFavorite));
-    }
-
-    @PostMapping("/restaurants/{restaurantId}/visited")
-    public ResponseEntity<?> toggleVisited(
-            @PathVariable String restaurantId,
-            Authentication auth) {
-        String email = auth.getName();
-        String visitDate = userService.toggleVisited(email, restaurantId);
-        return ResponseEntity.ok().body(Map.of("visitDate", visitDate != null ? visitDate : ""));
     }
 
     @GetMapping("/restaurants/{restaurantId}/status")
