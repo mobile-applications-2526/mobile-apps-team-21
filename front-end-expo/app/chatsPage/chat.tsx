@@ -90,10 +90,14 @@ export default function ChatScreen() {
             <TouchableOpacity onPress={async () => { leaveGroupBackend(); router.back(); }} style={styles.backTouch}>
               <MaterialIcons name="arrow-back" size={24} color={isDark ? '#fff' : '#1f2933'} />
             </TouchableOpacity>
-            <View style={styles.chatHeaderText}>
+            <TouchableOpacity 
+              style={styles.chatHeaderText} 
+              onPress={() => router.push({ pathname: '/chatsPage/group-members', params: { groupId: chatGroup.id, groupName: chatGroup.name } })}
+              activeOpacity={0.7}
+            >
               <Text style={[styles.chatTitle, isDark && styles.headerTitleDark]} numberOfLines={1}>{chatGroup.name}</Text>
-                <Text style={[styles.memberCount, isDark && styles.memberCountDark]}>{chatGroup.memberNames.length} {chatGroup.memberNames.length === 1 ? 'member' : 'members'}</Text>
-            </View>
+              <Text style={[styles.memberCount, isDark && styles.memberCountDark]}>{chatGroup.memberNames.length} {chatGroup.memberNames.length === 1 ? 'member' : 'members'}</Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => openRestaurantsModal()}>
               <MaterialIcons name="restaurant" size={24} color={isDark ? '#fff' : '#1f2933'} />
             </TouchableOpacity>
@@ -117,7 +121,7 @@ export default function ChatScreen() {
 
         <View style={[styles.sendRow, isDark && styles.sendRowDark]}>
           <TextInput
-            placeholder="Bericht"
+            placeholder="Message"
             placeholderTextColor={isDark ? '#8894a0' : '#99a1ab'}
             value={messageInput}
             onChangeText={setMessageInput}

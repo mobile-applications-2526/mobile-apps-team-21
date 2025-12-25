@@ -46,6 +46,12 @@ export interface Group {
   memberNames: string[];
 }
 
+export interface GroupMember {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 export interface MessageAuthor {
   id?: string;
   name?: string;

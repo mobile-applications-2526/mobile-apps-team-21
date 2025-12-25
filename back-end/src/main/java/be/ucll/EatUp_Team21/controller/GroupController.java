@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import be.ucll.EatUp_Team21.controller.dto.GroupMemberResponse;
 import be.ucll.EatUp_Team21.controller.dto.GroupRequest;
 import be.ucll.EatUp_Team21.controller.dto.GroupResponse;
 import be.ucll.EatUp_Team21.controller.dto.UserGroupRequest;
@@ -48,6 +49,11 @@ public class GroupController {
     @GetMapping("/getMembers/{groupId}")
     public List<String> getGroupMembers(@PathVariable String groupId, Authentication auth) {
         return groupService.getMembersByGroupId(groupId, auth.getName());
+    }
+
+    @GetMapping("/getMemberDetails/{groupId}")
+    public List<GroupMemberResponse> getGroupMemberDetails(@PathVariable String groupId, Authentication auth) {
+        return groupService.getMemberDetailsByGroupId(groupId, auth.getName());
     }
 
     @PutMapping("/restaurant")

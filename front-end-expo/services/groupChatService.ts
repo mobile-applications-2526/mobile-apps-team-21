@@ -1,5 +1,5 @@
 import { buildApiUrl } from '@/utils/apiConfig';
-import { Group, GroupCreationResult, Message, RawGroupResponse, RawMessage, Restaurant, SuggestedRestaurant } from '@/types';
+import { Group, GroupCreationResult, GroupMember, Message, RawGroupResponse, RawMessage, Restaurant, SuggestedRestaurant } from '@/types';
 
 async function handleJson<T>(res: Response): Promise<T> {
   const text = await res.text();
@@ -181,4 +181,10 @@ export async function leaveGroup(groupId: string, token?: string): Promise<void>
   }
 }
 
-export type { Group, Message, GroupCreationResult };
+export async function fetchGroupMemberDetails(groupId: string, token?: string): Promise<GroupMember[]> {
+  if (!token) throw new Error('No authentication');
+  const res = await request(`/groups/getMemberDetails/${encodeURIComponent(groupId)}`, undefined, token);
+  return await handleJson<GroupMember[]>(res);
+}
+
+export type { Group, Message, GroupCreationResult, GroupMember };
