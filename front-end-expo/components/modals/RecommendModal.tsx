@@ -59,7 +59,7 @@ export default function RecommendModal({ visible, groups, dark = false, title = 
       ]).start(() => {
         setLocalVisible(false);
         if (onRequestClose) onRequestClose();
-        if (onDone) onDone(res ?? 'Aanbeveling verzonden.');
+        if (onDone) onDone(res ?? 'Recommendation sent.');
         setBusy(false);
       });
     } catch (e) {
@@ -90,7 +90,7 @@ export default function RecommendModal({ visible, groups, dark = false, title = 
                 >
                   <View style={styles.groupContent}>
                     <Text style={[styles.groupName, dark && styles.groupNameDark]}>{g.name}</Text>
-                    <Text style={[styles.groupMeta, dark && styles.groupMetaDark]}>{g.memberNames?.length || 0} members</Text>
+                    <Text style={[styles.groupMeta, dark && styles.groupMetaDark]}>{g.memberNames?.length || 0} {(g.memberNames?.length || 0) === 1 ? 'member' : 'members'}</Text>
                   </View>
                 </TouchableOpacity>
               ))}

@@ -92,7 +92,7 @@ export default function ChatScreen() {
             </TouchableOpacity>
             <View style={styles.chatHeaderText}>
               <Text style={[styles.chatTitle, isDark && styles.headerTitleDark]} numberOfLines={1}>{chatGroup.name}</Text>
-              <Text style={[styles.memberCount, isDark && styles.memberCountDark]}>{chatGroup.memberNames.length} members</Text>
+                <Text style={[styles.memberCount, isDark && styles.memberCountDark]}>{chatGroup.memberNames.length} {chatGroup.memberNames.length === 1 ? 'member' : 'members'}</Text>
             </View>
             <TouchableOpacity onPress={() => openRestaurantsModal()}>
               <MaterialIcons name="restaurant" size={24} color={isDark ? '#fff' : '#1f2933'} />

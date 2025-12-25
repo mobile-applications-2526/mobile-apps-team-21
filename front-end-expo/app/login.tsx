@@ -50,35 +50,35 @@ export default function LoginScreen() {
     >
       <View style={[styles.page, { backgroundColor: theme.background }]}>
         <Text style={[styles.title, { color: theme.text }]}>Eat Up</Text>
-        <Text style={[styles.subtitle, { color: theme.tabIconDefault }]}>Ontdek restaurants samen met vrienden</Text>
+        <Text style={[styles.subtitle, { color: theme.tabIconDefault }]}>Discover restaurants together with friends</Text>
 
         <View style={[styles.card, colorScheme === 'dark' ? styles.cardDark : null]}>
-        <Text style={[styles.welcome, colorScheme === 'dark' ? styles.textDark : null]}>Welkom terug!</Text>
+        <Text style={[styles.welcome, colorScheme === 'dark' ? styles.textDark : null]}>Welcome back!</Text>
 
         <FormField
           label="E-mail"
           value={email}
           onChangeText={setEmail}
-          placeholder="jouw@email.com"
+          placeholder="your@email.com"
           keyboardType="email-address"
           autoCapitalize="none"
         />
         <FormField
-          label="Wachtwoord"
+          label="Password"
           value={password}
           onChangeText={setPassword}
-          placeholder="wachtwoord"
+          placeholder="password"
           secureTextEntry
         />
 
         {error && <Text style={styles.error}>{error}</Text>}
 
-        <LoadingButton title="Inloggen" loading={submitting} onPress={onSubmit} />
+        <LoadingButton title="Log in" loading={submitting} onPress={onSubmit} />
 
         <Text style={[styles.register, colorScheme === 'dark' ? styles.textDark : null]}>
-          Heb je nog geen account?{' '}
+          Don't have an account?{' '}
           <Link href={"/register" as any} asChild>
-            <Text style={styles.registerLink}>Registreer hier</Text>
+            <Text style={styles.registerLink}>Register here</Text>
           </Link>
         </Text>
         </View>

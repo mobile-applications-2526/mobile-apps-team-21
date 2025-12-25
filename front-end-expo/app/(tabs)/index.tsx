@@ -62,7 +62,7 @@ export default function GroupsScreen() {
       <View style={styles.header}>
         <Text style={[styles.headerTitle, isDark && styles.headerTitleDark]}>Chats</Text>
         <TouchableOpacity style={styles.newButton} onPress={handleAddGroup}>
-          <Text style={styles.newButtonText}>+ Groep</Text>
+          <Text style={styles.newButtonText}>+ Group</Text>
         </TouchableOpacity>
       </View>
       
@@ -73,7 +73,7 @@ export default function GroupsScreen() {
           renderItem={renderGroup}
           contentContainerStyle={styles.listPad}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          ListEmptyComponent={<Text style={[styles.empty, isDark && styles.emptyDark]}>Geen groepen gevonden.</Text>}
+          ListEmptyComponent={<Text style={[styles.empty, isDark && styles.emptyDark]}>No groups found.</Text>}
         />
       )}
     </SafeAreaView>
