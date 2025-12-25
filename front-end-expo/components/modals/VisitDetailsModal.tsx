@@ -65,7 +65,6 @@ const VisitDetailsModal: React.FC<Props> = ({
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
-      allowsEditing: true,
       quality: 0.7,
       base64: true,
     });
@@ -85,7 +84,6 @@ const VisitDetailsModal: React.FC<Props> = ({
     }
 
     const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
       quality: 0.7,
       base64: true,
     });
