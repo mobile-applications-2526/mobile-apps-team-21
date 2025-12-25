@@ -1,12 +1,11 @@
 import { useState, useCallback } from 'react';
-import { StyleSheet, TouchableOpacity, ScrollView, Modal, Alert } from 'react-native';
-import { Text, View } from '@/components/Themed';
+import { StyleSheet, TouchableOpacity, ScrollView, Modal, Alert, View, Text, useColorScheme } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/components/AuthContext';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { UserService } from '@/services/userService';
 import { RawUser } from '@/types';
 import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ProfileScreen() {
@@ -56,18 +55,24 @@ export default function ProfileScreen() {
     setShowNotImplementedModal(true);
   };
 
-  const cardBackgroundColor = colorScheme === 'dark' ? '#1c1c1e' : '#ffffff';
-  const screenBackgroundColor = colorScheme === 'dark' ? '#000000' : '#f9fafb';
-  const textColor = Colors[colorScheme ?? 'light'].text;
+  const isDark = colorScheme === 'dark';
+  const cardBackgroundColor = isDark ? '#1f2933' : '#ffffff';
+  const textColor = isDark ? '#ffffff' : '#1f2933';
   const tintColor = Colors[colorScheme ?? 'light'].tint;
-  const borderColor = Colors[colorScheme ?? 'light'].tabIconDefault;
+  const borderColor = isDark ? '#2d3a47' : '#e5e7eb';
 
   return (
-    <ScrollView style={[styles.scrollView, { backgroundColor: screenBackgroundColor }]} contentContainerStyle={styles.scrollContent}>
+    <SafeAreaView style={[styles.container, isDark && styles.containerDark]} edges={['top']}>
+      {/* Page Header - matching Chats style */}
+      <View style={styles.pageHeader}>
+        <Text style={[styles.pageHeaderTitle, isDark && styles.pageHeaderTitleDark]}>Profile</Text>
+      </View>
       
-      {/* Header */}
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+      
+      {/* Profile Card */}
       <View style={[styles.header, { backgroundColor: cardBackgroundColor }]}>
-        <View style={styles.avatarContainer}>
+        <View style={[styles.avatarContainer, { backgroundColor: '#a5d6a7' }]}>
             <Text style={styles.avatarText}>
                 {user?.firstName ? user.firstName[0].toUpperCase() : ''}{user?.name ? user.name[0].toUpperCase() : ''}
             </Text>
@@ -78,14 +83,14 @@ export default function ProfileScreen() {
         
         <TouchableOpacity 
             style={[styles.editProfileBtn, { backgroundColor: tintColor }]}
-            onPress={() => router.push('../edit-profile')}
+            onPress={() => router.push('/profile/edit-profile')}
         >
             <Text style={styles.editProfileText}>Edit Profile</Text>
         </TouchableOpacity>
       </View>
 
       {/* Account Section */}
-      <Text style={styles.sectionHeader}>Account</Text>
+      <Text style={[styles.sectionHeader, { color: colorScheme === 'dark' ? '#999' : '#666' }]}>Account</Text>
       <View style={[styles.sectionContainer, { backgroundColor: cardBackgroundColor, borderColor: borderColor }]}>
         <View style={styles.row}>
             <View style={styles.rowLeft}>
@@ -100,7 +105,7 @@ export default function ProfileScreen() {
             </View>
         </View>
         <View style={[styles.separator, { backgroundColor: borderColor }]} />
-        <TouchableOpacity style={styles.row} onPress={() => router.push('../privacy')}>
+        <TouchableOpacity style={styles.row} onPress={() => router.push('/profile/privacy')}>
             <View style={styles.rowLeft}>
                 <Ionicons name="shield-checkmark-outline" size={24} color={textColor} />
                 <Text style={[styles.rowLabel, { color: textColor }]}>Privacy</Text>
@@ -110,25 +115,25 @@ export default function ProfileScreen() {
       </View>
 
       {/* Statistics Section */}
-      <Text style={styles.sectionHeader}>Statistics</Text>
+      <Text style={[styles.sectionHeader, { color: colorScheme === 'dark' ? '#999' : '#666' }]}>Statistics</Text>
       <View style={[styles.sectionContainer, { backgroundColor: cardBackgroundColor, borderColor: borderColor }]}>
-        <TouchableOpacity style={styles.row} onPress={() => router.push('../visited-restaurants')}>
-            <View style={styles.rowLeft}>
+        <TouchableOpacity style={styles.row} onPress={() => router.push('/profile/visited-restaurants')}>
+            <View style={[styles.rowLeft, { backgroundColor: 'transparent' }]}>
                 <Ionicons name="restaurant-outline" size={24} color={textColor} />
                 <Text style={[styles.rowLabel, { color: textColor }]}>Total restaurants visited</Text>
             </View>
-            <View style={styles.rowRight}>
+            <View style={[styles.rowRight, { backgroundColor: 'transparent' }]}>
                 <Text style={styles.countText}>{user?.visitedRestaurantsCount || 0}</Text>
                 <Ionicons name="chevron-forward" size={20} color="#ccc" />
             </View>
         </TouchableOpacity>
         <View style={[styles.separator, { backgroundColor: borderColor }]} />
-        <TouchableOpacity style={styles.row} onPress={() => router.push('../favorite-restaurants')}>
-            <View style={styles.rowLeft}>
+        <TouchableOpacity style={styles.row} onPress={() => router.push('/profile/favorite-restaurants')}>
+            <View style={[styles.rowLeft, { backgroundColor: 'transparent' }]}>
                 <Ionicons name="heart-outline" size={24} color={textColor} />
-                <Text style={[styles.rowLabel, { color: textColor }]}>Favourite restaurants</Text>
+                <Text style={[styles.rowLabel, { color: textColor }]}>Favorite restaurants</Text>
             </View>
-            <View style={styles.rowRight}>
+            <View style={[styles.rowRight, { backgroundColor: 'transparent' }]}>
                 <Text style={styles.countText}>{user?.favoriteRestaurantsCount || 0}</Text>
                 <Ionicons name="chevron-forward" size={20} color="#ccc" />
             </View>
@@ -136,10 +141,10 @@ export default function ProfileScreen() {
       </View>
 
       {/* Help Section */}
-      <Text style={styles.sectionHeader}>Help</Text>
+      <Text style={[styles.sectionHeader, { color: colorScheme === 'dark' ? '#999' : '#666' }]}>Help</Text>
       <View style={[styles.sectionContainer, { backgroundColor: cardBackgroundColor, borderColor: borderColor }]}>
-        <TouchableOpacity style={styles.row} onPress={() => router.push('../help-support')}>
-            <View style={styles.rowLeft}>
+        <TouchableOpacity style={styles.row} onPress={() => router.push('/profile/help-support')}>
+            <View style={[styles.rowLeft, { backgroundColor: 'transparent' }]}>
                 <Ionicons name="help-circle-outline" size={24} color={textColor} />
                 <Text style={[styles.rowLabel, { color: textColor }]}>Help & Support</Text>
             </View>
@@ -174,16 +179,40 @@ export default function ProfileScreen() {
         </View>
       </Modal>
 
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: { 
+    flex: 1, 
+    backgroundColor: '#f5f7fa' 
+  },
+  containerDark: { 
+    backgroundColor: '#12181f' 
+  },
+  pageHeader: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'space-between', 
+    paddingHorizontal: 18, 
+    paddingTop: 14, 
+    paddingBottom: 8 
+  },
+  pageHeaderTitle: { 
+    fontSize: 24, 
+    fontWeight: '700', 
+    color: '#1f2933' 
+  },
+  pageHeaderTitleDark: { 
+    color: '#ffffff' 
+  },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    padding: 20,
+    padding: 18,
     paddingBottom: 40,
   },
   header: {
@@ -201,7 +230,6 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#a5d6a7', // Light green
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
@@ -229,11 +257,13 @@ const styles = StyleSheet.create({
   editProfileBtn: {
     paddingVertical: 10,
     paddingHorizontal: 30,
-    borderRadius: 20,
+    borderRadius: 10,
+    width: '100%',
   },
   editProfileText: {
     color: '#fff',
     fontWeight: '600',
+    textAlign: 'center',
   },
   sectionHeader: {
     fontSize: 16,

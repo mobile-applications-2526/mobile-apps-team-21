@@ -5,10 +5,10 @@ import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useAuth } from '@/components/AuthContext';
-import { Group } from '@/services/groupChatService';
+import { Group, leaveGroup } from '@/services/groupChatService';
 import { useChatWebSocket, OptimisticMessage } from '@/hooks/useChatWebSocket';
-import { buildApiUrl } from '@/utils/apiConfig';
 import RestaurantOverviewModal from '@/components/modals/RestaurantOverviewModal';
+import LoadingScreen from '@/components/LoadingScreen';
 
 export default function ChatScreen() {
   const router = useRouter();
@@ -57,7 +57,7 @@ export default function ChatScreen() {
     );
   };
 
-  if (!chatGroup) return <ActivityIndicator style={{flex:1}} />;
+  if (!chatGroup) return <LoadingScreen />;
 
   const openRestaurantsModal = () => {
     setModalVisible(true)
@@ -70,17 +70,7 @@ export default function ChatScreen() {
   // Call backend to mark this user's last-visited when leaving the chat
   const leaveGroupBackend = async () => {
     if (!chatGroup || !token) return;
-    try {
-      await fetch(buildApiUrl(`/groups/${chatGroup.id}/leave`), {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-    } catch (e) {
-      console.warn('Failed to call leave endpoint', e);
-    }
+    await leaveGroup(chatGroup.id, token);
   };
 
   // Ensure we call leave on unmount/navigation away

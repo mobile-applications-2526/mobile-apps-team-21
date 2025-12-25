@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import be.ucll.EatUp_Team21.controller.dto.GroupRequest;
 import be.ucll.EatUp_Team21.controller.dto.GroupResponse;
-import be.ucll.EatUp_Team21.controller.dto.SuggestedRestaurantResponse;
 import be.ucll.EatUp_Team21.model.Group;
 import be.ucll.EatUp_Team21.model.Message;
 import be.ucll.EatUp_Team21.model.Restaurant;
@@ -19,7 +18,6 @@ import be.ucll.EatUp_Team21.model.User;
 import be.ucll.EatUp_Team21.repository.GroupRepository;
 import be.ucll.EatUp_Team21.repository.MessageRepository;
 import be.ucll.EatUp_Team21.repository.SuggestedRestaurantRepository;
-import be.ucll.EatUp_Team21.repository.UserRepository;
 
 @Service
 public class GroupService {

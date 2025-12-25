@@ -1,5 +1,5 @@
 import { buildApiUrl, API_BASE_URL } from '@/utils/apiConfig';
-import { RawUser, RestRelResponse } from '@/types';
+import { RawUser, RestRelResponse, RestaurantStatus } from '@/types';
 
 export type LoginResponse = { token: string };
 export type RegisterResponse = { id: string; token: string };
@@ -86,5 +86,69 @@ export const UserService = {
     });
     if (!res.ok) throw new Error('Failed to fetch favorite restaurants');
     return handleJson<RestRelResponse[]>(res);
+  },
+
+  async toggleFavorite(restaurantId: string, token: string): Promise<{ isFavorite: boolean }> {
+    const res = await fetch(buildApiUrl(`/users/restaurants/${restaurantId}/favorite`), {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('Failed to toggle favorite');
+    return handleJson<{ isFavorite: boolean }>(res);
+  },
+
+  async toggleVisited(restaurantId: string, token: string): Promise<{ visitDate: string }> {
+    const res = await fetch(buildApiUrl(`/users/restaurants/${restaurantId}/visited`), {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('Failed to toggle visited');
+    return handleJson<{ visitDate: string }>(res);
+  },
+
+  async getRestaurantStatus(restaurantId: string, token: string): Promise<RestaurantStatus> {
+    const res = await fetch(buildApiUrl(`/users/restaurants/${restaurantId}/status`), {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('Failed to get restaurant status');
+    return handleJson<RestaurantStatus>(res);
+  },
+
+  async setRating(restaurantId: string, rating: number, token: string): Promise<{ rating: number }> {
+    const res = await fetch(buildApiUrl(`/users/restaurants/${restaurantId}/rating`), {
+      method: 'POST',
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ rating })
+    });
+    if (!res.ok) throw new Error('Failed to set rating');
+    return handleJson<{ rating: number }>(res);
+  },
+
+  async updateProfile(
+    email: string,
+    token: string,
+    data: {
+      name?: string;
+      firstName?: string;
+      phoneNumber?: string;
+      password?: string;
+    }
+  ): Promise<RawUser> {
+    const res = await fetch(buildApiUrl(`/users?email=${encodeURIComponent(email)}`), {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        ...data,
+        email
+      })
+    });
+    if (!res.ok) throw new Error('Failed to update profile');
+    return handleJson<RawUser>(res);
   },
 };

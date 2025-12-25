@@ -2,7 +2,7 @@ package be.ucll.EatUp_Team21.controller.dto;
 
 public record UserResponse(
     String name,
-    String firstname,
+    String firstName,
     String phoneNumber,
     String email,
     int visitedRestaurantsCount,

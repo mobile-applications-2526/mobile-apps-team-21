@@ -9,10 +9,18 @@ export type RawUser = {
 };
 
 export type RestRelResponse = {
+  restaurantId: string;
   restaurantName: string;
   restaurantAddress: string;
   visitDate: string;
   isFavorite: boolean;
+  rating: number | null;
+};
+
+export type RestaurantStatus = {
+  isFavorite: boolean;
+  visitDate: string;
+  rating: number | null;
 };
 
 export type RawGroupResponse = {
