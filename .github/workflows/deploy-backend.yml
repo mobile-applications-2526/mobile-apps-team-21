@@ -1,0 +1,86 @@
+# GitHub Actions workflow for deploying Spring Boot backend to Azure App Service
+# Deploys to production when pushing to main branch
+
+name: Deploy Backend to Azure
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'back-end/**'
+      - '.github/workflows/deploy-backend.yml'
+  
+  # Allows manual deployment from GitHub Actions tab
+  workflow_dispatch:
+
+env:
+  JAVA_VERSION: '21'
+  WORKING_DIRECTORY: './back-end'
+
+jobs:
+  # ===========================================
+  # BUILD & TEST
+  # ===========================================
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: mvn clean package -DskipTests
+
+      - name: Run tests
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: mvn test
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-app
+          path: '${{ env.WORKING_DIRECTORY }}/target/*.jar'
+          retention-days: 1
+
+  # ===========================================
+  # DEPLOY TO AZURE
+  # ===========================================
+  deploy:
+    name: Deploy to Azure
+    runs-on: ubuntu-latest
+    needs: build
+    
+    environment:
+      name: production
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: java-app
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          package: '*.jar'
+
+      - name: Logout from Azure
+        run: az logout
