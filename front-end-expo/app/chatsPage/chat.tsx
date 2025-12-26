@@ -1,14 +1,14 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator, useColorScheme } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useAuth } from '@/components/AuthContext';
-import { Group } from '@/services/groupChatService';
+import { Group, leaveGroup } from '@/services/groupChatService';
 import { useChatWebSocket, OptimisticMessage } from '@/hooks/useChatWebSocket';
-import { buildApiUrl } from '@/utils/apiConfig';
 import RestaurantOverviewModal from '@/components/modals/RestaurantOverviewModal';
+import LoadingScreen from '@/components/LoadingScreen';
 
 export default function ChatScreen() {
   const router = useRouter();
@@ -57,7 +57,7 @@ export default function ChatScreen() {
     );
   };
 
-  if (!chatGroup) return <ActivityIndicator style={{flex:1}} />;
+  if (!chatGroup) return <LoadingScreen />;
 
   const openRestaurantsModal = () => {
     setModalVisible(true)
@@ -70,17 +70,7 @@ export default function ChatScreen() {
   // Call backend to mark this user's last-visited when leaving the chat
   const leaveGroupBackend = async () => {
     if (!chatGroup || !token) return;
-    try {
-      await fetch(buildApiUrl(`/groups/${chatGroup.id}/leave`), {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-    } catch (e) {
-      console.warn('Failed to call leave endpoint', e);
-    }
+    await leaveGroup(chatGroup.id, token);
   };
 
   // Ensure we call leave on unmount/navigation away
@@ -100,10 +90,14 @@ export default function ChatScreen() {
             <TouchableOpacity onPress={async () => { leaveGroupBackend(); router.back(); }} style={styles.backTouch}>
               <MaterialIcons name="arrow-back" size={24} color={isDark ? '#fff' : '#1f2933'} />
             </TouchableOpacity>
-            <View style={styles.chatHeaderText}>
+            <TouchableOpacity 
+              style={styles.chatHeaderText} 
+              onPress={() => router.push({ pathname: '/chatsPage/group-members', params: { groupId: chatGroup.id, groupName: chatGroup.name } })}
+              activeOpacity={0.7}
+            >
               <Text style={[styles.chatTitle, isDark && styles.headerTitleDark]} numberOfLines={1}>{chatGroup.name}</Text>
-              <Text style={[styles.memberCount, isDark && styles.memberCountDark]}>{chatGroup.memberNames.length} members</Text>
-            </View>
+              <Text style={[styles.memberCount, isDark && styles.memberCountDark]}>{chatGroup.memberNames.length} {chatGroup.memberNames.length === 1 ? 'member' : 'members'}</Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => openRestaurantsModal()}>
               <MaterialIcons name="restaurant" size={24} color={isDark ? '#fff' : '#1f2933'} />
             </TouchableOpacity>
@@ -111,7 +105,7 @@ export default function ChatScreen() {
         </View>
 
         {loading ? (
-          <ActivityIndicator style={{ marginTop: 30, flex: 1 }} />
+          <LoadingScreen style={{ marginTop: 30 }} />
         ) : (
           <FlatList
             inverted
@@ -127,7 +121,7 @@ export default function ChatScreen() {
 
         <View style={[styles.sendRow, isDark && styles.sendRowDark]}>
           <TextInput
-            placeholder="Bericht"
+            placeholder="Message"
             placeholderTextColor={isDark ? '#8894a0' : '#99a1ab'}
             value={messageInput}
             onChangeText={setMessageInput}

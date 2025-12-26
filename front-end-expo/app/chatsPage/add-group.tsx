@@ -21,7 +21,7 @@ export default function AddGroupScreen() {
 
   const handleCreate = async () => {
     if (!groupName.trim()) {
-      setError('Groepsnaam is verplicht');
+      setError('Group name is required');
       return;
     }
 
@@ -38,7 +38,7 @@ export default function AddGroupScreen() {
       await createGroup(groupName.trim(), emails, userEmail, token || undefined);
       router.back(); 
     } catch (e) {
-      setError('Kon groep niet aanmaken. Controleer je verbinding.');
+      setError('Could not create group. Check your connection.');
       setLoading(false);
     }
   };
@@ -51,21 +51,21 @@ export default function AddGroupScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <MaterialIcons name="arrow-back" size={24} color={isDark ? '#fff' : '#1f2933'} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, isDark && styles.headerTitleDark]}>Nieuwe Groep</Text>
+        <Text style={[styles.headerTitle, isDark && styles.headerTitleDark]}>New Group</Text>
         <View style={{width: 32}} />
        </View>
 
        <View style={styles.form}>
-         <Text style={[styles.label, isDark && styles.labelDark]}>Naam van de groep</Text>
+         <Text style={[styles.label, isDark && styles.labelDark]}>Group name</Text>
          <TextInput 
            style={[styles.input, isDark && styles.inputDark]} 
-           placeholder="Bijv. Project Team"
+           placeholder="e.g. Project Team"
            value={groupName}
            onChangeText={setGroupName}
            placeholderTextColor={isDark ? '#8894a0' : '#99a1ab'}
          />
 
-         <Text style={[styles.label, isDark && styles.labelDark]}>Uitnodigen (emails, komma gescheiden)</Text>
+         <Text style={[styles.label, isDark && styles.labelDark]}>Invite (emails, comma separated)</Text>
          <TextInput 
            style={[styles.input, isDark && styles.inputDark]} 
            placeholder="jan@test.com, piet@test.com"
@@ -86,7 +86,7 @@ export default function AddGroupScreen() {
            {loading ? (
              <ActivityIndicator color="#fff" />
            ) : (
-             <Text style={styles.createButtonText}>Groep Aanmaken</Text>
+             <Text style={styles.createButtonText}>Create Group</Text>
            )}
          </TouchableOpacity>
        </View>

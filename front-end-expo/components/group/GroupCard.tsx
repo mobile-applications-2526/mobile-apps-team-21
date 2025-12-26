@@ -28,7 +28,7 @@ const GroupCard: React.FC<Props> = ({ group, memberCount, lastActivity, onOpen }
         )}
       </View>
       <View style={styles.meta}>
-        <Text style={[styles.metaLine, isDark && styles.metaDark]}>{displayCount} members</Text>
+        <Text style={[styles.metaLine, isDark && styles.metaDark]}>{displayCount} {displayCount === 1 ? 'member' : 'members'}</Text>
         {lastActivity && <Text style={[styles.metaLine, styles.last, isDark && styles.metaDark]} numberOfLines={1}>Last: {lastActivity}</Text>}
       </View>
     </TouchableOpacity>

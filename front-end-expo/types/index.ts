@@ -4,6 +4,23 @@ export type RawUser = {
   firstName?: string;
   email?: string;
   phoneNumber?: string;
+  visitedRestaurantsCount?: number;
+  favoriteRestaurantsCount?: number;
+};
+
+export type RestRelResponse = {
+  restaurantId: string;
+  restaurantName: string;
+  restaurantAddress: string;
+  visitDate: string;
+  isFavorite: boolean;
+  rating: number | null;
+};
+
+export type RestaurantStatus = {
+  isFavorite: boolean;
+  visitDate: string;
+  rating: number | null;
 };
 
 export type RawGroupResponse = {
@@ -27,6 +44,12 @@ export interface Group {
   name: string;
   missedMessages: number;
   memberNames: string[];
+}
+
+export interface GroupMember {
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 export interface MessageAuthor {
@@ -74,4 +97,43 @@ export interface SuggestedRestaurant {
   lockedDate?: string | null;
   closed?: boolean;
   availabilities?: { [email: string]: string[] };
+}
+
+export interface GroupVisitResponse {
+  id: string;
+  restaurantId: string;
+  restaurantName: string;
+  restaurantAddress: string;
+  groupId: string;
+  groupName: string;
+  visitDate: string;
+  totalPrice: number | null;
+  paidByEmail: string | null;
+  paidByName: string | null;
+  cuisine: string | null;
+  hasReceipt: boolean;
+  userRating: number | null;
+}
+
+export interface UpdateGroupVisitRequest {
+  totalPrice?: number;
+  paidByEmail?: string;
+  paidByName?: string;
+  receiptImage?: string;
+}
+
+export interface FilterOptions {
+  minRating: number | null;
+  location: string;
+  cuisine: string;
+  dateFrom: string | null;
+  dateTo: string | null;
+}
+
+export interface UniqueVisitedRestaurant {
+  restaurantId: string;
+  restaurantName: string;
+  restaurantAddress: string;
+  visitDate: string | null;
+  rating: number | null;
 }

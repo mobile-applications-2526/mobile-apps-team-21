@@ -15,6 +15,7 @@ export type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const TOKEN_KEY = 'auth_token';
+const EMAIL_KEY = 'auth_email';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
@@ -24,10 +25,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     (async () => {
       try {
-        const stored = await AsyncStorage.getItem(TOKEN_KEY);
-        if (stored) {
-          setToken(stored);
+        const [storedToken, storedEmail] = await Promise.all([
+          AsyncStorage.getItem(TOKEN_KEY),
+          AsyncStorage.getItem(EMAIL_KEY),
+        ]);
+        
+        // Only restore auth state if BOTH token and email exist
+        if (storedToken && storedEmail) {
+          // Validate the token by making a simple API call
+          try {
+            await UserService.getSelf(storedEmail, storedToken);
+            // Token is valid, restore the session
+            setToken(storedToken);
+            setUserEmail(storedEmail);
+          } catch (e) {
+            // Token is invalid or expired, clear stored data
+            console.log('Stored token is invalid, clearing auth state');
+            await AsyncStorage.multiRemove([TOKEN_KEY, EMAIL_KEY]);
+          }
+        } else {
+          // Clear any partial data
+          await AsyncStorage.multiRemove([TOKEN_KEY, EMAIL_KEY]);
         }
+      } catch (e) {
+        console.error('Error restoring auth state:', e);
       } finally {
         setLoading(false);
       }
@@ -50,12 +71,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = useCallback(async (email: string, password: string) => {
     const data = await UserService.login(email, password);
     await AsyncStorage.setItem(TOKEN_KEY, data.token);
+    await AsyncStorage.setItem(EMAIL_KEY, email);
     setToken(data.token);
     setUserEmail(email);
   }, []);
 
   const logout = useCallback(() => {
-    AsyncStorage.removeItem(TOKEN_KEY);
+    AsyncStorage.multiRemove([TOKEN_KEY, EMAIL_KEY]);
     setToken(null);
     setUserEmail(null);
   }, []);

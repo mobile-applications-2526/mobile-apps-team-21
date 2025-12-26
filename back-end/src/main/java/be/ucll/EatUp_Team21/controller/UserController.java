@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.method.P;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,13 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 import be.ucll.EatUp_Team21.controller.dto.GroupResponse;
 import be.ucll.EatUp_Team21.controller.dto.RegisterRequest;
 import be.ucll.EatUp_Team21.controller.dto.RegisterResponse;
-import be.ucll.EatUp_Team21.controller.dto.UserRequest;
 import be.ucll.EatUp_Team21.controller.dto.UserResponse;
-import be.ucll.EatUp_Team21.model.User;
+import be.ucll.EatUp_Team21.controller.dto.RestRelResponse;
 import be.ucll.EatUp_Team21.service.NotificationService;
 import be.ucll.EatUp_Team21.service.UserService;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -60,6 +57,14 @@ public class UserController {
         return userService.modifySelf(req, auth.getName(), email);
     }
 
+    @GetMapping("/favorites")
+    public List<RestRelResponse> getFavoriteRestaurants(@RequestParam String email, Authentication auth) {
+        if (!email.equals(auth.getName())) {
+            throw new IllegalArgumentException("Bad Credentials for request");
+        }
+        return userService.getFavoriteRestaurants(email);
+    }
+    
     @PostMapping("/push-token")
     public ResponseEntity<?> updatePushToken(
             @RequestBody Map<String, String> body,
@@ -70,6 +75,38 @@ public class UserController {
         notificationService.updateUserPushToken(email, pushToken);
 
         return ResponseEntity.ok().body(Map.of("message", "Push token updated"));
+    }
+
+    @PostMapping("/restaurants/{restaurantId}/favorite")
+    public ResponseEntity<?> toggleFavorite(
+            @PathVariable String restaurantId,
+            Authentication auth) {
+        String email = auth.getName();
+        boolean isFavorite = userService.toggleFavorite(email, restaurantId);
+        return ResponseEntity.ok().body(Map.of("isFavorite", isFavorite));
+    }
+
+    @GetMapping("/restaurants/{restaurantId}/status")
+    public ResponseEntity<?> getRestaurantStatus(
+            @PathVariable String restaurantId,
+            Authentication auth) {
+        String email = auth.getName();
+        Map<String, Object> status = userService.getRestaurantStatus(email, restaurantId);
+        return ResponseEntity.ok().body(status);
+    }
+
+    @PostMapping("/restaurants/{restaurantId}/rating")
+    public ResponseEntity<?> setRating(
+            @PathVariable String restaurantId,
+            @RequestBody Map<String, Float> body,
+            Authentication auth) {
+        String email = auth.getName();
+        Float rating = body.get("rating");
+        if (rating == null || rating < 0 || rating > 5) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Rating must be between 0 and 5"));
+        }
+        Float newRating = userService.setRating(email, restaurantId, rating);
+        return ResponseEntity.ok().body(Map.of("rating", newRating));
     }
 
 }

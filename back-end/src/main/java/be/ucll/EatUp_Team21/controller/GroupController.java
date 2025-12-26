@@ -2,19 +2,16 @@ package be.ucll.EatUp_Team21.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import be.ucll.EatUp_Team21.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import be.ucll.EatUp_Team21.controller.dto.GroupMemberResponse;
 import be.ucll.EatUp_Team21.controller.dto.GroupRequest;
 import be.ucll.EatUp_Team21.controller.dto.GroupResponse;
 import be.ucll.EatUp_Team21.controller.dto.UserGroupRequest;
-import be.ucll.EatUp_Team21.controller.dto.UserRequest;
 import be.ucll.EatUp_Team21.model.Message;
-import be.ucll.EatUp_Team21.model.Restaurant;
-import be.ucll.EatUp_Team21.model.SuggestedRestaurant;
 import be.ucll.EatUp_Team21.controller.dto.SuggestedRestaurantResponse;
 import be.ucll.EatUp_Team21.service.GroupService;
 
@@ -52,6 +49,11 @@ public class GroupController {
     @GetMapping("/getMembers/{groupId}")
     public List<String> getGroupMembers(@PathVariable String groupId, Authentication auth) {
         return groupService.getMembersByGroupId(groupId, auth.getName());
+    }
+
+    @GetMapping("/getMemberDetails/{groupId}")
+    public List<GroupMemberResponse> getGroupMemberDetails(@PathVariable String groupId, Authentication auth) {
+        return groupService.getMemberDetailsByGroupId(groupId, auth.getName());
     }
 
     @PutMapping("/restaurant")

@@ -1,5 +1,5 @@
 import { buildApiUrl } from '@/utils/apiConfig';
-import { Group, GroupCreationResult, Message, RawGroupResponse, RawMessage, Restaurant, SuggestedRestaurant } from '@/types';
+import { Group, GroupCreationResult, GroupMember, Message, RawGroupResponse, RawMessage, Restaurant, SuggestedRestaurant } from '@/types';
 
 async function handleJson<T>(res: Response): Promise<T> {
   const text = await res.text();
@@ -53,7 +53,7 @@ function mapMessage(raw: RawMessage): Message {
 }
 
 export async function fetchGroups(userEmail: string, token?: string): Promise<Group[]> {
-  if (!userEmail) throw new Error('Geen gebruiker bekend');
+  if (!userEmail) throw new Error('No user specified');
   const res = await request(`/users/groups?email=${encodeURIComponent(userEmail)}`, undefined, token);
   const rawGroups = await handleJson<RawGroupResponse[]>(res);
   const groups = await Promise.all(rawGroups.map(async g => {
@@ -64,8 +64,8 @@ export async function fetchGroups(userEmail: string, token?: string): Promise<Gr
 }
 
 export async function createGroup(name: string, memberEmails: string[], currentUserEmail: string, token?: string): Promise<GroupCreationResult> {
-  if (!name.trim()) throw new Error('Naam is verplicht');
-  if (!currentUserEmail) throw new Error('Gebruiker vereist');
+  if (!name.trim()) throw new Error('Name is required');
+  if (!currentUserEmail) throw new Error('User required');
   const res = await request('/groups/create', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -97,7 +97,7 @@ export async function fetchMessages(group: Group, token?: string): Promise<Messa
 
 export async function sendMessage(group: Group, content: string, senderEmail: string, token?: string): Promise<void> {
   if (!content.trim()) return;
-  if (!senderEmail) throw new Error('Geen afzender');
+  if (!senderEmail) throw new Error('No sender specified');
   const encodedName = encodeURIComponent(group.name);
   const url = `/messages/${encodedName}?${new URLSearchParams({ groupName: group.name }).toString()}`;
   await request(url, {
@@ -187,4 +187,19 @@ export async function setAvailability(groupId: string, suggestionId: string, dat
   }
 }
 
-export type { Group, Message, GroupCreationResult };
+export async function leaveGroup(groupId: string, token?: string): Promise<void> {
+  if (!token) throw new Error('No authentication');
+  try {
+    await request(`/groups/${groupId}/leave`, { method: 'POST' }, token);
+  } catch (e) {
+    console.warn('Failed to call leave endpoint', e);
+  }
+}
+
+export async function fetchGroupMemberDetails(groupId: string, token?: string): Promise<GroupMember[]> {
+  if (!token) throw new Error('No authentication');
+  const res = await request(`/groups/getMemberDetails/${encodeURIComponent(groupId)}`, undefined, token);
+  return await handleJson<GroupMember[]>(res);
+}
+
+export type { Group, Message, GroupCreationResult, GroupMember };

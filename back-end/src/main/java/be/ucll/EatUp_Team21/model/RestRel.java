@@ -22,6 +22,10 @@ public class RestRel {
 
     private boolean wantsToGo = false;
 
+    private boolean isFavorite = false;
+
+    private java.time.LocalDate visitDate;
+
     public RestRel() {
     }
 
@@ -47,6 +51,22 @@ public class RestRel {
             return rating;
         }
         return -1.0f;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
+    public java.time.LocalDate getVisitDate() {
+        return visitDate;
+    }
+
+    public void setVisitDate(java.time.LocalDate visitDate) {
+        this.visitDate = visitDate;
     }
 
     public boolean getWantsToGo() {

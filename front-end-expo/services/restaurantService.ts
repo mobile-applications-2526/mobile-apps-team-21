@@ -20,7 +20,7 @@ async function request(path: string, init?: RequestInit, token?: string): Promis
 }
 
 export async function fetchRestaurants(userEmail: string, token?: string): Promise<Restaurant[]> {
-    if (!userEmail) throw new Error('Geen gebruiker bekend');
+    if (!userEmail) throw new Error('No user specified');
     const res = await request(`/restaurants`, undefined, token);
     const restaurants = await handleJson<Restaurant[]>(res);
     return restaurants

@@ -48,6 +48,7 @@ export default function TabLayout() {
         name="revisit"
         options={{
           title: 'Revisit',
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <Ionicons name="time-outline" color={color} size={24}/>
           ),
@@ -57,6 +58,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <Ionicons name="person-outline" color={color} size={24}/>
           ),

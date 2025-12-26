@@ -203,36 +203,48 @@ const toFeedback = (res: unknown, successDefault: string) => {
                     <Text style={[styles.title, dark && styles.titleDark]}>{'Recommended restaurants for ' + group.name}</Text>
 
                     {restaurants.length === 0 ? (
-                        <Text style={[styles.empty, dark && styles.emptyDark]}>No restaurants have been recommended yet.</Text>
+                        <View style={styles.emptyContainer}>
+                            <Text style={[styles.empty, dark && styles.emptyDark]}>No restaurants have been recommended yet.</Text>
+                        </View>
                     ) : (
                         <View style={styles.listWrap}>
                             {restaurants.map((s) => (
-                                <View key={s.id} style={styles.restaurantRow}>
-                                    <View style={{ flex: 1 }}>
-                                        <Text style={[styles.restaurantName, dark && styles.restaurantNameDark]}>{s.restaurant.name}</Text>
-                                        <Text style={[styles.restaurantMeta, dark && styles.restaurantMetaDark]}>{s.voters.length} vote(s)</Text>
-                                        {s.lockedDate ? (
-                                            <Text style={[styles.restaurantMeta, dark && styles.restaurantMetaDark]}>Locked date: {s.lockedDate}</Text>
-                                        ) : s.closed ? (
-                                            <Text style={[styles.restaurantMeta, dark && styles.restaurantMetaDark]}>Vote closed — pick availability</Text>
-                                        ) : null}
-                                    </View>
-                                    <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 18}}>
-                                        {s.recommenderEmail === userEmail && (
-                                            <TouchableOpacity onPress={async () => { setBusy(true); await remove(s); setBusy(false); }}>
-                                                <MaterialIcons name="remove-circle" size={24} color={dark ? '#ff9b9b' : '#ef4444'} />
-                                            </TouchableOpacity>
-                                        )}
-                                        {s.voters.includes(userEmail || '') ? (
-                                            <TouchableOpacity onPress={async () => { setBusy(true); await unvote(s); setBusy(false); }}>
-                                                <MaterialIcons name="thumb-down" size={24} color={dark ? '#ff9b9b' : '#ef4444'} />
-                                            </TouchableOpacity>
-                                        ) : (
-                                            <TouchableOpacity onPress={async () => { setBusy(true); await vote(s); setBusy(false); }}>
-                                                <MaterialIcons name="thumb-up" size={24} color={dark ? '#1bf32dff' : '#0fd51fff'} />                                            
-                                            </TouchableOpacity>
-                                        )}
-                                        { /* allow any member to pick availability once closed */ }
+                                <View key={s.id} style={[styles.restaurantCard, dark && styles.restaurantCardDark]}>
+                                    <View style={styles.restaurantContent}>
+                                        <View style={styles.textContainer}>
+                                            <Text style={[styles.restaurantName, dark && styles.restaurantNameDark]}>{s.restaurant.name}</Text>
+                                            <Text style={[styles.restaurantMeta, dark && styles.restaurantMetaDark]}>{s.voters.length} vote(s)</Text>
+                                            {s.lockedDate ? (
+                                                <Text style={[styles.restaurantMeta, dark && styles.restaurantMetaDark]}>Locked date: {s.lockedDate}</Text>
+                                            ) : s.closed ? (
+                                                <Text style={[styles.restaurantMeta, dark && styles.restaurantMetaDark]}>Vote closed — pick availability</Text>
+                                            ) : null}
+                                        </View>
+                                        <View style={styles.actions}>
+                                            {s.recommenderEmail === userEmail && (
+                                                <TouchableOpacity 
+                                                    style={[styles.actionButton, styles.removeButton]}
+                                                    onPress={async () => { setBusy(true); await remove(s); setBusy(false); }}
+                                                >
+                                                    <MaterialIcons name="remove-circle" size={22} color="#ef4444" />
+                                                </TouchableOpacity>
+                                            )}
+                                            {s.voters.includes(userEmail || '') ? (
+                                                <TouchableOpacity 
+                                                    style={[styles.actionButton, styles.unvoteButton]}
+                                                    onPress={async () => { setBusy(true); await unvote(s); setBusy(false); }}
+                                                >
+                                                    <MaterialIcons name="thumb-down" size={22} color="#ef4444" />
+                                                </TouchableOpacity>
+                                            ) : (
+                                                <TouchableOpacity 
+                                                    style={[styles.actionButton, styles.voteButton]}
+                                                    onPress={async () => { setBusy(true); await vote(s); setBusy(false); }}
+                                                >
+                                                    <MaterialIcons name="thumb-up" size={22} color="#4caf50" />
+                                                </TouchableOpacity>
+                                            )}
+                                          { /* allow any member to pick availability once closed */ }
                                         {s.closed && (
                                             <TouchableOpacity onPress={() => {
                                                 // prefill with any previously saved availabilities for this user
@@ -244,6 +256,7 @@ const toFeedback = (res: unknown, successDefault: string) => {
                                                 <MaterialIcons name="calendar-today" size={24} color={dark ? '#ffd27a' : '#f59e0b'} />
                                             </TouchableOpacity>
                                         )}
+                                        </View>
                                     </View>
                                 </View>
                             ))}
@@ -315,7 +328,7 @@ const toFeedback = (res: unknown, successDefault: string) => {
                         </Modal>
                     )}
 
-                <TouchableOpacity style={styles.cancel} onPress={handleClose} disabled={busy}>
+                <TouchableOpacity style={[styles.cancelBtn, dark && styles.cancelBtnDark]} onPress={handleClose} disabled={busy}>
                     <Text style={[styles.cancelText, dark && styles.cancelTextDark]}>Close</Text>
                 </TouchableOpacity>
 
@@ -336,29 +349,73 @@ const toFeedback = (res: unknown, successDefault: string) => {
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
-  backdropDark: { backgroundColor: 'rgba(0,0,0,0.6)' },
+  backdropDark: { backgroundColor: 'rgba(0,0,0,0.7)' },
   card: {
     width: '100%',
     maxHeight: '80%',
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: '#f5f7fa',
+    borderRadius: 16,
+    padding: 20,
   },
-  cardDark: { backgroundColor: '#0b1114' },
-  title: { fontSize: 18, fontWeight: '700', marginBottom: 12 },
-  titleDark: { color: '#eef2f7' },
-  empty: { color: '#6b7280' },
+  cardDark: { backgroundColor: '#12181f' },
+  title: { 
+    fontSize: 20, 
+    fontWeight: '700', 
+    marginBottom: 16,
+    color: '#1f2933',
+  },
+  titleDark: { color: '#ffffff' },
+  emptyContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  empty: { 
+    color: '#6b7280',
+    fontSize: 15,
+  },
   emptyDark: { color: '#94a3b8' },
-  listWrap: { marginBottom: 8 },
-  restaurantRow: { paddingVertical: 12, paddingHorizontal: 6, borderBottomWidth: 1, borderBottomColor: '#eceff1', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  restaurantName: { fontSize: 16, color: '#111827' },
-  restaurantNameDark: { color: '#e6eef6' },
-  restaurantMeta: { fontSize: 12, color: '#6b7280' },
+  listWrap: { 
+    gap: 12,
+    marginBottom: 8,
+  },
+  restaurantCard: {
+    backgroundColor: '#ffffff',
+    padding: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  restaurantCardDark: {
+    backgroundColor: '#1f2933',
+  },
+  restaurantContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  textContainer: {
+    flex: 1,
+    marginRight: 12,
+  },
+  restaurantName: { 
+    fontSize: 17, 
+    fontWeight: '600',
+    color: '#1f2933',
+    marginBottom: 4,
+  },
+  restaurantNameDark: { color: '#ffffff' },
+  restaurantMeta: { 
+    fontSize: 14, 
+    color: '#6b7280',
+  },
   restaurantMetaDark: { color: '#94a3b8' },
         dateRow: { paddingVertical: 10, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: '#e6eef6' },
         dateSelected: { backgroundColor: '#e6f7e6' },
@@ -379,4 +436,41 @@ const styles = StyleSheet.create({
   cancelTextDark: { color: '#ff9b9b' },
   forText: { color: '#0fd51fff', fontWeight: '700' },
   forTextDark: { color: '#1bf32dff' }
+  actions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  actionButton: {
+    padding: 8,
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  voteButton: {
+    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+  },
+  unvoteButton: {
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+  },
+  removeButton: {
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+  },
+  cancelBtn: { 
+    marginTop: 16, 
+    paddingVertical: 14, 
+    alignItems: 'center',
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderRadius: 12,
+  },
+  cancelBtnDark: {
+    backgroundColor: 'rgba(239, 68, 68, 0.15)',
+  },
+  cancelText: { 
+    color: '#ef4444', 
+    fontWeight: '700',
+    fontSize: 16,
+  },
 });

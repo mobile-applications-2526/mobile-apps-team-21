@@ -56,25 +56,25 @@ export default function RegisterScreen() {
       enableAutomaticScroll={true}
     >
       <View style={[styles.page, { backgroundColor: theme.background }]}>
-        <Text style={[styles.title, { color: theme.text }]}>Registreren</Text>
-        <Text style={[styles.subtitle, { color: theme.tabIconDefault }]}>Maak je Eat Up account aan</Text>
+        <Text style={[styles.title, { color: theme.text }]}>Register</Text>
+        <Text style={[styles.subtitle, { color: theme.tabIconDefault }]}>Create your Eat Up account</Text>
 
         <View style={[styles.card, colorScheme === 'dark' ? styles.cardDark : null]}>
           <View style={styles.row}>
             <View style={[styles.col, { marginRight: 8 }]}>
               <FormField
-                label="Voornaam"
+                label="First name"
                 value={firstName}
                 onChangeText={setFirstName}
-                placeholder="Voornaam"
+                placeholder="First name"
               />
             </View>
             <View style={[styles.col, { marginLeft: 8 }]}>
               <FormField
-                label="Naam"
+                label="Last name"
                 value={name}
                 onChangeText={setName}
-                placeholder="Naam"
+                placeholder="Last name"
               />
             </View>
           </View>
@@ -83,33 +83,33 @@ export default function RegisterScreen() {
             label="E-mail"
             value={email}
             onChangeText={setEmail}
-            placeholder="jouw@email.com"
+            placeholder="your@email.com"
             keyboardType="email-address"
             autoCapitalize="none"
           />
           <FormField
-            label="Telefoonnummer"
+            label="Phone number"
             value={phoneNumber}
             onChangeText={setPhoneNumber}
-            placeholder="bv. 0470 12 34 56"
+            placeholder="e.g. 0470 12 34 56"
             keyboardType="phone-pad"
           />
           <FormField
-            label="Wachtwoord"
+            label="Password"
             value={password}
             onChangeText={setPassword}
-            placeholder="wachtwoord"
+            placeholder="password"
             secureTextEntry
           />
 
           {error && <Text style={styles.error}>{error}</Text>}
 
-          <LoadingButton title="Account aanmaken" loading={submitting} onPress={onSubmit} />
+          <LoadingButton title="Create account" loading={submitting} onPress={onSubmit} />
 
           <Text style={[styles.register, colorScheme === 'dark' ? styles.textDark : null]}>
-            Heb je al een account?{' '}
+            Already have an account?{' '}
             <Link href={"/login" as any} asChild>
-              <Text style={styles.registerLink}>Inloggen</Text>
+              <Text style={styles.registerLink}>Log in</Text>
             </Link>
           </Text>
         </View>
