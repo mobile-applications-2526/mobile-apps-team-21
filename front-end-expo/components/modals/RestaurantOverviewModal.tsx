@@ -1,11 +1,11 @@
 import { Group, SuggestedRestaurant } from "@/types";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Animated, Easing, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Easing, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAuth } from "../AuthContext";
 import { useFocusEffect } from "expo-router";
-import { fetchRecommendedRestaurants, removeSuggestion, unvoteSuggestion, voteSuggestion } from "@/services/groupChatService";
+import { fetchRecommendedRestaurants, removeSuggestion, unvoteSuggestion, voteSuggestion, setAvailability } from "@/services/groupChatService";
 import Feedback from "../Feedback";
-import Foundation from '@expo/vector-icons/Foundation';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 type Props = {
     visible: boolean;
@@ -31,6 +31,29 @@ export default function RestaurantOverviewModal({
     const [refreshing, setRefreshing] = useState(false)
 
     const [feedback, setFeedback] = useState<{ message: string; type: "success" | "error" } | null>(null);
+    const [availabilityModalOpen, setAvailabilityModalOpen] = useState(false);
+    const [selectedSuggestion, setSelectedSuggestion] = useState<SuggestedRestaurant | null>(null);
+    const [selectedDates, setSelectedDates] = useState<string[]>([]);
+
+    function generateNextDays(days: number) {
+        const arr: { iso: string; label: string }[] = [];
+        const today = new Date();
+        for (let i = 0; i < days; i++) {
+            const d = new Date(today);
+            d.setDate(today.getDate() + i);
+            const iso = d.toISOString().slice(0, 10);
+            const label = d.toLocaleDateString();
+            arr.push({ iso, label });
+        }
+        return arr;
+    }
+
+    function toggleSelectDate(iso: string) {
+        setSelectedDates(prev => {
+            if (prev.includes(iso)) return prev.filter(d => d !== iso);
+            return [...prev, iso];
+        });
+    }
 
     useEffect(() => {
         if (visible) {
@@ -188,26 +211,108 @@ const toFeedback = (res: unknown, successDefault: string) => {
                                     <View style={{ flex: 1 }}>
                                         <Text style={[styles.restaurantName, dark && styles.restaurantNameDark]}>{s.restaurant.name}</Text>
                                         <Text style={[styles.restaurantMeta, dark && styles.restaurantMetaDark]}>{s.voters.length} vote(s)</Text>
+                                        {s.lockedDate ? (
+                                            <Text style={[styles.restaurantMeta, dark && styles.restaurantMetaDark]}>Locked date: {s.lockedDate}</Text>
+                                        ) : s.closed ? (
+                                            <Text style={[styles.restaurantMeta, dark && styles.restaurantMetaDark]}>Vote closed — pick availability</Text>
+                                        ) : null}
                                     </View>
                                     <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 18}}>
                                         {s.recommenderEmail === userEmail && (
                                             <TouchableOpacity onPress={async () => { setBusy(true); await remove(s); setBusy(false); }}>
-                                                <Foundation name="minus-circle" size={24} color={dark ? '#ff9b9b' : '#ef4444'} />
+                                                <MaterialIcons name="remove-circle" size={24} color={dark ? '#ff9b9b' : '#ef4444'} />
                                             </TouchableOpacity>
                                         )}
                                         {s.voters.includes(userEmail || '') ? (
                                             <TouchableOpacity onPress={async () => { setBusy(true); await unvote(s); setBusy(false); }}>
-                                                <Foundation name="dislike" size={24} color={dark ? '#ff9b9b' : '#ef4444'} />
+                                                <MaterialIcons name="thumb-down" size={24} color={dark ? '#ff9b9b' : '#ef4444'} />
                                             </TouchableOpacity>
                                         ) : (
                                             <TouchableOpacity onPress={async () => { setBusy(true); await vote(s); setBusy(false); }}>
-                                                <Foundation name="like" size={24} color={dark ? '#1bf32dff' : '#0fd51fff'} />                                            
+                                                <MaterialIcons name="thumb-up" size={24} color={dark ? '#1bf32dff' : '#0fd51fff'} />                                            
+                                            </TouchableOpacity>
+                                        )}
+                                        { /* allow any member to pick availability once closed */ }
+                                        {s.closed && (
+                                            <TouchableOpacity onPress={() => {
+                                                // prefill with any previously saved availabilities for this user
+                                                const saved: string[] = (s as any).availabilities?.[userEmail || ''] ?? [];
+                                                setSelectedSuggestion(s);
+                                                setSelectedDates(saved || []);
+                                                setAvailabilityModalOpen(true);
+                                            }}>
+                                                <MaterialIcons name="calendar-today" size={24} color={dark ? '#ffd27a' : '#f59e0b'} />
                                             </TouchableOpacity>
                                         )}
                                     </View>
                                 </View>
                             ))}
                         </View>
+                    )}
+
+                    {/* Availability picker modal (inline) */}
+                    {availabilityModalOpen && selectedSuggestion && (
+                        <Modal transparent animationType="fade" visible={true} onRequestClose={() => setAvailabilityModalOpen(false)}>
+                            <View style={[styles.backdrop, dark && styles.backdropDark]}>
+                                <View style={[styles.card, dark && styles.cardDark]}>
+                                    <Text style={[styles.title, dark && styles.titleDark]}>Pick available dates for {selectedSuggestion.restaurant.name}</Text>
+                                    <Text style={[styles.restaurantMeta, dark && styles.restaurantMetaDark]}>Select one or more dates</Text>
+                                    {/* Calendar grid: 7 columns, show next 14 days */}
+                                    <View style={{ marginTop: 8 }}>
+                                        <View style={styles.weekHeader}>
+                                            {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(w => (
+                                                <Text key={w} style={[styles.weekday, dark && styles.weekdayDark]}>{w}</Text>
+                                            ))}
+                                        </View>
+                                        <View style={styles.calendarGrid}>
+                                            {generateNextDays(28).map((d, idx) => {
+                                                const dt = new Date(d.iso);
+                                                const dayNum = dt.getDate();
+                                                const selected = selectedDates.includes(d.iso);
+                                                return (
+                                                        <TouchableOpacity key={d.iso} onPress={() => toggleSelectDate(d.iso)} style={[styles.calendarCell, selected ? styles.calendarCellSelected : null]}>
+                                                            <Text style={[
+                                                                styles.calendarDayNum,
+                                                                dark && styles.calendarDayNumDark,
+                                                                selected && styles.calendarDayNumSelected
+                                                            ]}>{dayNum}</Text>
+                                                            <Text style={[
+                                                                styles.calendarMonth,
+                                                                dark && styles.calendarMonthDark,
+                                                                selected && styles.calendarMonthSelected
+                                                            ]}>{dt.toLocaleDateString(undefined, { month: 'short' })}</Text>
+                                                        </TouchableOpacity>
+                                                )
+                                            })}
+                                        </View>
+                                    </View>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 12 }}>
+                                        <TouchableOpacity onPress={() => setAvailabilityModalOpen(false)} style={styles.cancel}>
+                                            <Text style={[styles.cancelText, dark && styles.cancelTextDark]}>Cancel</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={async () => {
+                                            if (!selectedDates || selectedDates.length === 0) {
+                                                setFeedback({ message: 'Select at least one date', type: 'error' });
+                                                return;
+                                            }
+                                            try {
+                                                setBusy(true);
+                                                const res = await setAvailability(group.id, selectedSuggestion.id, selectedDates, token || undefined);
+                                                setFeedback(toFeedback(res, 'Availability saved'));
+                                                await loadRestaurants();
+                                            } catch (e) {
+                                                setFeedback({ message: e instanceof Error ? e.message : 'Save failed', type: 'error' });
+                                            } finally {
+                                                setBusy(false);
+                                                setAvailabilityModalOpen(false);
+                                            }
+                                        }} style={styles.cancel}>
+                                            <Text style={[styles.forText, dark && styles.forTextDark]}>{selectedDates.length === 0 ? 'Save' : 'Save'}</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                        </Modal>
                     )}
 
                 <TouchableOpacity style={styles.cancel} onPress={handleClose} disabled={busy}>
@@ -255,6 +360,20 @@ const styles = StyleSheet.create({
   restaurantNameDark: { color: '#e6eef6' },
   restaurantMeta: { fontSize: 12, color: '#6b7280' },
   restaurantMetaDark: { color: '#94a3b8' },
+        dateRow: { paddingVertical: 10, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: '#e6eef6' },
+        dateSelected: { backgroundColor: '#e6f7e6' },
+        weekHeader: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 4 },
+        weekday: { width: 40, textAlign: 'center', color: '#6b7280', fontSize: 12 },
+        weekdayDark: { color: '#94a3b8' },
+        calendarGrid: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 6 },
+        calendarCell: { width: '14.28%', alignItems: 'center', paddingVertical: 8, borderRadius: 6 },
+        calendarCellSelected: { backgroundColor: '#e6f7e6' },
+        calendarDayNum: { fontSize: 16, color: '#111827' },
+        calendarDayNumDark: { color: '#e6eef6' },
+        calendarMonth: { fontSize: 10, color: '#6b7280' },
+        calendarMonthDark: { color: '#94a3b8' },
+        calendarDayNumSelected: { color: '#0fd51fff', fontWeight: '700' },
+        calendarMonthSelected: { color: '#0fd51fff', fontWeight: '700' },
   cancel: { marginTop: 12, paddingVertical: 10, alignItems: 'center' },
   cancelText: { color: '#ef4444', fontWeight: '700' },
   cancelTextDark: { color: '#ff9b9b' },

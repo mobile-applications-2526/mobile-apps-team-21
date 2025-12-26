@@ -23,7 +23,12 @@ public class PushNotificationController {
      * Call this method when voting threshold is reached
      */
     public void sendPushNotification(List<String> expoPushTokens, String title, String body, Map<String, Object> data) {
-        List<Map<String, Object>> messages = new ArrayList<>();
+        if (expoPushTokens == null || expoPushTokens.isEmpty()) return;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Accept", "application/json");
+        headers.set("Accept-Encoding", "gzip, deflate");
 
         for (String token : expoPushTokens) {
             Map<String, Object> message = new HashMap<>();
@@ -33,24 +38,15 @@ public class PushNotificationController {
             message.put("body", body);
             message.put("data", data != null ? data : new HashMap<>());
             message.put("priority", "high");
-            
-            messages.add(message);
-        }
 
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("Accept", "application/json");
-            headers.set("Accept-Encoding", "gzip, deflate");
-
-            HttpEntity<List<Map<String, Object>>> request = new HttpEntity<>(messages, headers);
-            
-            ResponseEntity<String> response = restTemplate.postForEntity(EXPO_PUSH_URL, request, String.class);
-            
-            System.out.println("Push notification sent successfully: " + response.getBody());
-        } catch (Exception e) {
-            System.err.println("Failed to send push notification: " + e.getMessage());
-            e.printStackTrace();
+            try {
+                HttpEntity<Map<String, Object>> request = new HttpEntity<>(message, headers);
+                ResponseEntity<String> response = restTemplate.postForEntity(EXPO_PUSH_URL, request, String.class);
+                System.out.println("Push sent to " + token + ": " + response.getStatusCode());
+            } catch (Exception e) {
+                System.err.println("Failed to send push to " + token + ": " + e.getMessage());
+                // continue sending to other tokens
+            }
         }
     }
 

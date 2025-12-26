@@ -1,5 +1,6 @@
 package be.ucll.EatUp_Team21.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -219,6 +220,9 @@ public class GroupService {
                 .map(User::getEmail)
                 .collect(Collectors.toList());
 
+        // Do nothing if suggestion is null
+        if (suggestion == null) return;
+
         // Check if threshold is reached
         if (notificationService.checkVotingThreshold(
                 suggestion.getVoters().size(),
@@ -230,7 +234,113 @@ public class GroupService {
                     memberEmails,
                     suggestion.getVoters().size(),
                     memberEmails.size());
+            // mark suggestion as closed so we don't spam further notifications
+            suggestion.setClosed(true);
+            suggestedRestaurantRepository.save(suggestion);
         }
+    }
+
+    /**
+     * Set availability (dates) for the authenticated user for a specific suggestion.
+     * Expects date strings in ISO format (yyyy-MM-dd).
+     */
+    public String setAvailability(String groupId, String suggestionId, String userEmail, List<String> dateStrings) {
+        if (!userService.userExists(userEmail))
+            throw new IllegalArgumentException("User does not exist");
+        if (!userInGroup(groupId, userEmail))
+            throw new IllegalArgumentException("User is not a member of this group.");
+
+        Group group = getGroupById(groupId);
+        SuggestedRestaurant target = null;
+        for (SuggestedRestaurant s : group.getSuggestedRestaurants()) {
+            if (s.getId() != null && s.getId().equals(suggestionId)) {
+                target = s;
+                break;
+            }
+        }
+        if (target == null) throw new IllegalArgumentException("Suggestion not found");
+
+        // Only allow availability once suggestion is closed (threshold reached)
+        if (!target.isClosed()) {
+            throw new IllegalArgumentException("Suggestion has not been closed for scheduling yet");
+        }
+
+        // any group member may provide availability (voters are required for locking)
+
+        // parse date strings to LocalDate
+        List<java.time.LocalDate> dates = new ArrayList<>();
+        if (dateStrings != null) {
+            for (String ds : dateStrings) {
+                if (ds == null) continue;
+                try {
+                    dates.add(java.time.LocalDate.parse(ds));
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Invalid date format: " + ds);
+                }
+            }
+        }
+
+        target.setAvailabilityForUser(userEmail, dates);
+        suggestedRestaurantRepository.save(target);
+
+        // check if all voters provided availability
+        boolean allProvided = true;
+        for (String voter : target.getVoters()) {
+            if (!target.getAvailabilitiesUnsanitized().containsKey(voter) || target.getAvailabilitiesUnsanitized().get(voter).isEmpty()) {
+                allProvided = false;
+                break;
+            }
+        }
+
+        if (allProvided && target.getLockedDate() == null) {
+            // compute intersection of all voters' dates
+            List<java.time.LocalDate> intersection = null;
+            for (String voter : target.getVoters()) {
+                List<java.time.LocalDate> userDates = target.getAvailabilitiesUnsanitized().getOrDefault(voter, new ArrayList<>());
+                if (intersection == null) {
+                    intersection = new ArrayList<>(userDates);
+                } else {
+                    intersection.removeIf(d -> !userDates.contains(d));
+                }
+            }
+
+            java.time.LocalDate locked = null;
+            if (intersection != null && !intersection.isEmpty()) {
+                locked = intersection.stream().min(java.time.LocalDate::compareTo).orElse(null);
+            } else {
+                // pick most popular date across all lists
+                java.util.Map<java.time.LocalDate, Integer> counts = new java.util.HashMap<>();
+                for (String voter : target.getVoters()) {
+                    for (java.time.LocalDate d : target.getAvailabilitiesUnsanitized().getOrDefault(voter, new ArrayList<>())) {
+                        counts.put(d, counts.getOrDefault(d, 0) + 1);
+                    }
+                }
+                int max = 0;
+                for (java.util.Map.Entry<java.time.LocalDate, Integer> e : counts.entrySet()) {
+                    if (e.getValue() > max) max = e.getValue();
+                }
+                java.time.LocalDate best = null;
+                for (java.util.Map.Entry<java.time.LocalDate, Integer> e : counts.entrySet()) {
+                    if (e.getValue() == max) {
+                        if (best == null || e.getKey().isBefore(best)) best = e.getKey();
+                    }
+                }
+                locked = best;
+            }
+
+                target.setLockedDate(locked);
+                suggestedRestaurantRepository.save(target);
+
+                // notify recommender and all group members that a date has been locked
+                notificationService.notifyUserAboutLockedDate(target.getRecommenderEmail(), group.getId(), target.getId(), target.getRestaurant().getName(), locked);
+                List<String> memberEmails = group.getMembers().stream()
+                    .map(u -> u.getEmail())
+                    .collect(Collectors.toList());
+                notificationService.notifyMembersAboutLockedDate(memberEmails, group.getId(), target.getId(), target.getRestaurant().getName(), locked);
+        }
+
+        groupRepository.save(group);
+        return "Availability saved";
     }
 
     public String unvoteSuggestion(String groupId, String suggestionId, String userEmail) {

@@ -172,4 +172,19 @@ export async function removeSuggestion(groupId: string, suggestionId: string, to
   }
 }
 
+export async function setAvailability(groupId: string, suggestionId: string, dates: string[], token?: string): Promise<string> {
+  if (!token) throw new Error('No authentication');
+  try {
+    const resp = await request(`/groups/${encodeURIComponent(groupId)}/suggestions/${encodeURIComponent(suggestionId)}/availability`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dates)
+    }, token);
+    const result = await handleJson<string>(resp);
+    return result;
+  } catch (e: any) {
+    return e;
+  }
+}
+
 export type { Group, Message, GroupCreationResult };

@@ -71,4 +71,7 @@ export interface SuggestedRestaurant {
   recommenderEmail: string;
   voters: string[];
   recommendedAt?: string;
+  lockedDate?: string | null;
+  closed?: boolean;
+  availabilities?: { [email: string]: string[] };
 }
