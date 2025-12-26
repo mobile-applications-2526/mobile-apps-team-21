@@ -60,6 +60,54 @@ public class NotificationService {
     }
 
     /**
+     * Notify a single user (by email) that a visit date has been locked for a suggestion
+     */
+    public void notifyUserAboutLockedDate(String email, String groupId, String suggestionId, String restaurantName, java.time.LocalDate lockedDate) {
+        User user = userRepository.findUserByEmail(email);
+        if (user == null || user.getExpoPushToken() == null) return;
+
+        java.util.List<String> tokens = java.util.List.of(user.getExpoPushToken());
+
+        String title = "📅 Visit Date Locked";
+        String body = String.format("A visit date for %s is locked: %s", restaurantName, lockedDate != null ? lockedDate.toString() : "(none)");
+
+        java.util.Map<String, Object> data = new java.util.HashMap<>();
+        data.put("type", "visit_date_locked");
+        data.put("groupId", groupId);
+        data.put("suggestionId", suggestionId);
+        data.put("restaurantName", restaurantName);
+        data.put("lockedDate", lockedDate != null ? lockedDate.toString() : null);
+
+        pushNotificationController.sendPushNotification(tokens, title, body, data);
+    }
+
+    /**
+     * Notify a set of users (by email) that a visit date has been locked for a suggestion
+     */
+    public void notifyMembersAboutLockedDate(List<String> memberEmails, String groupId, String suggestionId, String restaurantName, java.time.LocalDate lockedDate) {
+        // Get push tokens for these members
+        List<String> pushTokens = memberEmails.stream()
+            .map(email -> userRepository.findUserByEmail(email))
+            .filter(user -> user != null && user.getExpoPushToken() != null)
+            .map(User::getExpoPushToken)
+            .collect(Collectors.toList());
+
+        if (pushTokens.isEmpty()) return;
+
+        String title = "📅 Visit Date Locked";
+        String body = String.format("A visit date for %s is locked: %s", restaurantName, lockedDate != null ? lockedDate.toString() : "(none)");
+
+        java.util.Map<String, Object> data = new java.util.HashMap<>();
+        data.put("type", "visit_date_locked");
+        data.put("groupId", groupId);
+        data.put("suggestionId", suggestionId);
+        data.put("restaurantName", restaurantName);
+        data.put("lockedDate", lockedDate != null ? lockedDate.toString() : null);
+
+        pushNotificationController.sendPushNotification(pushTokens, title, body, data);
+    }
+
+    /**
      * Check if voting threshold is reached (more than 1/2 of members voted)
      * Return true if threshold is reached
      */

@@ -65,7 +65,7 @@ public class GroupController {
     public List<SuggestedRestaurantResponse> getSuggestedRestaurants(@RequestParam String groupId, Authentication auth) {
         var suggestions = groupService.getSuggestedRestaurants(groupId, auth.getName());
         return suggestions.stream().map(s -> new SuggestedRestaurantResponse(
-            s.getId(), s.getRestaurant(), s.getRecommenderEmail(), s.getVoters(), s.getRecommendedAt()
+            s.getId(), s.getRestaurant(), s.getRecommenderEmail(), s.getVoters(), s.getRecommendedAt(), s.getLockedDate(), s.isClosed(), s.getAvailabilitiesUnsanitized()
         )).collect(Collectors.toList());
     }
 
@@ -82,6 +82,11 @@ public class GroupController {
     @DeleteMapping("/{groupId}/suggestions/{suggestionId}")
     public String removeSuggestion(@PathVariable String groupId, @PathVariable String suggestionId, Authentication auth) {
         return groupService.removeSuggestion(groupId, suggestionId, auth.getName());
+    }
+
+    @PostMapping("/{groupId}/suggestions/{suggestionId}/availability")
+    public String setAvailability(@PathVariable String groupId, @PathVariable String suggestionId, @RequestBody List<String> dates, Authentication auth) {
+        return groupService.setAvailability(groupId, suggestionId, auth.getName(), dates);
     }
     
     @PostMapping("/{groupId}/leave")
