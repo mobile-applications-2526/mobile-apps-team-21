@@ -48,6 +48,7 @@ export default function TabLayout() {
         name="revisit"
         options={{
           title: 'Revisit',
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <Ionicons name="time-outline" color={color} size={24}/>
           ),

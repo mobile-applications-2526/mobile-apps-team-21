@@ -12,9 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import be.ucll.EatUp_Team21.model.Group;
+import be.ucll.EatUp_Team21.model.GroupVisit;
 import be.ucll.EatUp_Team21.model.Message;
 import be.ucll.EatUp_Team21.model.User;
 import be.ucll.EatUp_Team21.repository.GroupRepository;
+import be.ucll.EatUp_Team21.repository.GroupVisitRepository;
 import be.ucll.EatUp_Team21.repository.MessageRepository;
 import be.ucll.EatUp_Team21.repository.UserRepository;
 import be.ucll.EatUp_Team21.repository.RestaurantRepository;
@@ -31,16 +33,19 @@ public class DatabaseSeeder implements CommandLineRunner {
 	private final MessageRepository messageRepository;
 	private final RestaurantRepository restaurantRepository;
 	private final RestRelRepository restRelRepository;
+	private final GroupVisitRepository groupVisitRepository;
 
 	private static final Logger logger = LoggerFactory.getLogger(DatabaseSeeder.class);
 
 	public DatabaseSeeder(UserRepository userRepository, GroupRepository groupRepository,
-			MessageRepository messageRepository, RestaurantRepository restaurantRepository, RestRelRepository restRelRepository) {
+			MessageRepository messageRepository, RestaurantRepository restaurantRepository, 
+			RestRelRepository restRelRepository, GroupVisitRepository groupVisitRepository) {
 		this.userRepository = userRepository;
 		this.groupRepository = groupRepository;
 		this.messageRepository = messageRepository;
 		this.restaurantRepository = restaurantRepository;
 		this.restRelRepository = restRelRepository;
+		this.groupVisitRepository = groupVisitRepository;
 	}
 
 	@Override
@@ -144,11 +149,14 @@ public class DatabaseSeeder implements CommandLineRunner {
 		try {
 			if (restaurantRepository.count() == 0) {
 				List<Restaurant> restaurants = new ArrayList<>();
+				restaurants.add(new Restaurant("Sushi Bar Osaka", "Naamsestraat 45, Ghent", "09-123456", "Fresh sushi and sashimi with a modern interior and omakase options."));
+				restaurants.add(new Restaurant("La Piazza Italiana", "Grote Markt 12, Antwerp", "03-654321", "Authentic Italian pasta, fresh sauces and a curated wine list."));
+				restaurants.add(new Restaurant("Thai Garden", "Bondgenotenlaan 8, Leuven", "016-987654", "Spicy Thai curries, pad thai and traditional dishes."));
 				restaurants.add(new Restaurant("De Gouden Lepel", "Kerkstraat 12, Leuven", "016-123456", "Cozy Belgian bistro with classic regional dishes."));
-				restaurants.add(new Restaurant("Pasta Bella", "Stationsstraat 3, Leuven", "016-654321", "Authentic Italian pasta, fresh sauces and a curated wine list."));
-				restaurants.add(new Restaurant("Sushi Hana", "Tiensestraat 45, Leuven", "016-987654", "Fresh sushi and sashimi with a modern interior and omakase options."));
 				restaurants.add(new Restaurant("Le Marché", "Mechelsestraat 22, Leuven", "016-111222", "Market-style small plates focused on seasonal ingredients."));
-				restaurants.add(new Restaurant("Curry Corner", "Bondgenotenlaan 8, Leuven", "016-333444", "Spicy Indian curries, vegetarian-friendly menu and house-made naan."));
+				restaurants.add(new Restaurant("Curry Corner", "Tiensestraat 3, Leuven", "016-333444", "Spicy Indian curries, vegetarian-friendly menu and house-made naan."));
+				restaurants.add(new Restaurant("El Toro Loco", "Diestsestraat 15, Leuven", "016-555666", "Mexican tacos, burritos and margaritas in a vibrant setting."));
+				restaurants.add(new Restaurant("Chez Pierre", "Vismarkt 8, Brussels", "02-777888", "Classic French cuisine with seasonal tasting menus."));
 				restaurantRepository.saveAll(restaurants);
 				logger.info("Seeded {} restaurants", restaurants.size());
 			} else {
@@ -174,6 +182,10 @@ public class DatabaseSeeder implements CommandLineRunner {
 						Restaurant r = restaurants.get(rnd.nextInt(restaurants.size()));
 						RestRel rr = new RestRel(u, r);
 						rr.setVisitDate(LocalDate.now().minusDays(rnd.nextInt(365)));
+						// Randomly add a rating (70% chance)
+						if (rnd.nextDouble() < 0.7) {
+							rr.setRating((float) (3 + rnd.nextInt(3))); // Rating between 3-5
+						}
 						// Randomly make it favorite
 						if (rnd.nextBoolean()) {
 							rr.setFavorite(true);
@@ -193,6 +205,63 @@ public class DatabaseSeeder implements CommandLineRunner {
 			}
 		} else {
 			logger.info("RestRels already present, skipping seeding");
+		}
+
+		// seed GroupVisits for the revisit page
+		if (groupVisitRepository.count() == 0) {
+			List<Group> allGroups = groupRepository.findAll();
+			List<Restaurant> restaurants = restaurantRepository.findAll();
+			List<GroupVisit> groupVisits = new ArrayList<>();
+			Random rnd = new Random(42);
+
+			// Cuisine types to assign
+			String[] cuisines = { "Japanese", "Italian", "Thai", "Belgian", "French", "Indian", "Mexican" };
+			// Payer names
+			String[] payerNames = { "John", "Jane", "Charlie", "Emma", "Liam", "Olivia", "Lisa", "Tom" };
+
+			if (!allGroups.isEmpty() && !restaurants.isEmpty()) {
+				for (Group group : allGroups) {
+					// Each group has 1-3 past visits
+					int visitCount = 1 + rnd.nextInt(3);
+					for (int i = 0; i < visitCount; i++) {
+						Restaurant restaurant = restaurants.get(rnd.nextInt(restaurants.size()));
+						
+						// Visit date is in the past (5-180 days ago)
+						LocalDate visitDate = LocalDate.now().minusDays(5 + rnd.nextInt(175));
+						
+						GroupVisit visit = new GroupVisit(group, restaurant, visitDate);
+						
+						// Assign a cuisine type based on restaurant name or random
+						String cuisine = cuisines[rnd.nextInt(cuisines.length)];
+						if (restaurant.getName().toLowerCase().contains("sushi")) cuisine = "Japanese";
+						else if (restaurant.getName().toLowerCase().contains("italian") || restaurant.getName().toLowerCase().contains("piazza")) cuisine = "Italian";
+						else if (restaurant.getName().toLowerCase().contains("thai")) cuisine = "Thai";
+						else if (restaurant.getName().toLowerCase().contains("curry") || restaurant.getName().toLowerCase().contains("indian")) cuisine = "Indian";
+						else if (restaurant.getName().toLowerCase().contains("mexican") || restaurant.getName().toLowerCase().contains("toro")) cuisine = "Mexican";
+						else if (restaurant.getName().toLowerCase().contains("pierre") || restaurant.getName().toLowerCase().contains("marché")) cuisine = "French";
+						else if (restaurant.getName().toLowerCase().contains("gouden") || restaurant.getName().toLowerCase().contains("belgian")) cuisine = "Belgian";
+						visit.setCuisine(cuisine);
+						
+						// 70% chance to have price and payer info
+						if (rnd.nextDouble() < 0.7) {
+							double price = 50 + rnd.nextDouble() * 150; // Between 50 and 200 euros
+							price = Math.round(price * 100.0) / 100.0; // Round to 2 decimals
+							visit.setTotalPrice(price);
+							
+							String payerName = payerNames[rnd.nextInt(payerNames.length)];
+							visit.setPaidByName(payerName);
+							visit.setPaidByEmail(payerName.toLowerCase() + "@example.com");
+						}
+						
+						groupVisits.add(visit);
+					}
+				}
+				
+				groupVisitRepository.saveAll(groupVisits);
+				logger.info("Seeded {} group visits", groupVisits.size());
+			}
+		} else {
+			logger.info("GroupVisits already present, skipping seeding");
 		}
 	}
 }

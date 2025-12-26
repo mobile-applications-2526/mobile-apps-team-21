@@ -95,3 +95,42 @@ export interface SuggestedRestaurant {
   voters: string[];
   recommendedAt?: string;
 }
+
+export interface GroupVisitResponse {
+  id: string;
+  restaurantId: string;
+  restaurantName: string;
+  restaurantAddress: string;
+  groupId: string;
+  groupName: string;
+  visitDate: string;
+  totalPrice: number | null;
+  paidByEmail: string | null;
+  paidByName: string | null;
+  cuisine: string | null;
+  hasReceipt: boolean;
+  userRating: number | null;
+}
+
+export interface UpdateGroupVisitRequest {
+  totalPrice?: number;
+  paidByEmail?: string;
+  paidByName?: string;
+  receiptImage?: string;
+}
+
+export interface FilterOptions {
+  minRating: number | null;
+  location: string;
+  cuisine: string;
+  dateFrom: string | null;
+  dateTo: string | null;
+}
+
+export interface UniqueVisitedRestaurant {
+  restaurantId: string;
+  restaurantName: string;
+  restaurantAddress: string;
+  visitDate: string | null;
+  rating: number | null;
+}
