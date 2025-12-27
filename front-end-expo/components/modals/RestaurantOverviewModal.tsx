@@ -432,10 +432,9 @@ const styles = StyleSheet.create({
         calendarDayNumSelected: { color: '#0fd51fff', fontWeight: '700' },
         calendarMonthSelected: { color: '#0fd51fff', fontWeight: '700' },
   cancel: { marginTop: 12, paddingVertical: 10, alignItems: 'center' },
-  cancelText: { color: '#ef4444', fontWeight: '700' },
   cancelTextDark: { color: '#ff9b9b' },
   forText: { color: '#0fd51fff', fontWeight: '700' },
-  forTextDark: { color: '#1bf32dff' }
+  forTextDark: { color: '#1bf32dff' },
   actions: {
     flexDirection: 'row',
     alignItems: 'center',
