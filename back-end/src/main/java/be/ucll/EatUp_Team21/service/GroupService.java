@@ -261,14 +261,10 @@ public class GroupService {
             throw new IllegalArgumentException("User is not a member of this group.");
 
         Group group = getGroupById(groupId);
-        SuggestedRestaurant target = null;
-        for (SuggestedRestaurant s : group.getSuggestedRestaurants()) {
-            if (s.getId() != null && s.getId().equals(suggestionId)) {
-                target = s;
-                break;
-            }
-        }
-        if (target == null) throw new IllegalArgumentException("Suggestion not found");
+        final SuggestedRestaurant target = group.getSuggestedRestaurants().stream()
+                .filter(s -> s.getId() != null && s.getId().equals(suggestionId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Suggestion not found"));
 
         // Only allow availability once suggestion is closed (threshold reached)
         if (!target.isClosed()) {
@@ -303,50 +299,42 @@ public class GroupService {
         }
 
         if (allProvided && target.getLockedDate() == null) {
-            // compute intersection of all voters' dates
-            List<java.time.LocalDate> intersection = null;
-            for (String voter : target.getVoters()) {
-                List<java.time.LocalDate> userDates = target.getAvailabilitiesUnsanitized().getOrDefault(voter, new ArrayList<>());
-                if (intersection == null) {
-                    intersection = new ArrayList<>(userDates);
-                } else {
-                    intersection.removeIf(d -> !userDates.contains(d));
-                }
-            }
+                            // Calculate intersection of common dates from all voters
+                            java.util.Set<java.time.LocalDate> intersection = null;
+                            for (String voter : target.getVoters()) {
+                                List<java.time.LocalDate> voterDates = target.getAvailabilitiesUnsanitized().get(voter);
+                                if (voterDates != null && !voterDates.isEmpty()) {
+                                    if (intersection == null) {
+                                        intersection = new java.util.HashSet<>(voterDates);
+                                    } else {
+                                        intersection.retainAll(voterDates);
+                                    }
+                                }
+                            }
+                            // If all voters provided availabilities and there is at least one common date, lock the earliest common date.
+                            if (intersection != null && !intersection.isEmpty()) {
+                                java.time.LocalDate locked = intersection.stream().min(java.time.LocalDate::compareTo).orElse(null);
 
-            java.time.LocalDate locked = null;
-            if (intersection != null && !intersection.isEmpty()) {
-                locked = intersection.stream().min(java.time.LocalDate::compareTo).orElse(null);
-            } else {
-                // pick most popular date across all lists
-                java.util.Map<java.time.LocalDate, Integer> counts = new java.util.HashMap<>();
-                for (String voter : target.getVoters()) {
-                    for (java.time.LocalDate d : target.getAvailabilitiesUnsanitized().getOrDefault(voter, new ArrayList<>())) {
-                        counts.put(d, counts.getOrDefault(d, 0) + 1);
-                    }
-                }
-                int max = 0;
-                for (java.util.Map.Entry<java.time.LocalDate, Integer> e : counts.entrySet()) {
-                    if (e.getValue() > max) max = e.getValue();
-                }
-                java.time.LocalDate best = null;
-                for (java.util.Map.Entry<java.time.LocalDate, Integer> e : counts.entrySet()) {
-                    if (e.getValue() == max) {
-                        if (best == null || e.getKey().isBefore(best)) best = e.getKey();
-                    }
-                }
-                locked = best;
-            }
+                                target.setLockedDate(locked);
+                                suggestedRestaurantRepository.save(target);
 
-                target.setLockedDate(locked);
-                suggestedRestaurantRepository.save(target);
-
-                // notify recommender and all group members that a date has been locked
-                notificationService.notifyUserAboutLockedDate(target.getRecommenderEmail(), group.getId(), target.getId(), target.getRestaurant().getName(), locked);
-                List<String> memberEmails = group.getMembers().stream()
-                    .map(u -> u.getEmail())
-                    .collect(Collectors.toList());
-                notificationService.notifyMembersAboutLockedDate(memberEmails, group.getId(), target.getId(), target.getRestaurant().getName(), locked);
+                                // notify recommender and all group members that a date has been locked
+                                notificationService.notifyUserAboutLockedDate(target.getRecommenderEmail(), group.getId(), target.getId(), target.getRestaurant().getName(), locked);
+                                List<String> memberEmails = group.getMembers().stream()
+                                    .map(u -> u.getEmail())
+                                    .filter(email -> email != null && !email.equals(target.getRecommenderEmail()))
+                                    .collect(Collectors.toList());
+                                notificationService.notifyMembersAboutLockedDate(memberEmails, group.getId(), target.getId(), target.getRestaurant().getName(), locked);
+                            } else {
+                                // No common date found — do NOT lock. Notify recommender and group members so they can propose/adjust dates.
+                                notificationService.notifyUserNoCommonDate(target.getRecommenderEmail(), group.getId(), target.getId(), target.getRestaurant().getName());
+                                List<String> memberEmails = group.getMembers().stream()
+                                    .map(u -> u.getEmail())
+                                    .filter(email -> email != null && !email.equals(target.getRecommenderEmail()))
+                                    .collect(Collectors.toList());
+                                notificationService.notifyMembersNoCommonDate(memberEmails, group.getId(), target.getId(), target.getRestaurant().getName());
+                            }
+                            // (no locking performed when no common date exists)
         }
 
         groupRepository.save(group);
