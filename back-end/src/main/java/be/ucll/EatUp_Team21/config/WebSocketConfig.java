@@ -7,6 +7,8 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import jakarta.annotation.PostConstruct;
+
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
@@ -46,6 +48,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             .setAllowedOriginPatterns("*")
             .setHandshakeHandler(userHandshakeHandler)
             .addInterceptors(handshakeInterceptor);
+    }
+
+    @PostConstruct
+    public void configureWebSocketSessionTimeout() {
+        // Set the default WebSocket session idle timeout to 2 minutes (120000 ms)
+        // This is a global JVM property for Tomcat/Undertow/Jetty
+        System.setProperty("org.apache.tomcat.websocket.DEFAULT_TIMEOUT", "120000");
+        System.setProperty("io.undertow.websockets.session-async-send-timeout", "120000");
+        System.setProperty("org.eclipse.jetty.websocket.idleTimeout", "120000");
     }
 
     @Override
