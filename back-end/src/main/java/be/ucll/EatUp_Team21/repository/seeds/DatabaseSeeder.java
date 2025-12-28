@@ -50,10 +50,23 @@ public class DatabaseSeeder implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+		
+		// Check if data already exists
+		long userCount = userRepository.count();
+		long groupCount = groupRepository.count();
+		long restaurantCount = restaurantRepository.count();
+		
+		if (userCount > 0 || groupCount > 0 || restaurantCount > 0) {
+			logger.info("Database already contains seed data. Skipping seeding.");
+			logger.info("Users: {}, Groups: {}, Restaurants: {}", userCount, groupCount, restaurantCount);
+			return;
+		}
+		
+		logger.info("Seeding database with initial data...");
 
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
 
-		// Always ensure test users exist and are up to date
+		// Seed users
 		List<User> users = new ArrayList<>();
 		String[][] sample = new String[][] {
 				{ "Smith", "John" },
@@ -69,33 +82,25 @@ public class DatabaseSeeder implements CommandLineRunner {
 			String email = String.format("%s.%s@example.com", firstName, name).toLowerCase(Locale.ROOT);
 			String rawPassword = "password123";
 			String hashed = encoder.encode(rawPassword);
-			User existing = userRepository.findUserByEmail(email);
-			if (existing == null) {
-				User u = new User(name, firstName, null, email, hashed);
-				u.setGroups(new ArrayList<>());
-				users.add(u);
-			} else {
-				users.add(existing);
-			}
+			User u = new User(name, firstName, null, email, hashed);
+			u.setGroups(new ArrayList<>());
+			users.add(u);
 		}
 		users = userRepository.saveAll(users);
+		logger.info("Seeded {} users", users.size());
 
-		// Always ensure test groups exist and are up to date
+		// Seed groups
 		List<Group> groups = new ArrayList<>();
 		String[] groupNames = new String[] { "Avondeten", "Lunchclub", "Weekendplans", "Projectgroep" };
 		for (String gname : groupNames) {
-			Group existing = groupRepository.findByName(gname);
-			if (existing == null) {
-				Group g = new Group(gname);
-				g.setMembers(new ArrayList<>());
-				groups.add(g);
-			} else {
-				groups.add(existing);
-			}
+			Group g = new Group(gname);
+			g.setMembers(new ArrayList<>());
+			groups.add(g);
 		}
 		groups = groupRepository.saveAll(groups);
+		logger.info("Seeded {} groups", groups.size());
 
-		// randomly assign users to groups (reset memberships)
+		// Assign users to groups
 		Random rnd = new Random(42);
 		for (Group g : groups) {
 			List<User> members = new ArrayList<>();
@@ -109,7 +114,8 @@ public class DatabaseSeeder implements CommandLineRunner {
 			g.setMembers(members);
 			groupRepository.save(g);
 		}
-		// update users' group lists
+		
+		// Update users' group lists
 		for (User u : users) {
 			List<Group> userGroups = new ArrayList<>();
 			for (Group g : groups) {
@@ -121,7 +127,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 			userRepository.save(u);
 		}
 
-		// Always ensure messages exist for each group
+		// Seed messages
 		List<Message> messages = new ArrayList<>();
 		for (Group g : groups) {
 			List<User> members = g.getMembers();
@@ -138,8 +144,9 @@ public class DatabaseSeeder implements CommandLineRunner {
 			}
 		}
 		messageRepository.saveAll(messages);
+		logger.info("Seeded {} messages", messages.size());
 
-		// Always ensure test restaurants exist
+		// Seed restaurants
 		try {
 			List<Restaurant> restaurants = new ArrayList<>();
 			restaurants.add(new Restaurant("Sushi Bar Osaka", "Naamsestraat 45, Ghent", "09-123456", "Fresh sushi and sashimi with a modern interior and omakase options."));
@@ -156,34 +163,29 @@ public class DatabaseSeeder implements CommandLineRunner {
 			logger.warn("Failed to seed restaurants: {}", ex.getMessage());
 		}
 
-		// Always ensure RestRels are seeded for all users
+		// Seed RestRels
 		List<User> allUsers = userRepository.findAll();
 		List<Restaurant> allRestaurants = restaurantRepository.findAll();
 		List<RestRel> restRels = new ArrayList<>();
 		Random restRelRnd = new Random(42);
 		if (!allUsers.isEmpty() && !allRestaurants.isEmpty()) {
 			for (User u : allUsers) {
-				// Add 1-3 visited restaurants
 				int visitedCount = 1 + restRelRnd.nextInt(3);
 				for (int i = 0; i < visitedCount; i++) {
 					Restaurant r = allRestaurants.get(restRelRnd.nextInt(allRestaurants.size()));
 					RestRel rr = new RestRel(u, r);
 					rr.setVisitDate(LocalDate.now().minusDays(restRelRnd.nextInt(365)));
-					// Randomly add a rating (70% chance)
 					if (restRelRnd.nextDouble() < 0.7) {
-						rr.setRating((float) (3 + restRelRnd.nextInt(3))); // Rating between 3-5
+						rr.setRating((float) (3 + restRelRnd.nextInt(3)));
 					}
-					// Randomly make it favorite
 					if (restRelRnd.nextBoolean()) {
 						rr.setFavorite(true);
 					}
 					restRels.add(rr);
 				}
 			}
-			// Save all RestRel objects and get the persisted versions (with IDs)
 			List<RestRel> savedRestRels = restRelRepository.saveAll(restRels);
 
-			// Update users with the *persisted* RestRel objects (with IDs)
 			for (User u : allUsers) {
 				List<RestRel> userRels = new ArrayList<>();
 				for (RestRel rr : savedRestRels) {
@@ -197,25 +199,20 @@ public class DatabaseSeeder implements CommandLineRunner {
 			logger.info("Seeded {} restaurant relations", savedRestRels.size());
 		}
 
-		// Always ensure GroupVisits are seeded for all groups
+		// Seed GroupVisits
 		List<Group> allGroups = groupRepository.findAll();
 		List<Restaurant> groupVisitRestaurants = restaurantRepository.findAll();
 		List<GroupVisit> groupVisits = new ArrayList<>();
 		Random groupVisitRnd = new Random(42);
-		// Cuisine types to assign
 		String[] cuisines = { "Japanese", "Italian", "Thai", "Belgian", "French", "Indian", "Mexican" };
-		// Payer names
 		String[] payerNames = { "John", "Jane", "Charlie", "Emma", "Liam", "Olivia", "Lisa", "Tom" };
 		if (!allGroups.isEmpty() && !groupVisitRestaurants.isEmpty()) {
 			for (Group group : allGroups) {
-				// Each group has 1-3 past visits
 				int visitCount = 1 + groupVisitRnd.nextInt(3);
 				for (int i = 0; i < visitCount; i++) {
 					Restaurant restaurant = groupVisitRestaurants.get(groupVisitRnd.nextInt(groupVisitRestaurants.size()));
-					// Visit date is in the past (5-180 days ago)
 					LocalDate visitDate = LocalDate.now().minusDays(5 + groupVisitRnd.nextInt(175));
 					GroupVisit visit = new GroupVisit(group, restaurant, visitDate);
-					// Assign a cuisine type based on restaurant name or random
 					String cuisine = cuisines[groupVisitRnd.nextInt(cuisines.length)];
 					if (restaurant.getName().toLowerCase().contains("sushi")) cuisine = "Japanese";
 					else if (restaurant.getName().toLowerCase().contains("italian") || restaurant.getName().toLowerCase().contains("piazza")) cuisine = "Italian";
@@ -225,10 +222,9 @@ public class DatabaseSeeder implements CommandLineRunner {
 					else if (restaurant.getName().toLowerCase().contains("pierre") || restaurant.getName().toLowerCase().contains("marché")) cuisine = "French";
 					else if (restaurant.getName().toLowerCase().contains("gouden") || restaurant.getName().toLowerCase().contains("belgian")) cuisine = "Belgian";
 					visit.setCuisine(cuisine);
-					// 70% chance to have price and payer info
 					if (groupVisitRnd.nextDouble() < 0.7) {
-						double price = 50 + groupVisitRnd.nextDouble() * 150; // Between 50 and 200 euros
-						price = Math.round(price * 100.0) / 100.0; // Round to 2 decimals
+						double price = 50 + groupVisitRnd.nextDouble() * 150;
+						price = Math.round(price * 100.0) / 100.0;
 						visit.setTotalPrice(price);
 						String payerName = payerNames[groupVisitRnd.nextInt(payerNames.length)];
 						visit.setPaidByName(payerName);
@@ -240,5 +236,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 			groupVisitRepository.saveAll(groupVisits);
 			logger.info("Seeded {} group visits", groupVisits.size());
 		}
+		
+		logger.info("Database seeding completed successfully!");
 	}
 }
