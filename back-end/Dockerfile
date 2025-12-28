@@ -10,7 +10,7 @@ COPY src ./src
 RUN ./mvnw clean package -DskipTests -B
 
 # Runtime stage - smaller image
-FROM openjdk:21-jdk
+FROM amazoncorretto:21-alpine
 WORKDIR /app
 
 # Copy the built JAR from build stage
