@@ -193,15 +193,21 @@ public class DatabaseSeeder implements CommandLineRunner {
 						restRels.add(rr);
 					}
 				}
-				restRelRepository.saveAll(restRels);
-				
-				// Update users with relations
-				for (User u : users) {
-					List<RestRel> userRels = restRels.stream().filter(rr -> rr.getUser().getId().equals(u.getId())).toList();
-					u.setRestaurantRelations(userRels);
-					userRepository.save(u);
-				}
-				logger.info("Seeded {} restaurant relations", restRels.size());
+				   // Save all RestRel objects and get the persisted versions (with IDs)
+				   List<RestRel> savedRestRels = restRelRepository.saveAll(restRels);
+
+				   // Update users with the *persisted* RestRel objects (with IDs)
+				   for (User u : users) {
+					   List<RestRel> userRels = new ArrayList<>();
+					   for (RestRel rr : savedRestRels) {
+						   if (rr.getUser().getId().equals(u.getId())) {
+							   userRels.add(rr);
+						   }
+					   }
+					   u.setRestaurantRelations(userRels);
+					   userRepository.save(u);
+				   }
+				   logger.info("Seeded {} restaurant relations", savedRestRels.size());
 			}
 		} else {
 			logger.info("RestRels already present, skipping seeding");
