@@ -7,7 +7,7 @@ COPY pom.xml .
 COPY src ./src
 
 # Build the application (skip tests for faster builds)
-RUN ./mvnw clean package -DskipTests -B
+RUN mvn clean package -DskipTests -B
 
 # Runtime stage - smaller image
 FROM amazoncorretto:21-alpine
