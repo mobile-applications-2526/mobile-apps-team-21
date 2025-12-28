@@ -1,0 +1,31 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea
+*.iml
+.vscode
+*.swp
+*.swo
+
+# Build outputs (we rebuild in Docker)
+target/
+
+# Documentation
+*.md
+README*
+LICENSE
+
+# Test files
+src/test/
+
+# Local config
+*.local
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db

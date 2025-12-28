@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Modal,
   View,
   Text,
   TouchableOpacity,
@@ -9,6 +8,7 @@ import {
   ScrollView,
   TextInput,
 } from 'react-native';
+import Modal from 'react-native-modal';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
 import { FilterOptions } from '@/types';
@@ -248,9 +248,16 @@ const FilterModal: React.FC<Props> = ({
   const hasActiveFilters = minRating !== null || location !== '' || cuisine !== '' || dateFrom !== null || dateTo !== null;
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <View style={[styles.modalContainer, { backgroundColor }]}>
+    <Modal
+      isVisible={visible}
+      onBackdropPress={onClose}
+      onBackButtonPress={onClose}
+      onSwipeComplete={onClose}
+      swipeDirection={['down']}
+      style={styles.modal}
+      propagateSwipe
+    >
+      <View style={[styles.modalContainer, { backgroundColor }]}>
           {/* Header */}
           <View style={styles.header}>
             <Text style={[styles.title, { color: textColor }]}>Filters</Text>
@@ -285,16 +292,14 @@ const FilterModal: React.FC<Props> = ({
             </TouchableOpacity>
           </View>
         </View>
-      </View>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  modal: {
     justifyContent: 'flex-end',
+    margin: 0,
   },
   modalContainer: {
     borderTopLeftRadius: 20,

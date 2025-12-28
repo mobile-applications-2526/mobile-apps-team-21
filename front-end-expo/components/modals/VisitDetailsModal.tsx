@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Modal,
   View,
   Text,
   TouchableOpacity,
@@ -11,6 +10,7 @@ import {
   Alert,
   Image,
 } from 'react-native';
+import Modal from 'react-native-modal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -155,9 +155,17 @@ const VisitDetailsModal: React.FC<Props> = ({
   if (!visit) return null;
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <View style={[styles.modalContainer, { backgroundColor }]}>
+    <Modal
+      isVisible={visible}
+      onBackdropPress={onClose}
+      onBackButtonPress={onClose}
+      onSwipeComplete={onClose}
+      swipeDirection={['down']}
+      style={styles.modal}
+      propagateSwipe
+      avoidKeyboard
+    >
+      <View style={[styles.modalContainer, { backgroundColor }]}>
           {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
@@ -300,16 +308,14 @@ const VisitDetailsModal: React.FC<Props> = ({
             </View>
           </KeyboardAwareScrollView>
         </View>
-      </View>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  modal: {
     justifyContent: 'flex-end',
+    margin: 0,
   },
   modalContainer: {
     borderTopLeftRadius: 20,
