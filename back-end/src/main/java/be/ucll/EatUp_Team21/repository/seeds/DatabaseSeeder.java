@@ -1,242 +1,242 @@
-// package be.ucll.EatUp_Team21.repository.seeds;
+package be.ucll.EatUp_Team21.repository.seeds;
 
-// import java.util.ArrayList;
-// import java.util.List;
-// import java.util.Locale;
-// import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
-// import org.springframework.boot.CommandLineRunner;
-// import org.springframework.stereotype.Component;
-// import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-// import org.slf4j.Logger;
-// import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-// import be.ucll.EatUp_Team21.model.Group;
-// import be.ucll.EatUp_Team21.model.GroupVisit;
-// import be.ucll.EatUp_Team21.model.Message;
-// import be.ucll.EatUp_Team21.model.User;
-// import be.ucll.EatUp_Team21.repository.GroupRepository;
-// import be.ucll.EatUp_Team21.repository.GroupVisitRepository;
-// import be.ucll.EatUp_Team21.repository.MessageRepository;
-// import be.ucll.EatUp_Team21.repository.UserRepository;
-// import be.ucll.EatUp_Team21.repository.RestaurantRepository;
-// import be.ucll.EatUp_Team21.repository.RestRelRepository;
-// import be.ucll.EatUp_Team21.model.Restaurant;
-// import be.ucll.EatUp_Team21.model.RestRel;
-// import java.time.LocalDate;
+import be.ucll.EatUp_Team21.model.Group;
+import be.ucll.EatUp_Team21.model.GroupVisit;
+import be.ucll.EatUp_Team21.model.Message;
+import be.ucll.EatUp_Team21.model.User;
+import be.ucll.EatUp_Team21.repository.GroupRepository;
+import be.ucll.EatUp_Team21.repository.GroupVisitRepository;
+import be.ucll.EatUp_Team21.repository.MessageRepository;
+import be.ucll.EatUp_Team21.repository.UserRepository;
+import be.ucll.EatUp_Team21.repository.RestaurantRepository;
+import be.ucll.EatUp_Team21.repository.RestRelRepository;
+import be.ucll.EatUp_Team21.model.Restaurant;
+import be.ucll.EatUp_Team21.model.RestRel;
+import java.time.LocalDate;
 
-// @Component
-// public class DatabaseSeeder implements CommandLineRunner {
+@Component
+public class DatabaseSeeder implements CommandLineRunner {
 
-// 	private final UserRepository userRepository;
-// 	private final GroupRepository groupRepository;
-// 	private final MessageRepository messageRepository;
-// 	private final RestaurantRepository restaurantRepository;
-// 	private final RestRelRepository restRelRepository;
-// 	private final GroupVisitRepository groupVisitRepository;
+	private final UserRepository userRepository;
+	private final GroupRepository groupRepository;
+	private final MessageRepository messageRepository;
+	private final RestaurantRepository restaurantRepository;
+	private final RestRelRepository restRelRepository;
+	private final GroupVisitRepository groupVisitRepository;
 
-// 	private static final Logger logger = LoggerFactory.getLogger(DatabaseSeeder.class);
+	private static final Logger logger = LoggerFactory.getLogger(DatabaseSeeder.class);
 
-// 	public DatabaseSeeder(UserRepository userRepository, GroupRepository groupRepository,
-// 			MessageRepository messageRepository, RestaurantRepository restaurantRepository, 
-// 			RestRelRepository restRelRepository, GroupVisitRepository groupVisitRepository) {
-// 		this.userRepository = userRepository;
-// 		this.groupRepository = groupRepository;
-// 		this.messageRepository = messageRepository;
-// 		this.restaurantRepository = restaurantRepository;
-// 		this.restRelRepository = restRelRepository;
-// 		this.groupVisitRepository = groupVisitRepository;
-// 	}
+	public DatabaseSeeder(UserRepository userRepository, GroupRepository groupRepository,
+			MessageRepository messageRepository, RestaurantRepository restaurantRepository, 
+			RestRelRepository restRelRepository, GroupVisitRepository groupVisitRepository) {
+		this.userRepository = userRepository;
+		this.groupRepository = groupRepository;
+		this.messageRepository = messageRepository;
+		this.restaurantRepository = restaurantRepository;
+		this.restRelRepository = restRelRepository;
+		this.groupVisitRepository = groupVisitRepository;
+	}
 
-// 	@Override
-// 	public void run(String... args) throws Exception {
+	@Override
+	public void run(String... args) throws Exception {
 		
-// 		// Check if data already exists
-// 		long userCount = userRepository.count();
-// 		long groupCount = groupRepository.count();
-// 		long restaurantCount = restaurantRepository.count();
+		// Check if data already exists
+		long userCount = userRepository.count();
+		long groupCount = groupRepository.count();
+		long restaurantCount = restaurantRepository.count();
 		
-// 		if (userCount > 0 || groupCount > 0 || restaurantCount > 0) {
-// 			logger.info("Database already contains seed data. Skipping seeding.");
-// 			logger.info("Users: {}, Groups: {}, Restaurants: {}", userCount, groupCount, restaurantCount);
-// 			return;
-// 		}
+		if (userCount > 0 || groupCount > 0 || restaurantCount > 0) {
+			logger.info("Database already contains seed data. Skipping seeding.");
+			logger.info("Users: {}, Groups: {}, Restaurants: {}", userCount, groupCount, restaurantCount);
+			return;
+		}
 		
-// 		logger.info("Seeding database with initial data...");
+		logger.info("Seeding database with initial data...");
 
-// 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
 
-// 		// Seed users
-// 		List<User> users = new ArrayList<>();
-// 		String[][] sample = new String[][] {
-// 				{ "Smith", "John" },
-// 				{ "Doe", "Jane" },
-// 				{ "Brown", "Charlie" },
-// 				{ "Johnson", "Emma" },
-// 				{ "Miller", "Liam" },
-// 				{ "Davis", "Olivia" }
-// 		};
-// 		for (String[] s : sample) {
-// 			String name = s[0];
-// 			String firstName = s[1];
-// 			String email = String.format("%s.%s@example.com", firstName, name).toLowerCase(Locale.ROOT);
-// 			String rawPassword = "password123";
-// 			String hashed = encoder.encode(rawPassword);
-// 			User u = new User(name, firstName, null, email, hashed);
-// 			u.setGroups(new ArrayList<>());
-// 			users.add(u);
-// 		}
-// 		users = userRepository.saveAll(users);
-// 		logger.info("Seeded {} users", users.size());
+		// Seed users
+		List<User> users = new ArrayList<>();
+		String[][] sample = new String[][] {
+				{ "Smith", "John" },
+				{ "Doe", "Jane" },
+				{ "Brown", "Charlie" },
+				{ "Johnson", "Emma" },
+				{ "Miller", "Liam" },
+				{ "Davis", "Olivia" }
+		};
+		for (String[] s : sample) {
+			String name = s[0];
+			String firstName = s[1];
+			String email = String.format("%s.%s@example.com", firstName, name).toLowerCase(Locale.ROOT);
+			String rawPassword = "password123";
+			String hashed = encoder.encode(rawPassword);
+			User u = new User(name, firstName, null, email, hashed);
+			u.setGroups(new ArrayList<>());
+			users.add(u);
+		}
+		users = userRepository.saveAll(users);
+		logger.info("Seeded {} users", users.size());
 
-// 		// Seed groups
-// 		List<Group> groups = new ArrayList<>();
-// 		String[] groupNames = new String[] { "Avondeten", "Lunchclub", "Weekendplans", "Projectgroep" };
-// 		for (String gname : groupNames) {
-// 			Group g = new Group(gname);
-// 			g.setMembers(new ArrayList<>());
-// 			groups.add(g);
-// 		}
-// 		groups = groupRepository.saveAll(groups);
-// 		logger.info("Seeded {} groups", groups.size());
+		// Seed groups
+		List<Group> groups = new ArrayList<>();
+		String[] groupNames = new String[] { "Avondeten", "Lunchclub", "Weekendplans", "Projectgroep" };
+		for (String gname : groupNames) {
+			Group g = new Group(gname);
+			g.setMembers(new ArrayList<>());
+			groups.add(g);
+		}
+		groups = groupRepository.saveAll(groups);
+		logger.info("Seeded {} groups", groups.size());
 
-// 		// Assign users to groups
-// 		Random rnd = new Random(42);
-// 		for (Group g : groups) {
-// 			List<User> members = new ArrayList<>();
-// 			int number = 1 + rnd.nextInt(users.size());
-// 			for (int i = 0; i < number; i++) {
-// 				User u = users.get(rnd.nextInt(users.size()));
-// 				if (!members.contains(u)) {
-// 					members.add(u);
-// 				}
-// 			}
-// 			g.setMembers(members);
-// 			groupRepository.save(g);
-// 		}
+		// Assign users to groups
+		Random rnd = new Random(42);
+		for (Group g : groups) {
+			List<User> members = new ArrayList<>();
+			int number = 1 + rnd.nextInt(users.size());
+			for (int i = 0; i < number; i++) {
+				User u = users.get(rnd.nextInt(users.size()));
+				if (!members.contains(u)) {
+					members.add(u);
+				}
+			}
+			g.setMembers(members);
+			groupRepository.save(g);
+		}
 		
-// 		// Update users' group lists
-// 		for (User u : users) {
-// 			List<Group> userGroups = new ArrayList<>();
-// 			for (Group g : groups) {
-// 				if (g.getMembers().contains(u)) {
-// 					userGroups.add(g);
-// 				}
-// 			}
-// 			u.setGroups(userGroups);
-// 			userRepository.save(u);
-// 		}
+		// Update users' group lists
+		for (User u : users) {
+			List<Group> userGroups = new ArrayList<>();
+			for (Group g : groups) {
+				if (g.getMembers().contains(u)) {
+					userGroups.add(g);
+				}
+			}
+			u.setGroups(userGroups);
+			userRepository.save(u);
+		}
 
-// 		// Seed messages
-// 		List<Message> messages = new ArrayList<>();
-// 		for (Group g : groups) {
-// 			List<User> members = g.getMembers();
-// 			if (members == null || members.isEmpty()) {
-// 				continue;
-// 			}
-// 			int msgCount = 3 + rnd.nextInt(5);
-// 			for (int i = 0; i < msgCount; i++) {
-// 				User author = members.get(rnd.nextInt(members.size()));
-// 				String content = String.format("Message %d in %s from %s %s", i + 1, g.getName(),
-// 						author.getFirstName(), author.getName());
-// 				Message m = new Message(content, author, g);
-// 				messages.add(m);
-// 			}
-// 		}
-// 		messageRepository.saveAll(messages);
-// 		logger.info("Seeded {} messages", messages.size());
+		// Seed messages
+		List<Message> messages = new ArrayList<>();
+		for (Group g : groups) {
+			List<User> members = g.getMembers();
+			if (members == null || members.isEmpty()) {
+				continue;
+			}
+			int msgCount = 3 + rnd.nextInt(5);
+			for (int i = 0; i < msgCount; i++) {
+				User author = members.get(rnd.nextInt(members.size()));
+				String content = String.format("Message %d in %s from %s %s", i + 1, g.getName(),
+						author.getFirstName(), author.getName());
+				Message m = new Message(content, author, g);
+				messages.add(m);
+			}
+		}
+		messageRepository.saveAll(messages);
+		logger.info("Seeded {} messages", messages.size());
 
-// 		// Seed restaurants
-// 		try {
-// 			List<Restaurant> restaurants = new ArrayList<>();
-// 			restaurants.add(new Restaurant("Sushi Bar Osaka", "Naamsestraat 45, Ghent", "09-123456", "Fresh sushi and sashimi with a modern interior and omakase options."));
-// 			restaurants.add(new Restaurant("La Piazza Italiana", "Grote Markt 12, Antwerp", "03-654321", "Authentic Italian pasta, fresh sauces and a curated wine list."));
-// 			restaurants.add(new Restaurant("Thai Garden", "Bondgenotenlaan 8, Leuven", "016-987654", "Spicy Thai curries, pad thai and traditional dishes."));
-// 			restaurants.add(new Restaurant("De Gouden Lepel", "Kerkstraat 12, Leuven", "016-123456", "Cozy Belgian bistro with classic regional dishes."));
-// 			restaurants.add(new Restaurant("Le Marché", "Mechelsestraat 22, Leuven", "016-111222", "Market-style small plates focused on seasonal ingredients."));
-// 			restaurants.add(new Restaurant("Curry Corner", "Tiensestraat 3, Leuven", "016-333444", "Spicy Indian curries, vegetarian-friendly menu and house-made naan."));
-// 			restaurants.add(new Restaurant("El Toro Loco", "Diestsestraat 15, Leuven", "016-555666", "Mexican tacos, burritos and margaritas in a vibrant setting."));
-// 			restaurants.add(new Restaurant("Chez Pierre", "Vismarkt 8, Brussels", "02-777888", "Classic French cuisine with seasonal tasting menus."));
-// 			restaurantRepository.saveAll(restaurants);
-// 			logger.info("Seeded {} restaurants", restaurants.size());
-// 		} catch (Exception ex) {
-// 			logger.warn("Failed to seed restaurants: {}", ex.getMessage());
-// 		}
+		// Seed restaurants
+		try {
+			List<Restaurant> restaurants = new ArrayList<>();
+			restaurants.add(new Restaurant("Sushi Bar Osaka", "Naamsestraat 45, Ghent", "09-123456", "Fresh sushi and sashimi with a modern interior and omakase options."));
+			restaurants.add(new Restaurant("La Piazza Italiana", "Grote Markt 12, Antwerp", "03-654321", "Authentic Italian pasta, fresh sauces and a curated wine list."));
+			restaurants.add(new Restaurant("Thai Garden", "Bondgenotenlaan 8, Leuven", "016-987654", "Spicy Thai curries, pad thai and traditional dishes."));
+			restaurants.add(new Restaurant("De Gouden Lepel", "Kerkstraat 12, Leuven", "016-123456", "Cozy Belgian bistro with classic regional dishes."));
+			restaurants.add(new Restaurant("Le Marché", "Mechelsestraat 22, Leuven", "016-111222", "Market-style small plates focused on seasonal ingredients."));
+			restaurants.add(new Restaurant("Curry Corner", "Tiensestraat 3, Leuven", "016-333444", "Spicy Indian curries, vegetarian-friendly menu and house-made naan."));
+			restaurants.add(new Restaurant("El Toro Loco", "Diestsestraat 15, Leuven", "016-555666", "Mexican tacos, burritos and margaritas in a vibrant setting."));
+			restaurants.add(new Restaurant("Chez Pierre", "Vismarkt 8, Brussels", "02-777888", "Classic French cuisine with seasonal tasting menus."));
+			restaurantRepository.saveAll(restaurants);
+			logger.info("Seeded {} restaurants", restaurants.size());
+		} catch (Exception ex) {
+			logger.warn("Failed to seed restaurants: {}", ex.getMessage());
+		}
 
-// 		// Seed RestRels
-// 		List<User> allUsers = userRepository.findAll();
-// 		List<Restaurant> allRestaurants = restaurantRepository.findAll();
-// 		List<RestRel> restRels = new ArrayList<>();
-// 		Random restRelRnd = new Random(42);
-// 		if (!allUsers.isEmpty() && !allRestaurants.isEmpty()) {
-// 			for (User u : allUsers) {
-// 				int visitedCount = 1 + restRelRnd.nextInt(3);
-// 				for (int i = 0; i < visitedCount; i++) {
-// 					Restaurant r = allRestaurants.get(restRelRnd.nextInt(allRestaurants.size()));
-// 					RestRel rr = new RestRel(u, r);
-// 					rr.setVisitDate(LocalDate.now().minusDays(restRelRnd.nextInt(365)));
-// 					if (restRelRnd.nextDouble() < 0.7) {
-// 						rr.setRating((float) (3 + restRelRnd.nextInt(3)));
-// 					}
-// 					if (restRelRnd.nextBoolean()) {
-// 						rr.setFavorite(true);
-// 					}
-// 					restRels.add(rr);
-// 				}
-// 			}
-// 			List<RestRel> savedRestRels = restRelRepository.saveAll(restRels);
+		// Seed RestRels
+		List<User> allUsers = userRepository.findAll();
+		List<Restaurant> allRestaurants = restaurantRepository.findAll();
+		List<RestRel> restRels = new ArrayList<>();
+		Random restRelRnd = new Random(42);
+		if (!allUsers.isEmpty() && !allRestaurants.isEmpty()) {
+			for (User u : allUsers) {
+				int visitedCount = 1 + restRelRnd.nextInt(3);
+				for (int i = 0; i < visitedCount; i++) {
+					Restaurant r = allRestaurants.get(restRelRnd.nextInt(allRestaurants.size()));
+					RestRel rr = new RestRel(u, r);
+					rr.setVisitDate(LocalDate.now().minusDays(restRelRnd.nextInt(365)));
+					if (restRelRnd.nextDouble() < 0.7) {
+						rr.setRating((float) (3 + restRelRnd.nextInt(3)));
+					}
+					if (restRelRnd.nextBoolean()) {
+						rr.setFavorite(true);
+					}
+					restRels.add(rr);
+				}
+			}
+			List<RestRel> savedRestRels = restRelRepository.saveAll(restRels);
 
-// 			for (User u : allUsers) {
-// 				List<RestRel> userRels = new ArrayList<>();
-// 				for (RestRel rr : savedRestRels) {
-// 					if (rr.getUser().getId().equals(u.getId())) {
-// 						userRels.add(rr);
-// 					}
-// 				}
-// 				u.setRestaurantRelations(userRels);
-// 				userRepository.save(u);
-// 			}
-// 			logger.info("Seeded {} restaurant relations", savedRestRels.size());
-// 		}
+			for (User u : allUsers) {
+				List<RestRel> userRels = new ArrayList<>();
+				for (RestRel rr : savedRestRels) {
+					if (rr.getUser().getId().equals(u.getId())) {
+						userRels.add(rr);
+					}
+				}
+				u.setRestaurantRelations(userRels);
+				userRepository.save(u);
+			}
+			logger.info("Seeded {} restaurant relations", savedRestRels.size());
+		}
 
-// 		// Seed GroupVisits
-// 		List<Group> allGroups = groupRepository.findAll();
-// 		List<Restaurant> groupVisitRestaurants = restaurantRepository.findAll();
-// 		List<GroupVisit> groupVisits = new ArrayList<>();
-// 		Random groupVisitRnd = new Random(42);
-// 		String[] cuisines = { "Japanese", "Italian", "Thai", "Belgian", "French", "Indian", "Mexican" };
-// 		String[] payerNames = { "John", "Jane", "Charlie", "Emma", "Liam", "Olivia", "Lisa", "Tom" };
-// 		if (!allGroups.isEmpty() && !groupVisitRestaurants.isEmpty()) {
-// 			for (Group group : allGroups) {
-// 				int visitCount = 1 + groupVisitRnd.nextInt(3);
-// 				for (int i = 0; i < visitCount; i++) {
-// 					Restaurant restaurant = groupVisitRestaurants.get(groupVisitRnd.nextInt(groupVisitRestaurants.size()));
-// 					LocalDate visitDate = LocalDate.now().minusDays(5 + groupVisitRnd.nextInt(175));
-// 					GroupVisit visit = new GroupVisit(group, restaurant, visitDate);
-// 					String cuisine = cuisines[groupVisitRnd.nextInt(cuisines.length)];
-// 					if (restaurant.getName().toLowerCase().contains("sushi")) cuisine = "Japanese";
-// 					else if (restaurant.getName().toLowerCase().contains("italian") || restaurant.getName().toLowerCase().contains("piazza")) cuisine = "Italian";
-// 					else if (restaurant.getName().toLowerCase().contains("thai")) cuisine = "Thai";
-// 					else if (restaurant.getName().toLowerCase().contains("curry") || restaurant.getName().toLowerCase().contains("indian")) cuisine = "Indian";
-// 					else if (restaurant.getName().toLowerCase().contains("mexican") || restaurant.getName().toLowerCase().contains("toro")) cuisine = "Mexican";
-// 					else if (restaurant.getName().toLowerCase().contains("pierre") || restaurant.getName().toLowerCase().contains("marché")) cuisine = "French";
-// 					else if (restaurant.getName().toLowerCase().contains("gouden") || restaurant.getName().toLowerCase().contains("belgian")) cuisine = "Belgian";
-// 					visit.setCuisine(cuisine);
-// 					if (groupVisitRnd.nextDouble() < 0.7) {
-// 						double price = 50 + groupVisitRnd.nextDouble() * 150;
-// 						price = Math.round(price * 100.0) / 100.0;
-// 						visit.setTotalPrice(price);
-// 						String payerName = payerNames[groupVisitRnd.nextInt(payerNames.length)];
-// 						visit.setPaidByName(payerName);
-// 						visit.setPaidByEmail(payerName.toLowerCase() + "@example.com");
-// 					}
-// 					groupVisits.add(visit);
-// 				}
-// 			}
-// 			groupVisitRepository.saveAll(groupVisits);
-// 			logger.info("Seeded {} group visits", groupVisits.size());
-// 		}
+		// Seed GroupVisits
+		List<Group> allGroups = groupRepository.findAll();
+		List<Restaurant> groupVisitRestaurants = restaurantRepository.findAll();
+		List<GroupVisit> groupVisits = new ArrayList<>();
+		Random groupVisitRnd = new Random(42);
+		String[] cuisines = { "Japanese", "Italian", "Thai", "Belgian", "French", "Indian", "Mexican" };
+		String[] payerNames = { "John", "Jane", "Charlie", "Emma", "Liam", "Olivia", "Lisa", "Tom" };
+		if (!allGroups.isEmpty() && !groupVisitRestaurants.isEmpty()) {
+			for (Group group : allGroups) {
+				int visitCount = 1 + groupVisitRnd.nextInt(3);
+				for (int i = 0; i < visitCount; i++) {
+					Restaurant restaurant = groupVisitRestaurants.get(groupVisitRnd.nextInt(groupVisitRestaurants.size()));
+					LocalDate visitDate = LocalDate.now().minusDays(5 + groupVisitRnd.nextInt(175));
+					GroupVisit visit = new GroupVisit(group, restaurant, visitDate);
+					String cuisine = cuisines[groupVisitRnd.nextInt(cuisines.length)];
+					if (restaurant.getName().toLowerCase().contains("sushi")) cuisine = "Japanese";
+					else if (restaurant.getName().toLowerCase().contains("italian") || restaurant.getName().toLowerCase().contains("piazza")) cuisine = "Italian";
+					else if (restaurant.getName().toLowerCase().contains("thai")) cuisine = "Thai";
+					else if (restaurant.getName().toLowerCase().contains("curry") || restaurant.getName().toLowerCase().contains("indian")) cuisine = "Indian";
+					else if (restaurant.getName().toLowerCase().contains("mexican") || restaurant.getName().toLowerCase().contains("toro")) cuisine = "Mexican";
+					else if (restaurant.getName().toLowerCase().contains("pierre") || restaurant.getName().toLowerCase().contains("marché")) cuisine = "French";
+					else if (restaurant.getName().toLowerCase().contains("gouden") || restaurant.getName().toLowerCase().contains("belgian")) cuisine = "Belgian";
+					visit.setCuisine(cuisine);
+					if (groupVisitRnd.nextDouble() < 0.7) {
+						double price = 50 + groupVisitRnd.nextDouble() * 150;
+						price = Math.round(price * 100.0) / 100.0;
+						visit.setTotalPrice(price);
+						String payerName = payerNames[groupVisitRnd.nextInt(payerNames.length)];
+						visit.setPaidByName(payerName);
+						visit.setPaidByEmail(payerName.toLowerCase() + "@example.com");
+					}
+					groupVisits.add(visit);
+				}
+			}
+			groupVisitRepository.saveAll(groupVisits);
+			logger.info("Seeded {} group visits", groupVisits.size());
+		}
 		
-// 		logger.info("Database seeding completed successfully!");
-// 	}
-// }
+		logger.info("Database seeding completed successfully!");
+	}
+}
