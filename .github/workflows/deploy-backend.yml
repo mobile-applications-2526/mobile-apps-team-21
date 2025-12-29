@@ -26,6 +26,5 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'eatup-backend'  # <-- CHANGE THIS to your Azure Web App name
-          slot-name: 'Production'
           package: 'app.jar'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
