@@ -1,0 +1,30 @@
+# name: CD Deploy JAR app to Azure Web App - eatup-backend
+
+# on:
+#   workflow_run:
+#     workflows: ["CI Build & Publish JAR app - eatup-backend"]
+#     types:
+#       - completed
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Download build artifact
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: eatup-backend-jar
+
+#       - name: Rename JAR to app.jar
+#         run: |
+#           JAR_FILE=$(ls *.jar | head -n 1)
+#           mv "$JAR_FILE" app.jar
+
+#       - name: Deploy to Azure Web App
+#         id: deploy-to-webapp
+#         uses: azure/webapps-deploy@v3
+#         with:
+#           app-name: 'eatup-backend'  # <-- CHANGE THIS to your Azure Web App name
+#           package: 'app.jar'
+#           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}

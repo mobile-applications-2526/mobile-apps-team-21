@@ -1,0 +1,54 @@
+name: Backend CI/CD - Build & Deploy eatup-backend to Azure
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java version
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'microsoft'
+
+      - name: Build with maven (backend folder)
+        run: |
+          chmod +x mvnw || true
+          ./mvnw clean package -DskipTests -B
+        working-directory: back-end
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: eatup-backend-jar
+          path: back-end/target/*.jar
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build # This ensures deploy only runs after a successful build
+    
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: eatup-backend-jar
+
+      - name: Rename JAR to app.jar
+        run: |
+          JAR_FILE=$(ls *.jar | head -n 1)
+          mv "$JAR_FILE" app.jar
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'eatup-backend'
+          package: 'app.jar'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}

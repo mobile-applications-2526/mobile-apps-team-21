@@ -1,0 +1,31 @@
+# name: CI Build & Publish JAR app - eatup-backend
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+
+#       - name: Set up Java version
+#         uses: actions/setup-java@v4
+#         with:
+#           java-version: '21'
+#           distribution: 'microsoft'
+
+#       - name: Build with maven (backend folder)
+#         run: |
+#           chmod +x mvnw || true
+#           ./mvnw clean package -DskipTests -B
+#         working-directory: back-end
+
+#       - name: Upload JAR artifact
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: eatup-backend-jar
+#           path: back-end/target/*.jar
