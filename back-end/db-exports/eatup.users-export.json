@@ -1,0 +1,241 @@
+[{
+  "_id": {
+    "$oid": "695187e134de9726cea3b062"
+  },
+  "name": "Smith",
+  "firstName": "John",
+  "email": "john.smith@example.com",
+  "password": "$2a$10$UY6ZGPTpMS9wjEkQ6ZHIMOc6jg3ugfOBbbzJ7T/N5vPdqily655ma",
+  "groups": [
+    {
+      "$ref": "groups",
+      "$id": {
+        "$oid": "695187e234de9726cea3b068"
+      }
+    },
+    {
+      "$ref": "groups",
+      "$id": {
+        "$oid": "695187e234de9726cea3b06a"
+      }
+    },
+    {
+      "$ref": "groups",
+      "$id": {
+        "$oid": "695198019e22be8aaea1c948"
+      }
+    }
+  ],
+  "restaurantRelations": [
+    {
+      "$ref": "restRels",
+      "$id": {
+        "$oid": "695187e834de9726cea3b089"
+      }
+    },
+    {
+      "$ref": "restRels",
+      "$id": {
+        "$oid": "695187e834de9726cea3b08a"
+      }
+    },
+    {
+      "$ref": "restRels",
+      "$id": {
+        "$oid": "695187e834de9726cea3b08b"
+      }
+    }
+  ],
+  "expoPushToken": "ExponentPushToken[8qJPxaMtTLzpTnse8OHYF2]",
+  "_class": "be.ucll.EatUp_Team21.model.User"
+},
+{
+  "_id": {
+    "$oid": "695187e134de9726cea3b063"
+  },
+  "name": "Doe",
+  "firstName": "Jane",
+  "email": "jane.doe@example.com",
+  "password": "$2a$10$ty8V3Iz31H1MXqRmcqu1nu7FJIOkRtuOdkR1jnBGUlUWiOLOuupdW",
+  "groups": [
+    {
+      "$ref": "groups",
+      "$id": {
+        "$oid": "695187e234de9726cea3b069"
+      }
+    },
+    {
+      "$ref": "groups",
+      "$id": {
+        "$oid": "695187e234de9726cea3b06a"
+      }
+    },
+    {
+      "$ref": "groups",
+      "$id": {
+        "$oid": "695198019e22be8aaea1c948"
+      }
+    }
+  ],
+  "restaurantRelations": [
+    {
+      "$ref": "restRels",
+      "$id": {
+        "$oid": "695187e834de9726cea3b08c"
+      }
+    },
+    {
+      "$ref": "restRels",
+      "$id": {
+        "$oid": "695187e834de9726cea3b08d"
+      }
+    },
+    {
+      "$ref": "restRels",
+      "$id": {
+        "$oid": "695187e834de9726cea3b08e"
+      }
+    },
+    {
+      "$ref": "restRels",
+      "$id": {
+        "$oid": "69518db934de9726cea3b0a2"
+      }
+    }
+  ],
+  "expoPushToken": "ExponentPushToken[WnYM74EdRD1A6yAWAE3lHw]",
+  "_class": "be.ucll.EatUp_Team21.model.User"
+},
+{
+  "_id": {
+    "$oid": "695187e134de9726cea3b064"
+  },
+  "name": "Brown",
+  "firstName": "Charlie",
+  "email": "charlie.brown@example.com",
+  "password": "$2a$10$C50igfN3uKA2UpYp.GQAe.dYkTVHPTRsOvbRi92U20.R/39YA9TIC",
+  "groups": [
+    {
+      "$ref": "groups",
+      "$id": {
+        "$oid": "695187e234de9726cea3b068"
+      }
+    },
+    {
+      "$ref": "groups",
+      "$id": {
+        "$oid": "695187e234de9726cea3b06a"
+      }
+    },
+    {
+      "$ref": "groups",
+      "$id": {
+        "$oid": "695187e234de9726cea3b06b"
+      }
+    }
+  ],
+  "restaurantRelations": [
+    {
+      "$ref": "restRels",
+      "$id": {
+        "$oid": "695187e834de9726cea3b08f"
+      }
+    },
+    {
+      "$ref": "restRels",
+      "$id": {
+        "$oid": "695187e834de9726cea3b090"
+      }
+    }
+  ],
+  "_class": "be.ucll.EatUp_Team21.model.User"
+},
+{
+  "_id": {
+    "$oid": "695187e134de9726cea3b065"
+  },
+  "name": "Johnson",
+  "firstName": "Emma",
+  "email": "emma.johnson@example.com",
+  "password": "$2a$10$e/ujSIAaT35le3Pki2aTeeVqumIZ53Qp4UtAeWZSg7dGtf/kZhWJC",
+  "groups": [
+    {
+      "$ref": "groups",
+      "$id": {
+        "$oid": "695187e234de9726cea3b068"
+      }
+    }
+  ],
+  "restaurantRelations": [
+    {
+      "$ref": "restRels",
+      "$id": {
+        "$oid": "695187e834de9726cea3b091"
+      }
+    },
+    {
+      "$ref": "restRels",
+      "$id": {
+        "$oid": "695187e834de9726cea3b092"
+      }
+    }
+  ],
+  "_class": "be.ucll.EatUp_Team21.model.User"
+},
+{
+  "_id": {
+    "$oid": "695187e134de9726cea3b066"
+  },
+  "name": "Miller",
+  "firstName": "Liam",
+  "email": "liam.miller@example.com",
+  "password": "$2a$10$9njpuEqSQetzsHMzZvd.Cu5lYW0dOAyjBU330rdcQb8bWBqr3DeXG",
+  "groups": [],
+  "restaurantRelations": [
+    {
+      "$ref": "restRels",
+      "$id": {
+        "$oid": "695187e834de9726cea3b093"
+      }
+    },
+    {
+      "$ref": "restRels",
+      "$id": {
+        "$oid": "695187e834de9726cea3b094"
+      }
+    },
+    {
+      "$ref": "restRels",
+      "$id": {
+        "$oid": "695187e834de9726cea3b095"
+      }
+    }
+  ],
+  "_class": "be.ucll.EatUp_Team21.model.User"
+},
+{
+  "_id": {
+    "$oid": "695187e134de9726cea3b067"
+  },
+  "name": "Davis",
+  "firstName": "Olivia",
+  "email": "olivia.davis@example.com",
+  "password": "$2a$10$fE93MUd3NYOpC1O6gxpocuDdlqopNBQlLzNcrSnwco7/N9YqiPate",
+  "groups": [
+    {
+      "$ref": "groups",
+      "$id": {
+        "$oid": "695187e234de9726cea3b06a"
+      }
+    }
+  ],
+  "restaurantRelations": [
+    {
+      "$ref": "restRels",
+      "$id": {
+        "$oid": "695187e834de9726cea3b096"
+      }
+    }
+  ],
+  "_class": "be.ucll.EatUp_Team21.model.User"
+}]

@@ -1,0 +1,136 @@
+[{
+  "_id": {
+    "$oid": "695187e234de9726cea3b068"
+  },
+  "name": "Avondeten",
+  "members": [
+    {
+      "$ref": "users",
+      "$id": {
+        "$oid": "695187e134de9726cea3b065"
+      }
+    },
+    {
+      "$ref": "users",
+      "$id": {
+        "$oid": "695187e134de9726cea3b062"
+      }
+    },
+    {
+      "$ref": "users",
+      "$id": {
+        "$oid": "695187e134de9726cea3b064"
+      }
+    }
+  ],
+  "suggestedRestaurants": [],
+  "memberLastVisited": {},
+  "_class": "be.ucll.EatUp_Team21.model.Group"
+},
+{
+  "_id": {
+    "$oid": "695187e234de9726cea3b069"
+  },
+  "name": "Lunchclub",
+  "members": [
+    {
+      "$ref": "users",
+      "$id": {
+        "$oid": "695187e134de9726cea3b063"
+      }
+    }
+  ],
+  "suggestedRestaurants": [],
+  "memberLastVisited": {
+    "695187e134de9726cea3b063": {
+      "$date": "2025-12-28T20:47:35.648Z"
+    }
+  },
+  "_class": "be.ucll.EatUp_Team21.model.Group"
+},
+{
+  "_id": {
+    "$oid": "695187e234de9726cea3b06a"
+  },
+  "name": "Weekendplans",
+  "members": [
+    {
+      "$ref": "users",
+      "$id": {
+        "$oid": "695187e134de9726cea3b064"
+      }
+    },
+    {
+      "$ref": "users",
+      "$id": {
+        "$oid": "695187e134de9726cea3b063"
+      }
+    },
+    {
+      "$ref": "users",
+      "$id": {
+        "$oid": "695187e134de9726cea3b067"
+      }
+    },
+    {
+      "$ref": "users",
+      "$id": {
+        "$oid": "695187e134de9726cea3b062"
+      }
+    }
+  ],
+  "suggestedRestaurants": [],
+  "memberLastVisited": {
+    "695187e134de9726cea3b063": {
+      "$date": "2025-12-28T20:47:53.849Z"
+    }
+  },
+  "_class": "be.ucll.EatUp_Team21.model.Group"
+},
+{
+  "_id": {
+    "$oid": "695187e234de9726cea3b06b"
+  },
+  "name": "Projectgroep",
+  "members": [
+    {
+      "$ref": "users",
+      "$id": {
+        "$oid": "695187e134de9726cea3b064"
+      }
+    }
+  ],
+  "suggestedRestaurants": [],
+  "memberLastVisited": {},
+  "_class": "be.ucll.EatUp_Team21.model.Group"
+},
+{
+  "_id": {
+    "$oid": "695198019e22be8aaea1c948"
+  },
+  "name": "test",
+  "members": [
+    {
+      "$ref": "users",
+      "$id": {
+        "$oid": "695187e134de9726cea3b063"
+      }
+    },
+    {
+      "$ref": "users",
+      "$id": {
+        "$oid": "695187e134de9726cea3b062"
+      }
+    }
+  ],
+  "suggestedRestaurants": [],
+  "memberLastVisited": {
+    "695187e134de9726cea3b062": {
+      "$date": "2025-12-28T20:54:05.140Z"
+    },
+    "695187e134de9726cea3b063": {
+      "$date": "2025-12-29T13:55:22.289Z"
+    }
+  },
+  "_class": "be.ucll.EatUp_Team21.model.Group"
+}]

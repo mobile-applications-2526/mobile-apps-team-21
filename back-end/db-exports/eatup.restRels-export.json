@@ -1,0 +1,668 @@
+[{
+  "_id": {
+    "$oid": "695187e834de9726cea3b089"
+  },
+  "user": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b062"
+    },
+    "name": "Smith",
+    "firstName": "John",
+    "email": "john.smith@example.com",
+    "password": "$2a$10$UY6ZGPTpMS9wjEkQ6ZHIMOc6jg3ugfOBbbzJ7T/N5vPdqily655ma",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "restaurant": {
+    "_id": {
+      "$oid": "695187e434de9726cea3b081"
+    },
+    "name": "Sushi Bar Osaka",
+    "adress": "Naamsestraat 45, Ghent",
+    "phoneNumber": "09-123456",
+    "description": "Fresh sushi and sashimi with a modern interior and omakase options."
+  },
+  "rating": 4,
+  "wantsToGo": false,
+  "isFavorite": false,
+  "visitDate": {
+    "$date": "2025-02-23T00:00:00.000Z"
+  },
+  "_class": "be.ucll.EatUp_Team21.model.RestRel"
+},
+{
+  "_id": {
+    "$oid": "695187e834de9726cea3b08a"
+  },
+  "user": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b062"
+    },
+    "name": "Smith",
+    "firstName": "John",
+    "email": "john.smith@example.com",
+    "password": "$2a$10$UY6ZGPTpMS9wjEkQ6ZHIMOc6jg3ugfOBbbzJ7T/N5vPdqily655ma",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "restaurant": {
+    "_id": {
+      "$oid": "695187e434de9726cea3b086"
+    },
+    "name": "Curry Corner",
+    "adress": "Tiensestraat 3, Leuven",
+    "phoneNumber": "016-333444",
+    "description": "Spicy Indian curries, vegetarian-friendly menu and house-made naan."
+  },
+  "rating": 5,
+  "wantsToGo": false,
+  "isFavorite": false,
+  "visitDate": {
+    "$date": "2025-06-12T00:00:00.000Z"
+  },
+  "_class": "be.ucll.EatUp_Team21.model.RestRel"
+},
+{
+  "_id": {
+    "$oid": "695187e834de9726cea3b08b"
+  },
+  "user": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b062"
+    },
+    "name": "Smith",
+    "firstName": "John",
+    "email": "john.smith@example.com",
+    "password": "$2a$10$UY6ZGPTpMS9wjEkQ6ZHIMOc6jg3ugfOBbbzJ7T/N5vPdqily655ma",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "restaurant": {
+    "_id": {
+      "$oid": "695187e434de9726cea3b084"
+    },
+    "name": "De Gouden Lepel",
+    "adress": "Kerkstraat 12, Leuven",
+    "phoneNumber": "016-123456",
+    "description": "Cozy Belgian bistro with classic regional dishes."
+  },
+  "rating": 3,
+  "wantsToGo": false,
+  "isFavorite": true,
+  "visitDate": {
+    "$date": "2025-07-25T00:00:00.000Z"
+  },
+  "_class": "be.ucll.EatUp_Team21.model.RestRel"
+},
+{
+  "_id": {
+    "$oid": "695187e834de9726cea3b08c"
+  },
+  "user": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b063"
+    },
+    "name": "Doe",
+    "firstName": "Jane",
+    "email": "jane.doe@example.com",
+    "password": "$2a$10$ty8V3Iz31H1MXqRmcqu1nu7FJIOkRtuOdkR1jnBGUlUWiOLOuupdW",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b069"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "restaurant": {
+    "_id": {
+      "$oid": "695187e434de9726cea3b088"
+    },
+    "name": "Chez Pierre",
+    "adress": "Vismarkt 8, Brussels",
+    "phoneNumber": "02-777888",
+    "description": "Classic French cuisine with seasonal tasting menus."
+  },
+  "rating": 5,
+  "wantsToGo": false,
+  "isFavorite": true,
+  "visitDate": {
+    "$date": "2025-01-19T00:00:00.000Z"
+  },
+  "_class": "be.ucll.EatUp_Team21.model.RestRel"
+},
+{
+  "_id": {
+    "$oid": "695187e834de9726cea3b08d"
+  },
+  "user": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b063"
+    },
+    "name": "Doe",
+    "firstName": "Jane",
+    "email": "jane.doe@example.com",
+    "password": "$2a$10$ty8V3Iz31H1MXqRmcqu1nu7FJIOkRtuOdkR1jnBGUlUWiOLOuupdW",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b069"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": [
+      {
+        "$ref": "restRels",
+        "$id": {
+          "$oid": "695187e834de9726cea3b08c"
+        }
+      },
+      {
+        "$ref": "restRels",
+        "$id": {
+          "$oid": "695187e834de9726cea3b08d"
+        }
+      },
+      {
+        "$ref": "restRels",
+        "$id": {
+          "$oid": "695187e834de9726cea3b08e"
+        }
+      }
+    ],
+    "expoPushToken": "ExponentPushToken[WnYM74EdRD1A6yAWAE3lHw]"
+  },
+  "restaurant": {
+    "_id": {
+      "$oid": "695187e434de9726cea3b084"
+    },
+    "name": "De Gouden Lepel",
+    "adress": "Kerkstraat 12, Leuven",
+    "phoneNumber": "016-123456",
+    "description": "Cozy Belgian bistro with classic regional dishes."
+  },
+  "rating": 5,
+  "wantsToGo": false,
+  "isFavorite": false,
+  "visitDate": {
+    "$date": "2025-03-25T00:00:00.000Z"
+  },
+  "_class": "be.ucll.EatUp_Team21.model.RestRel"
+},
+{
+  "_id": {
+    "$oid": "695187e834de9726cea3b08e"
+  },
+  "user": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b063"
+    },
+    "name": "Doe",
+    "firstName": "Jane",
+    "email": "jane.doe@example.com",
+    "password": "$2a$10$ty8V3Iz31H1MXqRmcqu1nu7FJIOkRtuOdkR1jnBGUlUWiOLOuupdW",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b069"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "restaurant": {
+    "_id": {
+      "$oid": "695187e434de9726cea3b082"
+    },
+    "name": "La Piazza Italiana",
+    "adress": "Grote Markt 12, Antwerp",
+    "phoneNumber": "03-654321",
+    "description": "Authentic Italian pasta, fresh sauces and a curated wine list."
+  },
+  "wantsToGo": false,
+  "isFavorite": false,
+  "visitDate": {
+    "$date": "2025-11-23T00:00:00.000Z"
+  },
+  "_class": "be.ucll.EatUp_Team21.model.RestRel"
+},
+{
+  "_id": {
+    "$oid": "695187e834de9726cea3b08f"
+  },
+  "user": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b064"
+    },
+    "name": "Brown",
+    "firstName": "Charlie",
+    "email": "charlie.brown@example.com",
+    "password": "$2a$10$C50igfN3uKA2UpYp.GQAe.dYkTVHPTRsOvbRi92U20.R/39YA9TIC",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06b"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "restaurant": {
+    "_id": {
+      "$oid": "695187e434de9726cea3b085"
+    },
+    "name": "Le Marché",
+    "adress": "Mechelsestraat 22, Leuven",
+    "phoneNumber": "016-111222",
+    "description": "Market-style small plates focused on seasonal ingredients."
+  },
+  "wantsToGo": false,
+  "isFavorite": true,
+  "visitDate": {
+    "$date": "2025-11-29T00:00:00.000Z"
+  },
+  "_class": "be.ucll.EatUp_Team21.model.RestRel"
+},
+{
+  "_id": {
+    "$oid": "695187e834de9726cea3b090"
+  },
+  "user": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b064"
+    },
+    "name": "Brown",
+    "firstName": "Charlie",
+    "email": "charlie.brown@example.com",
+    "password": "$2a$10$C50igfN3uKA2UpYp.GQAe.dYkTVHPTRsOvbRi92U20.R/39YA9TIC",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06b"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "restaurant": {
+    "_id": {
+      "$oid": "695187e434de9726cea3b081"
+    },
+    "name": "Sushi Bar Osaka",
+    "adress": "Naamsestraat 45, Ghent",
+    "phoneNumber": "09-123456",
+    "description": "Fresh sushi and sashimi with a modern interior and omakase options."
+  },
+  "rating": 5,
+  "wantsToGo": false,
+  "isFavorite": false,
+  "visitDate": {
+    "$date": "2025-10-04T00:00:00.000Z"
+  },
+  "_class": "be.ucll.EatUp_Team21.model.RestRel"
+},
+{
+  "_id": {
+    "$oid": "695187e834de9726cea3b091"
+  },
+  "user": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b065"
+    },
+    "name": "Johnson",
+    "firstName": "Emma",
+    "email": "emma.johnson@example.com",
+    "password": "$2a$10$e/ujSIAaT35le3Pki2aTeeVqumIZ53Qp4UtAeWZSg7dGtf/kZhWJC",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "restaurant": {
+    "_id": {
+      "$oid": "695187e434de9726cea3b083"
+    },
+    "name": "Thai Garden",
+    "adress": "Bondgenotenlaan 8, Leuven",
+    "phoneNumber": "016-987654",
+    "description": "Spicy Thai curries, pad thai and traditional dishes."
+  },
+  "wantsToGo": false,
+  "isFavorite": false,
+  "visitDate": {
+    "$date": "2025-02-26T00:00:00.000Z"
+  },
+  "_class": "be.ucll.EatUp_Team21.model.RestRel"
+},
+{
+  "_id": {
+    "$oid": "695187e834de9726cea3b092"
+  },
+  "user": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b065"
+    },
+    "name": "Johnson",
+    "firstName": "Emma",
+    "email": "emma.johnson@example.com",
+    "password": "$2a$10$e/ujSIAaT35le3Pki2aTeeVqumIZ53Qp4UtAeWZSg7dGtf/kZhWJC",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "restaurant": {
+    "_id": {
+      "$oid": "695187e434de9726cea3b087"
+    },
+    "name": "El Toro Loco",
+    "adress": "Diestsestraat 15, Leuven",
+    "phoneNumber": "016-555666",
+    "description": "Mexican tacos, burritos and margaritas in a vibrant setting."
+  },
+  "rating": 3,
+  "wantsToGo": false,
+  "isFavorite": false,
+  "visitDate": {
+    "$date": "2025-08-12T00:00:00.000Z"
+  },
+  "_class": "be.ucll.EatUp_Team21.model.RestRel"
+},
+{
+  "_id": {
+    "$oid": "695187e834de9726cea3b093"
+  },
+  "user": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b066"
+    },
+    "name": "Miller",
+    "firstName": "Liam",
+    "email": "liam.miller@example.com",
+    "password": "$2a$10$9njpuEqSQetzsHMzZvd.Cu5lYW0dOAyjBU330rdcQb8bWBqr3DeXG",
+    "groups": [],
+    "restaurantRelations": []
+  },
+  "restaurant": {
+    "_id": {
+      "$oid": "695187e434de9726cea3b083"
+    },
+    "name": "Thai Garden",
+    "adress": "Bondgenotenlaan 8, Leuven",
+    "phoneNumber": "016-987654",
+    "description": "Spicy Thai curries, pad thai and traditional dishes."
+  },
+  "wantsToGo": false,
+  "isFavorite": true,
+  "visitDate": {
+    "$date": "2025-04-06T00:00:00.000Z"
+  },
+  "_class": "be.ucll.EatUp_Team21.model.RestRel"
+},
+{
+  "_id": {
+    "$oid": "695187e834de9726cea3b094"
+  },
+  "user": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b066"
+    },
+    "name": "Miller",
+    "firstName": "Liam",
+    "email": "liam.miller@example.com",
+    "password": "$2a$10$9njpuEqSQetzsHMzZvd.Cu5lYW0dOAyjBU330rdcQb8bWBqr3DeXG",
+    "groups": [],
+    "restaurantRelations": []
+  },
+  "restaurant": {
+    "_id": {
+      "$oid": "695187e434de9726cea3b082"
+    },
+    "name": "La Piazza Italiana",
+    "adress": "Grote Markt 12, Antwerp",
+    "phoneNumber": "03-654321",
+    "description": "Authentic Italian pasta, fresh sauces and a curated wine list."
+  },
+  "rating": 5,
+  "wantsToGo": false,
+  "isFavorite": false,
+  "visitDate": {
+    "$date": "2025-01-07T00:00:00.000Z"
+  },
+  "_class": "be.ucll.EatUp_Team21.model.RestRel"
+},
+{
+  "_id": {
+    "$oid": "695187e834de9726cea3b095"
+  },
+  "user": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b066"
+    },
+    "name": "Miller",
+    "firstName": "Liam",
+    "email": "liam.miller@example.com",
+    "password": "$2a$10$9njpuEqSQetzsHMzZvd.Cu5lYW0dOAyjBU330rdcQb8bWBqr3DeXG",
+    "groups": [],
+    "restaurantRelations": []
+  },
+  "restaurant": {
+    "_id": {
+      "$oid": "695187e434de9726cea3b084"
+    },
+    "name": "De Gouden Lepel",
+    "adress": "Kerkstraat 12, Leuven",
+    "phoneNumber": "016-123456",
+    "description": "Cozy Belgian bistro with classic regional dishes."
+  },
+  "rating": 4,
+  "wantsToGo": false,
+  "isFavorite": false,
+  "visitDate": {
+    "$date": "2025-03-05T00:00:00.000Z"
+  },
+  "_class": "be.ucll.EatUp_Team21.model.RestRel"
+},
+{
+  "_id": {
+    "$oid": "695187e834de9726cea3b096"
+  },
+  "user": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b067"
+    },
+    "name": "Davis",
+    "firstName": "Olivia",
+    "email": "olivia.davis@example.com",
+    "password": "$2a$10$fE93MUd3NYOpC1O6gxpocuDdlqopNBQlLzNcrSnwco7/N9YqiPate",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "restaurant": {
+    "_id": {
+      "$oid": "695187e434de9726cea3b084"
+    },
+    "name": "De Gouden Lepel",
+    "adress": "Kerkstraat 12, Leuven",
+    "phoneNumber": "016-123456",
+    "description": "Cozy Belgian bistro with classic regional dishes."
+  },
+  "wantsToGo": false,
+  "isFavorite": false,
+  "visitDate": {
+    "$date": "2025-06-12T00:00:00.000Z"
+  },
+  "_class": "be.ucll.EatUp_Team21.model.RestRel"
+},
+{
+  "_id": {
+    "$oid": "69518db934de9726cea3b0a2"
+  },
+  "user": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b063"
+    },
+    "name": "Doe",
+    "firstName": "Jane",
+    "email": "jane.doe@example.com",
+    "password": "$2a$10$ty8V3Iz31H1MXqRmcqu1nu7FJIOkRtuOdkR1jnBGUlUWiOLOuupdW",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b069"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": [
+      {
+        "$ref": "restRels",
+        "$id": {
+          "$oid": "695187e834de9726cea3b08c"
+        }
+      },
+      {
+        "$ref": "restRels",
+        "$id": {
+          "$oid": "695187e834de9726cea3b08d"
+        }
+      },
+      {
+        "$ref": "restRels",
+        "$id": {
+          "$oid": "695187e834de9726cea3b08e"
+        }
+      },
+      {
+        "$ref": "restRels",
+        "$id": {
+          "$oid": "69518db934de9726cea3b0a2"
+        }
+      }
+    ],
+    "expoPushToken": "ExponentPushToken[WnYM74EdRD1A6yAWAE3lHw]"
+  },
+  "restaurant": {
+    "_id": {
+      "$oid": "695187e434de9726cea3b081"
+    },
+    "name": "Sushi Bar Osaka",
+    "adress": "Naamsestraat 45, Ghent",
+    "phoneNumber": "09-123456",
+    "description": "Fresh sushi and sashimi with a modern interior and omakase options."
+  },
+  "rating": 3,
+  "wantsToGo": false,
+  "isFavorite": true,
+  "_class": "be.ucll.EatUp_Team21.model.RestRel"
+}]

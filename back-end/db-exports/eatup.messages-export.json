@@ -1,0 +1,1443 @@
+[{
+  "_id": {
+    "$oid": "695187e434de9726cea3b06c"
+  },
+  "content": "Message 1 in Avondeten from Emma Johnson",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b065"
+    },
+    "name": "Johnson",
+    "firstName": "Emma",
+    "email": "emma.johnson@example.com",
+    "password": "$2a$10$e/ujSIAaT35le3Pki2aTeeVqumIZ53Qp4UtAeWZSg7dGtf/kZhWJC",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b068"
+    },
+    "name": "Avondeten",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b065"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b062"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b064"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b06d"
+  },
+  "content": "Message 2 in Avondeten from Emma Johnson",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b065"
+    },
+    "name": "Johnson",
+    "firstName": "Emma",
+    "email": "emma.johnson@example.com",
+    "password": "$2a$10$e/ujSIAaT35le3Pki2aTeeVqumIZ53Qp4UtAeWZSg7dGtf/kZhWJC",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b068"
+    },
+    "name": "Avondeten",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b065"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b062"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b064"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b06e"
+  },
+  "content": "Message 3 in Avondeten from John Smith",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b062"
+    },
+    "name": "Smith",
+    "firstName": "John",
+    "email": "john.smith@example.com",
+    "password": "$2a$10$UY6ZGPTpMS9wjEkQ6ZHIMOc6jg3ugfOBbbzJ7T/N5vPdqily655ma",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b068"
+    },
+    "name": "Avondeten",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b065"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b062"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b064"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b06f"
+  },
+  "content": "Message 4 in Avondeten from Charlie Brown",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b064"
+    },
+    "name": "Brown",
+    "firstName": "Charlie",
+    "email": "charlie.brown@example.com",
+    "password": "$2a$10$C50igfN3uKA2UpYp.GQAe.dYkTVHPTRsOvbRi92U20.R/39YA9TIC",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06b"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b068"
+    },
+    "name": "Avondeten",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b065"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b062"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b064"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b070"
+  },
+  "content": "Message 5 in Avondeten from Charlie Brown",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b064"
+    },
+    "name": "Brown",
+    "firstName": "Charlie",
+    "email": "charlie.brown@example.com",
+    "password": "$2a$10$C50igfN3uKA2UpYp.GQAe.dYkTVHPTRsOvbRi92U20.R/39YA9TIC",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06b"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b068"
+    },
+    "name": "Avondeten",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b065"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b062"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b064"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b071"
+  },
+  "content": "Message 1 in Lunchclub from Jane Doe",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b063"
+    },
+    "name": "Doe",
+    "firstName": "Jane",
+    "email": "jane.doe@example.com",
+    "password": "$2a$10$ty8V3Iz31H1MXqRmcqu1nu7FJIOkRtuOdkR1jnBGUlUWiOLOuupdW",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b069"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b069"
+    },
+    "name": "Lunchclub",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b063"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b072"
+  },
+  "content": "Message 2 in Lunchclub from Jane Doe",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b063"
+    },
+    "name": "Doe",
+    "firstName": "Jane",
+    "email": "jane.doe@example.com",
+    "password": "$2a$10$ty8V3Iz31H1MXqRmcqu1nu7FJIOkRtuOdkR1jnBGUlUWiOLOuupdW",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b069"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b069"
+    },
+    "name": "Lunchclub",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b063"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b073"
+  },
+  "content": "Message 3 in Lunchclub from Jane Doe",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b063"
+    },
+    "name": "Doe",
+    "firstName": "Jane",
+    "email": "jane.doe@example.com",
+    "password": "$2a$10$ty8V3Iz31H1MXqRmcqu1nu7FJIOkRtuOdkR1jnBGUlUWiOLOuupdW",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b069"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b069"
+    },
+    "name": "Lunchclub",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b063"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b074"
+  },
+  "content": "Message 4 in Lunchclub from Jane Doe",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b063"
+    },
+    "name": "Doe",
+    "firstName": "Jane",
+    "email": "jane.doe@example.com",
+    "password": "$2a$10$ty8V3Iz31H1MXqRmcqu1nu7FJIOkRtuOdkR1jnBGUlUWiOLOuupdW",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b069"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b069"
+    },
+    "name": "Lunchclub",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b063"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b075"
+  },
+  "content": "Message 5 in Lunchclub from Jane Doe",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b063"
+    },
+    "name": "Doe",
+    "firstName": "Jane",
+    "email": "jane.doe@example.com",
+    "password": "$2a$10$ty8V3Iz31H1MXqRmcqu1nu7FJIOkRtuOdkR1jnBGUlUWiOLOuupdW",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b069"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b069"
+    },
+    "name": "Lunchclub",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b063"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b076"
+  },
+  "content": "Message 6 in Lunchclub from Jane Doe",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b063"
+    },
+    "name": "Doe",
+    "firstName": "Jane",
+    "email": "jane.doe@example.com",
+    "password": "$2a$10$ty8V3Iz31H1MXqRmcqu1nu7FJIOkRtuOdkR1jnBGUlUWiOLOuupdW",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b069"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b069"
+    },
+    "name": "Lunchclub",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b063"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b077"
+  },
+  "content": "Message 1 in Weekendplans from Charlie Brown",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b064"
+    },
+    "name": "Brown",
+    "firstName": "Charlie",
+    "email": "charlie.brown@example.com",
+    "password": "$2a$10$C50igfN3uKA2UpYp.GQAe.dYkTVHPTRsOvbRi92U20.R/39YA9TIC",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06b"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b06a"
+    },
+    "name": "Weekendplans",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b064"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b063"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b067"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b062"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b078"
+  },
+  "content": "Message 2 in Weekendplans from Olivia Davis",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b067"
+    },
+    "name": "Davis",
+    "firstName": "Olivia",
+    "email": "olivia.davis@example.com",
+    "password": "$2a$10$fE93MUd3NYOpC1O6gxpocuDdlqopNBQlLzNcrSnwco7/N9YqiPate",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b06a"
+    },
+    "name": "Weekendplans",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b064"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b063"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b067"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b062"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b079"
+  },
+  "content": "Message 3 in Weekendplans from Jane Doe",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b063"
+    },
+    "name": "Doe",
+    "firstName": "Jane",
+    "email": "jane.doe@example.com",
+    "password": "$2a$10$ty8V3Iz31H1MXqRmcqu1nu7FJIOkRtuOdkR1jnBGUlUWiOLOuupdW",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b069"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b06a"
+    },
+    "name": "Weekendplans",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b064"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b063"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b067"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b062"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b07a"
+  },
+  "content": "Message 4 in Weekendplans from Charlie Brown",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b064"
+    },
+    "name": "Brown",
+    "firstName": "Charlie",
+    "email": "charlie.brown@example.com",
+    "password": "$2a$10$C50igfN3uKA2UpYp.GQAe.dYkTVHPTRsOvbRi92U20.R/39YA9TIC",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06b"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b06a"
+    },
+    "name": "Weekendplans",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b064"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b063"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b067"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b062"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b07b"
+  },
+  "content": "Message 5 in Weekendplans from Jane Doe",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b063"
+    },
+    "name": "Doe",
+    "firstName": "Jane",
+    "email": "jane.doe@example.com",
+    "password": "$2a$10$ty8V3Iz31H1MXqRmcqu1nu7FJIOkRtuOdkR1jnBGUlUWiOLOuupdW",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b069"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b06a"
+    },
+    "name": "Weekendplans",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b064"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b063"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b067"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b062"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b07c"
+  },
+  "content": "Message 1 in Projectgroep from Charlie Brown",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b064"
+    },
+    "name": "Brown",
+    "firstName": "Charlie",
+    "email": "charlie.brown@example.com",
+    "password": "$2a$10$C50igfN3uKA2UpYp.GQAe.dYkTVHPTRsOvbRi92U20.R/39YA9TIC",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06b"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b06b"
+    },
+    "name": "Projectgroep",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b064"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b07d"
+  },
+  "content": "Message 2 in Projectgroep from Charlie Brown",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.793Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b064"
+    },
+    "name": "Brown",
+    "firstName": "Charlie",
+    "email": "charlie.brown@example.com",
+    "password": "$2a$10$C50igfN3uKA2UpYp.GQAe.dYkTVHPTRsOvbRi92U20.R/39YA9TIC",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06b"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b06b"
+    },
+    "name": "Projectgroep",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b064"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b07e"
+  },
+  "content": "Message 3 in Projectgroep from Charlie Brown",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.794Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b064"
+    },
+    "name": "Brown",
+    "firstName": "Charlie",
+    "email": "charlie.brown@example.com",
+    "password": "$2a$10$C50igfN3uKA2UpYp.GQAe.dYkTVHPTRsOvbRi92U20.R/39YA9TIC",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06b"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b06b"
+    },
+    "name": "Projectgroep",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b064"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b07f"
+  },
+  "content": "Message 4 in Projectgroep from Charlie Brown",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.794Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b064"
+    },
+    "name": "Brown",
+    "firstName": "Charlie",
+    "email": "charlie.brown@example.com",
+    "password": "$2a$10$C50igfN3uKA2UpYp.GQAe.dYkTVHPTRsOvbRi92U20.R/39YA9TIC",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06b"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b06b"
+    },
+    "name": "Projectgroep",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b064"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b080"
+  },
+  "content": "Message 5 in Projectgroep from Charlie Brown",
+  "timestamp": {
+    "$date": "2025-12-28T19:41:23.794Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b064"
+    },
+    "name": "Brown",
+    "firstName": "Charlie",
+    "email": "charlie.brown@example.com",
+    "password": "$2a$10$C50igfN3uKA2UpYp.GQAe.dYkTVHPTRsOvbRi92U20.R/39YA9TIC",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06b"
+        }
+      }
+    ],
+    "restaurantRelations": []
+  },
+  "group": {
+    "_id": {
+      "$oid": "695187e234de9726cea3b06b"
+    },
+    "name": "Projectgroep",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b064"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {}
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695198409e22be8aaea1c949"
+  },
+  "content": "Test",
+  "timestamp": {
+    "$date": "2025-12-28T20:51:12.719Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b062"
+    },
+    "name": "Smith",
+    "firstName": "John",
+    "email": "john.smith@example.com",
+    "password": "$2a$10$UY6ZGPTpMS9wjEkQ6ZHIMOc6jg3ugfOBbbzJ7T/N5vPdqily655ma",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b068"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695198019e22be8aaea1c948"
+        }
+      }
+    ],
+    "restaurantRelations": [
+      {
+        "$ref": "restRels",
+        "$id": {
+          "$oid": "695187e834de9726cea3b089"
+        }
+      },
+      {
+        "$ref": "restRels",
+        "$id": {
+          "$oid": "695187e834de9726cea3b08a"
+        }
+      },
+      {
+        "$ref": "restRels",
+        "$id": {
+          "$oid": "695187e834de9726cea3b08b"
+        }
+      }
+    ],
+    "expoPushToken": "ExponentPushToken[8qJPxaMtTLzpTnse8OHYF2]"
+  },
+  "group": {
+    "_id": {
+      "$oid": "695198019e22be8aaea1c948"
+    },
+    "name": "test",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b063"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b062"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {
+      "695187e134de9726cea3b062": {
+        "$date": "2025-12-28T20:51:03.860Z"
+      },
+      "695187e134de9726cea3b063": {
+        "$date": "2025-12-28T20:51:07.260Z"
+      }
+    }
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+},
+{
+  "_id": {
+    "$oid": "695198489e22be8aaea1c94a"
+  },
+  "content": "test",
+  "timestamp": {
+    "$date": "2025-12-28T20:51:20.970Z"
+  },
+  "author": {
+    "_id": {
+      "$oid": "695187e134de9726cea3b063"
+    },
+    "name": "Doe",
+    "firstName": "Jane",
+    "email": "jane.doe@example.com",
+    "password": "$2a$10$ty8V3Iz31H1MXqRmcqu1nu7FJIOkRtuOdkR1jnBGUlUWiOLOuupdW",
+    "groups": [
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b069"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695187e234de9726cea3b06a"
+        }
+      },
+      {
+        "$ref": "groups",
+        "$id": {
+          "$oid": "695198019e22be8aaea1c948"
+        }
+      }
+    ],
+    "restaurantRelations": [
+      {
+        "$ref": "restRels",
+        "$id": {
+          "$oid": "695187e834de9726cea3b08c"
+        }
+      },
+      {
+        "$ref": "restRels",
+        "$id": {
+          "$oid": "695187e834de9726cea3b08d"
+        }
+      },
+      {
+        "$ref": "restRels",
+        "$id": {
+          "$oid": "695187e834de9726cea3b08e"
+        }
+      },
+      {
+        "$ref": "restRels",
+        "$id": {
+          "$oid": "69518db934de9726cea3b0a2"
+        }
+      }
+    ],
+    "expoPushToken": "ExponentPushToken[WnYM74EdRD1A6yAWAE3lHw]"
+  },
+  "group": {
+    "_id": {
+      "$oid": "695198019e22be8aaea1c948"
+    },
+    "name": "test",
+    "members": [
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b063"
+        }
+      },
+      {
+        "$ref": "users",
+        "$id": {
+          "$oid": "695187e134de9726cea3b062"
+        }
+      }
+    ],
+    "suggestedRestaurants": [],
+    "memberLastVisited": {
+      "695187e134de9726cea3b062": {
+        "$date": "2025-12-28T20:51:03.860Z"
+      },
+      "695187e134de9726cea3b063": {
+        "$date": "2025-12-28T20:51:16.503Z"
+      }
+    }
+  },
+  "isEdited": false,
+  "_class": "be.ucll.EatUp_Team21.model.Message"
+}]

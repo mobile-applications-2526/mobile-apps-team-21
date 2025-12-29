@@ -1,0 +1,26 @@
+{
+  "type": "Compass Connections",
+  "version": {
+    "$numberInt": "1"
+  },
+  "connections": [
+    {
+      "id": "a98b22da-352a-4d08-9e25-233d1784b285",
+      "lastUsed": {
+        "$date": {
+          "$numberLong": "1766946081133"
+        }
+      },
+      "favorite": {
+        "name": "eatup-db"
+      },
+      "savedConnectionType": "recent",
+      "connectionOptions": {
+        "connectionString": "mongodb+srv://efeokan39:1Ql4mOkNgqC7PrFM@eatup-db.g16iyjj.mongodb.net/?appName=eatup-db",
+        "oidc": {
+          "serializedState": "eyJvaWRjUGx1Z2luU3RhdGVWZXJzaW9uIjoxLCJzdGF0ZSI6W119"
+        }
+      }
+    }
+  ]
+}

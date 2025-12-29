@@ -1,0 +1,80 @@
+[{
+  "_id": {
+    "$oid": "695187e434de9726cea3b081"
+  },
+  "name": "Sushi Bar Osaka",
+  "adress": "Naamsestraat 45, Ghent",
+  "phoneNumber": "09-123456",
+  "description": "Fresh sushi and sashimi with a modern interior and omakase options.",
+  "_class": "be.ucll.EatUp_Team21.model.Restaurant"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b082"
+  },
+  "name": "La Piazza Italiana",
+  "adress": "Grote Markt 12, Antwerp",
+  "phoneNumber": "03-654321",
+  "description": "Authentic Italian pasta, fresh sauces and a curated wine list.",
+  "_class": "be.ucll.EatUp_Team21.model.Restaurant"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b083"
+  },
+  "name": "Thai Garden",
+  "adress": "Bondgenotenlaan 8, Leuven",
+  "phoneNumber": "016-987654",
+  "description": "Spicy Thai curries, pad thai and traditional dishes.",
+  "_class": "be.ucll.EatUp_Team21.model.Restaurant"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b084"
+  },
+  "name": "De Gouden Lepel",
+  "adress": "Kerkstraat 12, Leuven",
+  "phoneNumber": "016-123456",
+  "description": "Cozy Belgian bistro with classic regional dishes.",
+  "_class": "be.ucll.EatUp_Team21.model.Restaurant"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b085"
+  },
+  "name": "Le Marché",
+  "adress": "Mechelsestraat 22, Leuven",
+  "phoneNumber": "016-111222",
+  "description": "Market-style small plates focused on seasonal ingredients.",
+  "_class": "be.ucll.EatUp_Team21.model.Restaurant"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b086"
+  },
+  "name": "Curry Corner",
+  "adress": "Tiensestraat 3, Leuven",
+  "phoneNumber": "016-333444",
+  "description": "Spicy Indian curries, vegetarian-friendly menu and house-made naan.",
+  "_class": "be.ucll.EatUp_Team21.model.Restaurant"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b087"
+  },
+  "name": "El Toro Loco",
+  "adress": "Diestsestraat 15, Leuven",
+  "phoneNumber": "016-555666",
+  "description": "Mexican tacos, burritos and margaritas in a vibrant setting.",
+  "_class": "be.ucll.EatUp_Team21.model.Restaurant"
+},
+{
+  "_id": {
+    "$oid": "695187e434de9726cea3b088"
+  },
+  "name": "Chez Pierre",
+  "adress": "Vismarkt 8, Brussels",
+  "phoneNumber": "02-777888",
+  "description": "Classic French cuisine with seasonal tasting menus.",
+  "_class": "be.ucll.EatUp_Team21.model.Restaurant"
+}]
