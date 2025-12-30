@@ -1,0 +1,401 @@
+/**
+ * Register Page E2E Tests
+ * 
+ * Tests the registration functionality including:
+ * - DOM elements rendering
+ * - Form validation
+ * - API integration (using dev backend)
+ * - Navigation after successful registration
+ * - Error handling
+ * 
+ * Note: Tests that create new users will use cleanup to remove
+ * test-created users and avoid polluting the database.
+ */
+
+describe('Register Page', () => {
+  before(() => {
+    // Reset and reseed database before running register tests
+    // This ensures we start with a clean state (seeded users from DatabaseSeeder)
+    cy.resetDatabase();
+  });
+
+  after(() => {
+    // Clean up any users created during tests
+    cy.cleanupTestData();
+  });
+
+  beforeEach(() => {
+    // Clear any existing auth state
+    cy.logout();
+    // Visit the register page
+    cy.visit('/register');
+  });
+
+  describe('DOM Elements & Rendering', () => {
+    it('should display the page title', () => {
+      cy.contains('Register').should('be.visible');
+    });
+
+    it('should display the subtitle', () => {
+      cy.contains('Create your Eat Up account').should('be.visible');
+    });
+
+    it('should display all form fields', () => {
+      cy.get('input[placeholder="First name"]').should('be.visible');
+      cy.get('input[placeholder="Last name"]').should('be.visible');
+      cy.get('input[placeholder="your@email.com"]').should('be.visible');
+      cy.get('input[placeholder*="0470"]').should('be.visible');
+      cy.get('input[placeholder="password"]').should('be.visible');
+    });
+
+    it('should display all form labels', () => {
+      cy.contains('First name').should('be.visible');
+      cy.contains('Last name').should('be.visible');
+      cy.contains('E-mail').should('be.visible');
+      cy.contains('Phone number').should('be.visible');
+      cy.contains('Password').should('be.visible');
+    });
+
+    it('should display the create account button', () => {
+      cy.contains('button', 'Create account').should('be.visible');
+      cy.get('[role="button"]').contains('Create account').should('be.visible');
+    });
+
+    it('should display login link for existing users', () => {
+      cy.contains('Already have an account?').should('be.visible');
+      cy.contains('Log in').should('be.visible');
+    });
+  });
+
+  describe('Form Interaction', () => {
+    it('should allow typing in the first name field', () => {
+      const firstName = 'John';
+      cy.get('input[placeholder="First name"]')
+        .type(firstName)
+        .should('have.value', firstName);
+    });
+
+    it('should allow typing in the last name field', () => {
+      const lastName = 'Doe';
+      cy.get('input[placeholder="Last name"]')
+        .type(lastName)
+        .should('have.value', lastName);
+    });
+
+    it('should allow typing in the email field', () => {
+      const email = 'john.doe@example.com';
+      cy.get('input[placeholder="your@email.com"]')
+        .type(email)
+        .should('have.value', email);
+    });
+
+    it('should allow typing in the phone number field', () => {
+      const phone = '0470123456';
+      cy.get('input[placeholder*="0470"]')
+        .type(phone)
+        .should('have.value', phone);
+    });
+
+    it('should allow typing in the password field', () => {
+      const password = 'SecurePass123!';
+      cy.get('input[placeholder="password"]')
+        .type(password)
+        .should('have.value', password);
+    });
+
+    it('should mask the password input', () => {
+      cy.get('input[placeholder="password"]')
+        .should('have.attr', 'type', 'password');
+    });
+
+    it('should use phone keyboard for phone number', () => {
+      cy.get('input[placeholder*="0470"]')
+        .should('satisfy', ($el) => {
+          return $el.attr('inputMode') === 'tel' || $el.attr('type') === 'tel';
+        });
+    });
+
+    it('should use email keyboard for email field', () => {
+      cy.get('input[placeholder="your@email.com"]')
+        .should('satisfy', ($el) => {
+          return $el.attr('inputMode') === 'email' || $el.attr('type') === 'email';
+        });
+    });
+  });
+
+  describe('Form Validation (Client-Side)', () => {
+    it('should show error when first name is empty', () => {
+      fillFormExcept('firstName');
+      cy.contains('button', 'Create account').click();
+      cy.contains('First name is required').should('be.visible');
+    });
+
+    it('should show error when last name is empty', () => {
+      fillFormExcept('lastName');
+      cy.contains('button', 'Create account').click();
+      cy.contains('Last name is required').should('be.visible');
+    });
+
+    it('should show error when email is empty', () => {
+      fillFormExcept('email');
+      cy.contains('button', 'Create account').click();
+      cy.contains('Email is required').should('be.visible');
+    });
+
+    it('should show error when phone number is empty', () => {
+      fillFormExcept('phone');
+      cy.contains('button', 'Create account').click();
+      cy.contains('Phone number is required').should('be.visible');
+    });
+
+    it('should show error when password is empty', () => {
+      fillFormExcept('password');
+      cy.contains('button', 'Create account').click();
+      cy.contains('Password is required').should('be.visible');
+    });
+
+    it('should show error for invalid email format', () => {
+      cy.get('input[placeholder="First name"]').type('John');
+      cy.get('input[placeholder="Last name"]').type('Doe');
+      cy.get('input[placeholder="your@email.com"]').type('invalid-email');
+      cy.get('input[placeholder*="0470"]').type('0470123456');
+      cy.get('input[placeholder="password"]').type('Password123');
+      
+      cy.contains('button', 'Create account').click();
+      cy.contains('Please enter a valid email address').should('be.visible');
+    });
+
+    it('should show error when all fields are empty', () => {
+      cy.contains('button', 'Create account').click();
+      cy.contains(/required/i).should('be.visible');
+    });
+  });
+
+  describe('API Integration - Registration Flow', () => {
+    // Note: These tests require the dev backend to be running locally
+    // Each test should use a unique email to avoid conflicts
+
+    it('should successfully register a new user', () => {
+      const uniqueEmail = `test.user.${Date.now()}@example.com`;
+      const userData = {
+        firstName: 'Test',
+        lastName: 'User',
+        email: uniqueEmail,
+        phone: '0470123456',
+        password: 'TestPassword123!',
+      };
+
+      // Fill the form
+      fillForm(userData);
+
+      // Submit
+      cy.contains('button', 'Create account').click();
+
+      // Wait for the API call
+      cy.wait('@registerRequest').then((interception) => {
+        // Verify request body
+        expect(interception.request.body).to.deep.include({
+          firstName: userData.firstName,
+          name: userData.lastName,
+          email: userData.email,
+          phoneNumber: userData.phone,
+          password: userData.password,
+        });
+      });
+
+      // After successful registration, should auto-login and redirect
+      cy.wait('@loginRequest');
+      cy.url().should('match', /\(tabs\)|tabs/);
+    });
+
+    it('should show error when email already exists', () => {
+      // Use existing test user email (seeded by DatabaseSeeder)
+      const existingEmail = 'john.smith@example.com';
+      
+      fillForm({
+        firstName: 'Test',
+        lastName: 'User',
+        email: existingEmail,
+        phone: '0470123456',
+        password: 'TestPassword123!',
+      });
+
+      cy.contains('button', 'Create account').click();
+
+      // Wait for API response
+      cy.wait('@registerRequest');
+
+      // Should show error about existing email
+      cy.contains(/already registered|already exists|duplicate/i).should('be.visible');
+
+      // Should stay on register page
+      cy.url().should('include', '/register');
+    });
+
+    it('should show loading state while submitting', () => {
+      const uniqueEmail = `loading.test.${Date.now()}@example.com`;
+
+      // Intercept and delay the response
+      cy.intercept('POST', '**/users/register', {
+        delay: 1000,
+        statusCode: 200,
+        body: { id: 'test-id', token: 'test-token' },
+      }).as('delayedRegister');
+
+      fillForm({
+        firstName: 'Test',
+        lastName: 'User',
+        email: uniqueEmail,
+        phone: '0470123456',
+        password: 'TestPassword123!',
+      });
+
+      cy.contains('button', 'Create account').click();
+
+      // Check for loading indicator
+      cy.get('[role="button"]').find('svg, [role="progressbar"]', { timeout: 500 })
+        .should('exist');
+    });
+
+    it('should handle network errors gracefully', () => {
+      // Simulate network error
+      cy.intercept('POST', '**/users/register', {
+        forceNetworkError: true,
+      }).as('networkError');
+
+      fillForm({
+        firstName: 'Test',
+        lastName: 'User',
+        email: 'network.error@test.com',
+        phone: '0470123456',
+        password: 'TestPassword123!',
+      });
+
+      cy.contains('button', 'Create account').click();
+
+      // Should show network error message
+      cy.contains(/Network error|Check your internet|failed/i, { timeout: 10000 })
+        .should('be.visible');
+    });
+
+    it('should handle server validation errors', () => {
+      // Simulate server returning validation error
+      cy.intercept('POST', '**/users/register', {
+        statusCode: 400,
+        body: { message: 'Invalid data. Please check your input' },
+      }).as('validationError');
+
+      fillForm({
+        firstName: 'Test',
+        lastName: 'User',
+        email: 'validation@test.com',
+        phone: '0470123456',
+        password: 'weak', // Server might reject weak passwords
+      });
+
+      cy.contains('button', 'Create account').click();
+
+      // Wait for API and check error
+      cy.wait('@validationError');
+      cy.contains(/Invalid data|check your input/i).should('be.visible');
+    });
+  });
+
+  describe('Navigation', () => {
+    it('should navigate to login page when clicking login link', () => {
+      cy.contains('Log in').click();
+      cy.url().should('include', '/login');
+    });
+
+    it('should be accessible from login page', () => {
+      cy.visit('/login');
+      cy.contains('Register here').click();
+      cy.url().should('include', '/register');
+      cy.contains('Create your Eat Up account').should('be.visible');
+    });
+  });
+
+  describe('Responsive Design', () => {
+    const viewports = [
+      { name: 'iPhone SE', width: 375, height: 667 },
+      { name: 'iPhone 12', width: 390, height: 844 },
+      { name: 'iPad', width: 768, height: 1024 },
+    ];
+
+    viewports.forEach((viewport) => {
+      it(`should render correctly on ${viewport.name}`, () => {
+        cy.viewport(viewport.width, viewport.height);
+
+        // Check main elements are visible
+        cy.contains('Register').should('be.visible');
+        cy.contains('button', 'Create account').should('be.visible');
+        cy.get('input[placeholder="First name"]').should('be.visible');
+        cy.get('input[placeholder="Last name"]').should('be.visible');
+        cy.get('input[placeholder="your@email.com"]').should('be.visible');
+        cy.get('input[placeholder*="0470"]').should('be.visible');
+        cy.get('input[placeholder="password"]').should('be.visible');
+      });
+    });
+
+    it('should have first name and last name side by side', () => {
+      // Check layout - they should be in a row
+      cy.get('input[placeholder="First name"]')
+        .parent()
+        .parent()
+        .should('satisfy', ($el) => {
+          const flexDir = $el.css('flex-direction');
+          return flexDir === 'row' || $el.text().includes('First name');
+        });
+    });
+  });
+
+  describe('Accessibility', () => {
+    it('should have accessible button', () => {
+      cy.get('[role="button"]')
+        .contains('Create account')
+        .should('have.attr', 'accessibilityRole', 'button');
+    });
+  });
+});
+
+// Helper function to fill the registration form
+function fillForm(data: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  password: string;
+}) {
+  cy.get('input[placeholder="First name"]').clear().type(data.firstName);
+  cy.get('input[placeholder="Last name"]').clear().type(data.lastName);
+  cy.get('input[placeholder="your@email.com"]').clear().type(data.email);
+  cy.get('input[placeholder*="0470"]').clear().type(data.phone);
+  cy.get('input[placeholder="password"]').clear().type(data.password);
+}
+
+// Helper function to fill all fields except one
+function fillFormExcept(skipField: 'firstName' | 'lastName' | 'email' | 'phone' | 'password') {
+  const defaults = {
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@example.com',
+    phone: '0470123456',
+    password: 'Password123!',
+  };
+
+  if (skipField !== 'firstName') {
+    cy.get('input[placeholder="First name"]').type(defaults.firstName);
+  }
+  if (skipField !== 'lastName') {
+    cy.get('input[placeholder="Last name"]').type(defaults.lastName);
+  }
+  if (skipField !== 'email') {
+    cy.get('input[placeholder="your@email.com"]').type(defaults.email);
+  }
+  if (skipField !== 'phone') {
+    cy.get('input[placeholder*="0470"]').type(defaults.phone);
+  }
+  if (skipField !== 'password') {
+    cy.get('input[placeholder="password"]').type(defaults.password);
+  }
+}

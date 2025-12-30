@@ -59,7 +59,7 @@ export default function RegisterScreen() {
         <Text style={[styles.title, { color: theme.text }]}>Register</Text>
         <Text style={[styles.subtitle, { color: theme.tabIconDefault }]}>Create your Eat Up account</Text>
 
-        <View style={[styles.card, colorScheme === 'dark' ? styles.cardDark : null]}>
+        <View style={[styles.card, colorScheme === 'dark' ? styles.cardDark : null]} testID="register-card">
           <View style={styles.row}>
             <View style={[styles.col, { marginRight: 8 }]}>
               <FormField
@@ -67,6 +67,7 @@ export default function RegisterScreen() {
                 value={firstName}
                 onChangeText={setFirstName}
                 placeholder="First name"
+                testID="register-firstname-input"
               />
             </View>
             <View style={[styles.col, { marginLeft: 8 }]}>
@@ -75,6 +76,7 @@ export default function RegisterScreen() {
                 value={name}
                 onChangeText={setName}
                 placeholder="Last name"
+                testID="register-lastname-input"
               />
             </View>
           </View>
@@ -86,6 +88,7 @@ export default function RegisterScreen() {
             placeholder="your@email.com"
             keyboardType="email-address"
             autoCapitalize="none"
+            testID="register-email-input"
           />
           <FormField
             label="Phone number"
@@ -93,6 +96,7 @@ export default function RegisterScreen() {
             onChangeText={setPhoneNumber}
             placeholder="e.g. 0470 12 34 56"
             keyboardType="phone-pad"
+            testID="register-phone-input"
           />
           <FormField
             label="Password"
@@ -100,16 +104,17 @@ export default function RegisterScreen() {
             onChangeText={setPassword}
             placeholder="password"
             secureTextEntry
+            testID="register-password-input"
           />
 
-          {error && <Text style={styles.error}>{error}</Text>}
+          {error && <Text style={styles.error} testID="register-error">{error}</Text>}
 
-          <LoadingButton title="Create account" loading={submitting} onPress={onSubmit} />
+          <LoadingButton title="Create account" loading={submitting} onPress={onSubmit} testID="register-button" />
 
           <Text style={[styles.register, colorScheme === 'dark' ? styles.textDark : null]}>
             Already have an account?{' '}
             <Link href={"/login" as any} asChild>
-              <Text style={styles.registerLink}>Log in</Text>
+              <Text style={styles.registerLink} testID="login-link">Log in</Text>
             </Link>
           </Text>
         </View>

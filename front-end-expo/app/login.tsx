@@ -52,7 +52,7 @@ export default function LoginScreen() {
         <Text style={[styles.title, { color: theme.text }]}>Eat Up</Text>
         <Text style={[styles.subtitle, { color: theme.tabIconDefault }]}>Discover restaurants together with friends</Text>
 
-        <View style={[styles.card, colorScheme === 'dark' ? styles.cardDark : null]}>
+        <View style={[styles.card, colorScheme === 'dark' ? styles.cardDark : null]} testID="login-card">
         <Text style={[styles.welcome, colorScheme === 'dark' ? styles.textDark : null]}>Welcome back!</Text>
 
         <FormField
@@ -62,6 +62,7 @@ export default function LoginScreen() {
           placeholder="your@email.com"
           keyboardType="email-address"
           autoCapitalize="none"
+          testID="login-email-input"
         />
         <FormField
           label="Password"
@@ -69,16 +70,17 @@ export default function LoginScreen() {
           onChangeText={setPassword}
           placeholder="password"
           secureTextEntry
+          testID="login-password-input"
         />
 
-        {error && <Text style={styles.error}>{error}</Text>}
+        {error && <Text style={styles.error} testID="login-error">{error}</Text>}
 
-        <LoadingButton title="Log in" loading={submitting} onPress={onSubmit} />
+        <LoadingButton title="Log in" loading={submitting} onPress={onSubmit} testID="login-button" />
 
         <Text style={[styles.register, colorScheme === 'dark' ? styles.textDark : null]}>
           Don't have an account?{' '}
           <Link href={"/register" as any} asChild>
-            <Text style={styles.registerLink}>Register here</Text>
+            <Text style={styles.registerLink} testID="register-link">Register here</Text>
           </Link>
         </Text>
         </View>

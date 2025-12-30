@@ -1,0 +1,76 @@
+{
+  "seededUsers": {
+    "john": {
+      "email": "john.smith@example.com",
+      "password": "password123",
+      "firstName": "John",
+      "name": "Smith",
+      "phoneNumber": "555-1234"
+    },
+    "jane": {
+      "email": "jane.doe@example.com",
+      "password": "password123",
+      "firstName": "Jane",
+      "name": "Doe",
+      "phoneNumber": "555-5678"
+    },
+    "charlie": {
+      "email": "charlie.brown@example.com",
+      "password": "password123",
+      "firstName": "Charlie",
+      "name": "Brown",
+      "phoneNumber": "555-9012"
+    },
+    "emma": {
+      "email": "emma.johnson@example.com",
+      "password": "password123",
+      "firstName": "Emma",
+      "name": "Johnson",
+      "phoneNumber": "555-3456"
+    },
+    "liam": {
+      "email": "liam.miller@example.com",
+      "password": "password123",
+      "firstName": "Liam",
+      "name": "Miller",
+      "phoneNumber": "555-7890"
+    },
+    "olivia": {
+      "email": "olivia.davis@example.com",
+      "password": "password123",
+      "firstName": "Olivia",
+      "name": "Davis",
+      "phoneNumber": "555-2345"
+    }
+  },
+  "testUser": {
+    "email": "john.smith@example.com",
+    "password": "password123",
+    "firstName": "John",
+    "name": "Smith",
+    "phoneNumber": "555-1234"
+  },
+  "newUser": {
+    "email": "cypress.test@example.com",
+    "password": "TestPassword123!",
+    "firstName": "Cypress",
+    "name": "TestUser",
+    "phoneNumber": "555-0000"
+  },
+  "invalidUser": {
+    "email": "notexist@example.com",
+    "password": "wrongpassword"
+  },
+  "validationTests": {
+    "invalidEmails": [
+      "notanemail",
+      "missing@domain",
+      "@nodomain.com",
+      "spaces in@email.com"
+    ],
+    "weakPasswords": [
+      "123",
+      "short"
+    ]
+  }
+}
