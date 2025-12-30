@@ -1,0 +1,31 @@
+# Login Navigate to Register Test
+# Tests navigation from login page to register page
+
+appId: com.eatup.frontend
+---
+# Clear app state and launch fresh
+- launchApp:
+    clearState: true
+
+# Wait for login screen
+- assertVisible: "Welcome back!"
+- assertVisible: "Don't have an account?"
+
+# Tap on register link
+- tapOn:
+    id: "register-link"
+
+# Should navigate to register page
+- assertVisible: "Register"
+- assertVisible: "Create your Eat Up account"
+
+# Verify register form elements are visible
+- assertVisible:
+    id: "register-firstname-input"
+- assertVisible:
+    id: "register-email-input"
+- assertVisible:
+    id: "register-button"
+
+# Take screenshot
+- takeScreenshot: login-navigate-to-register

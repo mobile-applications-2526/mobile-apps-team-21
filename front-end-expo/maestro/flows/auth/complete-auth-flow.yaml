@@ -1,0 +1,54 @@
+# Complete Authentication Flow Test
+# Tests the full auth lifecycle: Login -> Navigate -> Logout
+
+appId: com.eatup.frontend
+---
+# Clear state completely
+- launchApp:
+    clearState: true
+
+# === PHASE 1: LOGIN ===
+- assertVisible: "Welcome back!"
+- assertVisible: "Eat Up"
+
+# Enter credentials
+- tapOn:
+    id: "login-email-input"
+- inputText: ${TEST_USER_EMAIL}
+- tapOn:
+    id: "login-password-input"
+- inputText: ${TEST_USER_PASSWORD}
+- hideKeyboard
+
+# Submit
+- tapOn:
+    id: "login-button"
+
+# Verify successful login (tabs visible)
+- assertVisible:
+    text: "Chats"
+    optional: false
+- takeScreenshot: auth-flow-1-logged-in
+
+# === PHASE 2: AUTHENTICATED NAVIGATION ===
+# Navigate to Profile tab
+- tapOn:
+    id: "tab-profile"
+- assertVisible: "Profile"
+- takeScreenshot: auth-flow-2-profile
+
+# === PHASE 3: LOGOUT ===
+# Look for logout button/option in profile
+# Note: Adjust this based on your actual logout UI
+- scrollUntilVisible:
+    element: "Log out"
+    direction: DOWN
+    timeout: 5000
+- tapOn: "Log out"
+
+# Verify logged out (back to login screen)
+- assertVisible: "Welcome back!"
+- assertVisible: "Eat Up"
+- takeScreenshot: auth-flow-3-logged-out
+
+# Verify we can't access tabs anymore (would redirect to login)

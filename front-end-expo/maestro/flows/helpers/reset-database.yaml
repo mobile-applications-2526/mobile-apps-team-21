@@ -1,0 +1,11 @@
+# Helper flow to reset the database before tests
+# This calls the test endpoint on the backend to reset and reseed
+appId: com.eatup.frontend
+---
+# Note: Maestro can make HTTP requests using runScript with JavaScript
+- evalScript: |
+    const response = http.post('${API_BASE_URL}/test/reset-database', {});
+    if (response.status !== 200) {
+      throw new Error('Failed to reset database: ' + response.status);
+    }
+    output.resetResult = 'Database reset successful';

@@ -1,0 +1,72 @@
+# Register Form Validation Test
+# Tests client-side validation for registration form
+
+appId: com.eatup.frontend
+---
+# Clear app state and launch fresh
+- launchApp:
+    clearState: true
+
+# Navigate to register
+- assertVisible: "Welcome back!"
+- tapOn:
+    id: "register-link"
+
+# Wait for register screen
+- assertVisible: "Register"
+
+# Test 1: Submit with all empty fields
+- tapOn:
+    id: "register-button"
+
+# Should show validation error
+- assertVisible:
+    id: "register-error"
+
+# Take screenshot
+- takeScreenshot: register-validation-empty
+
+# Test 2: Fill only some fields
+- tapOn:
+    id: "register-firstname-input"
+- inputText: "John"
+- hideKeyboard
+
+- tapOn:
+    id: "register-button"
+
+# Should still show error
+- assertVisible:
+    id: "register-error"
+
+# Take screenshot
+- takeScreenshot: register-validation-partial
+
+# Test 3: Invalid email format
+- tapOn:
+    id: "register-lastname-input"
+- inputText: "Doe"
+
+- tapOn:
+    id: "register-email-input"
+- inputText: "invalid-email-format"
+
+- tapOn:
+    id: "register-phone-input"
+- inputText: "0470123456"
+
+- tapOn:
+    id: "register-password-input"
+- inputText: "Password123!"
+
+- hideKeyboard
+
+- tapOn:
+    id: "register-button"
+
+# Should show email validation error
+- assertVisible:
+    id: "register-error"
+
+# Take screenshot
+- takeScreenshot: register-validation-invalid-email

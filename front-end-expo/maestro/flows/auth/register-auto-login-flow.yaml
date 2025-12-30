@@ -1,0 +1,61 @@
+# Register Auto-Login Flow Test
+# Tests that after registration, user is automatically logged in
+
+appId: com.eatup.frontend
+---
+# Clear state completely
+- launchApp:
+    clearState: true
+
+# Navigate to register page
+- assertVisible: "Welcome back!"
+- tapOn:
+    id: "register-link"
+
+# Verify on register page
+- assertVisible: "Register"
+- assertVisible: "Create your Eat Up account"
+
+# Fill registration form with unique email
+- tapOn:
+    id: "register-firstname-input"
+- inputText: "Auto"
+
+- tapOn:
+    id: "register-lastname-input"  
+- inputText: "Login"
+
+- tapOn:
+    id: "register-email-input"
+- inputText: "auto.login.test@example.com"
+
+- tapOn:
+    id: "register-phone-input"
+- inputText: "0470111222"
+
+- tapOn:
+    id: "register-password-input"
+- inputText: "AutoLogin123!"
+
+- hideKeyboard
+- takeScreenshot: auto-login-flow-1-form-filled
+
+# Submit registration
+- tapOn:
+    id: "register-button"
+
+# After registration, should be automatically logged in
+# and redirected to tabs (not login page)
+- assertVisible:
+    text: "Chats"
+    optional: false
+- assertVisible: "Discover"
+- assertVisible: "Profile"
+
+- takeScreenshot: auto-login-flow-2-auto-logged-in
+
+# Verify we're actually authenticated by navigating
+- tapOn:
+    id: "tab-profile"
+- assertVisible: "Profile"
+- takeScreenshot: auto-login-flow-3-can-access-profile

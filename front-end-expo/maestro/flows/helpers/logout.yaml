@@ -1,0 +1,6 @@
+# Helper flow to logout the user
+appId: com.eatup.frontend
+---
+- clearState
+- launchApp:
+    clearState: true

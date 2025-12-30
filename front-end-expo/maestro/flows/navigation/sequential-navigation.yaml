@@ -1,0 +1,55 @@
+# Sequential Tab Navigation Test
+# Tests navigating through all tabs in sequence
+
+appId: com.eatup.frontend
+---
+# Clear state and login first
+- launchApp:
+    clearState: true
+
+# Login flow
+- assertVisible: "Welcome back!"
+- tapOn:
+    id: "login-email-input"
+- inputText: ${TEST_USER_EMAIL}
+- tapOn:
+    id: "login-password-input"
+- inputText: ${TEST_USER_PASSWORD}
+- hideKeyboard
+- tapOn:
+    id: "login-button"
+
+# Wait for tabs
+- assertVisible: "Chats"
+
+# Sequential navigation: Chats -> Discover -> Revisit -> Profile -> Chats
+
+# 1. Navigate to Discover
+- tapOn:
+    id: "tab-discover"
+- assertVisible: "Discover"
+- takeScreenshot: seq-nav-1-discover
+
+# 2. Navigate to Revisit
+- tapOn:
+    id: "tab-revisit"
+- assertVisible: "Revisit"
+- takeScreenshot: seq-nav-2-revisit
+
+# 3. Navigate to Profile
+- tapOn:
+    id: "tab-profile"
+- assertVisible: "Profile"
+- takeScreenshot: seq-nav-3-profile
+
+# 4. Navigate back to Chats
+- tapOn:
+    id: "tab-chats"
+- assertVisible: "Chats"
+- takeScreenshot: seq-nav-4-chats
+
+# Verify we completed the full cycle
+- assertVisible: "Chats"
+- assertVisible: "Discover"
+- assertVisible: "Revisit"
+- assertVisible: "Profile"

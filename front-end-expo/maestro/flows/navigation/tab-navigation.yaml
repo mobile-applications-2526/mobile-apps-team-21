@@ -1,0 +1,56 @@
+# Tab Navigation Test
+# Tests navigation between tabs after login
+#
+# Prerequisites: Must be logged in
+
+appId: com.eatup.frontend
+---
+# Clear state and login first
+- launchApp:
+    clearState: true
+
+# Login
+- assertVisible: "Welcome back!"
+- tapOn:
+    id: "login-email-input"
+- inputText: ${TEST_USER_EMAIL}
+- tapOn:
+    id: "login-password-input"
+- inputText: ${TEST_USER_PASSWORD}
+- hideKeyboard
+- tapOn:
+    id: "login-button"
+
+# Wait for tabs to appear
+- assertVisible:
+    text: "Chats"
+    optional: false
+
+# Verify all tabs are visible
+- assertVisible: "Chats"
+- assertVisible: "Discover"
+- assertVisible: "Revisit"
+- assertVisible: "Profile"
+
+# Take screenshot of initial state (Chats tab)
+- takeScreenshot: navigation-chats-tab
+
+# Navigate to Discover tab
+- tapOn:
+    id: "tab-discover"
+- takeScreenshot: navigation-discover-tab
+
+# Navigate to Revisit tab
+- tapOn:
+    id: "tab-revisit"
+- takeScreenshot: navigation-revisit-tab
+
+# Navigate to Profile tab
+- tapOn:
+    id: "tab-profile"
+- takeScreenshot: navigation-profile-tab
+
+# Navigate back to Chats tab
+- tapOn:
+    id: "tab-chats"
+- takeScreenshot: navigation-back-to-chats

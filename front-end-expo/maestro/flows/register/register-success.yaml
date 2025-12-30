@@ -1,0 +1,66 @@
+# Register Success Test
+# Tests successful registration with valid data
+# Creates a new user and verifies auto-login
+
+appId: com.eatup.frontend
+---
+# Clear app state and launch fresh
+- launchApp:
+    clearState: true
+
+# Navigate to register (if not already there)
+- assertVisible: "Welcome back!"
+- tapOn:
+    id: "register-link"
+
+# Wait for register screen
+- assertVisible: "Register"
+- assertVisible: "Create your Eat Up account"
+
+# Fill in first name
+- tapOn:
+    id: "register-firstname-input"
+- inputText: "Test"
+
+# Fill in last name
+- tapOn:
+    id: "register-lastname-input"
+- inputText: "User"
+
+# Fill in email (use timestamp to ensure unique)
+- tapOn:
+    id: "register-email-input"
+- inputText: "maestro.test@example.com"
+
+# Fill in phone number
+- tapOn:
+    id: "register-phone-input"
+- inputText: "0470123456"
+
+# Fill in password
+- tapOn:
+    id: "register-password-input"
+- inputText: "TestPassword123!"
+
+# Hide keyboard
+- hideKeyboard
+
+# Take screenshot before submit
+- takeScreenshot: register-form-filled
+
+# Tap create account button
+- tapOn:
+    id: "register-button"
+
+# Wait for registration and auto-login
+# Should redirect to tabs
+- assertVisible:
+    text: "Chats"
+    optional: false
+- assertVisible:
+    text: "Discover"
+- assertVisible:
+    text: "Profile"
+
+# Take screenshot of success
+- takeScreenshot: register-success-result

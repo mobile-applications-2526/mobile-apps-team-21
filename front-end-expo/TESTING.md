@@ -1,30 +1,44 @@
-# Cypress E2E Testing Guide
+# Mobile E2E Testing Guide with Maestro
 
-This document explains how to run and write E2E tests for the EatUp Expo application.
+This document explains how to run and write E2E tests for the EatUp Expo mobile application using **Maestro**.
+
+## Why Maestro?
+
+Maestro is the ideal choice for Expo managed workflow because:
+- ✅ **Works with Expo out of the box** - no ejecting/prebuild required
+- ✅ **Simple YAML syntax** - human-readable test flows
+- ✅ **Uses `testID` directly** - leverages React Native's testID prop
+- ✅ **Fast execution** - optimized for mobile testing
+- ✅ **Cross-platform** - same tests run on iOS and Android
 
 ## Setup
 
-### Prerequisites
+### 1. Install Maestro CLI
 
-1. **Cypress is already installed** in the project via npm.
+**macOS:**
+```bash
+curl -Ls "https://get.maestro.mobile.dev" | bash
+```
 
-2. **Install additional dev dependencies** for better TypeScript support:
-   ```bash
-   npm install --save-dev @types/node start-server-and-test
-   ```
+**Windows (via WSL or PowerShell):**
+```powershell
+# Using PowerShell (requires scoop or manual install)
+iex "& { $(irm get.maestro.mobile.dev) }"
+```
 
-3. **Configure your `.env` file** for testing:
-   ```env
-   # Production API (don't use for testing!)
-   EXPO_PUBLIC_API_URL=https://eatup-backend.azurewebsites.net
-   
-   # Cypress Test API (localhost)
-   CYPRESS_BASE_URL=http://localhost:8080
-   ```
+**Linux:**
+```bash
+curl -Ls "https://get.maestro.mobile.dev" | bash
+```
 
-### Backend Setup (Required)
+**Verify installation:**
+```bash
+maestro --version
+```
 
-The backend must be running locally with the **dev** profile to enable test endpoints:
+### 2. Backend Setup (Required)
+
+The backend must be running locally with the **dev** profile:
 
 ```bash
 cd back-end
@@ -35,9 +49,25 @@ This enables:
 - Test database endpoints (`/test/reset-database`, `/test/seed`, `/test/cleanup`)
 - Uses local MongoDB at `mongodb://localhost:27017/Eat-Up`
 
+### 3. Build & Run the Expo App
+
+**For Android emulator:**
+```bash
+# Create a development build
+npx expo run:android
+
+# Or use EAS build
+eas build --profile development --platform android
+```
+
+**For iOS simulator (macOS only):**
+```bash
+npx expo run:ios
+```
+
 ## Test Users (DatabaseSeeder)
 
-The backend includes a `DatabaseSeeder` that populates the database with test data. These users are available after running `cy.resetDatabase()`:
+The backend seeds these test users on startup:
 
 | User | Email | Password |
 |------|-------|----------|
@@ -50,350 +80,237 @@ The backend includes a `DatabaseSeeder` that populates the database with test da
 
 **Default Test User**: `john.smith@example.com` / `password123`
 
-The seeder also creates:
-- Groups (e.g., "Italian Lovers", "Weekend Foodies")
-- Restaurants with menus
-- Group visits and relationships
-
 ## Running Tests
 
-### Option 1: Interactive Mode (Recommended for development)
-
-1. Start your Expo web server:
-   ```bash
-   npm run web
-   ```
-
-2. In another terminal, open Cypress:
-   ```bash
-   npm run cypress:open
-   ```
-
-3. Select "E2E Testing" and choose a browser.
-
-### Option 2: Headless Mode (For CI/CD)
-
-Run all tests in headless mode:
+### Run All Tests
 ```bash
-npm run cypress:run
+cd front-end-expo
+maestro test maestro/flows/
 ```
 
-### Option 3: With Server Auto-Start
-
-If you have `start-server-and-test` installed:
+### Run a Specific Test
 ```bash
-npm run test:e2e       # Headless
-npm run test:e2e:open  # Interactive
+maestro test maestro/flows/login/login-success.yaml
 ```
+
+### Run Tests in a Folder
+```bash
+maestro test maestro/flows/login/
+maestro test maestro/flows/register/
+maestro test maestro/flows/navigation/
+maestro test maestro/flows/auth/
+```
+
+### Interactive Mode (Maestro Studio)
+```bash
+maestro studio
+```
+This opens an interactive UI where you can:
+- Record test flows by interacting with the app
+- Debug failing tests
+- See element hierarchy
 
 ## Test Structure
 
 ```
-cypress/
-├── e2e/                    # E2E test files
-│   ├── login.cy.ts         # Login page tests
-│   ├── register.cy.ts      # Register page tests
-│   ├── navigation.cy.ts    # Tab navigation tests
-│   └── auth-flow.cy.ts     # Complete auth flow tests
-├── fixtures/               # Test data
-│   └── users.json          # User test data
-├── support/                # Support files
-│   ├── commands.ts         # Custom Cypress commands
-│   └── e2e.ts              # Setup file
-└── tsconfig.json           # TypeScript config for Cypress
+maestro/
+├── config.yaml                    # Global configuration
+├── flows/
+│   ├── helpers/                   # Reusable helper flows
+│   │   ├── reset-database.yaml
+│   │   └── logout.yaml
+│   ├── login/                     # Login tests
+│   │   ├── login-success.yaml
+│   │   ├── login-invalid-credentials.yaml
+│   │   ├── login-validation.yaml
+│   │   └── login-navigate-to-register.yaml
+│   ├── register/                  # Registration tests
+│   │   ├── register-success.yaml
+│   │   ├── register-validation.yaml
+│   │   ├── register-existing-email.yaml
+│   │   └── register-navigate-to-login.yaml
+│   ├── navigation/                # Tab navigation tests
+│   │   ├── tab-navigation.yaml
+│   │   └── sequential-navigation.yaml
+│   └── auth/                      # Authentication flow tests
+│       ├── complete-auth-flow.yaml
+│       └── register-auto-login-flow.yaml
 ```
 
-## Custom Commands
+## Writing Tests
 
-The following custom commands are available:
+### Basic Test Structure
+```yaml
+# my-test.yaml
+appId: com.eatup.frontend
+---
+- launchApp:
+    clearState: true
 
-### `cy.login(email?, password?)`
-Logs in a user via API and stores the token. Uses test user credentials by default.
+- assertVisible: "Welcome back!"
 
-```typescript
-// Use default test user
-cy.login();
+- tapOn:
+    id: "login-email-input"
+- inputText: "john.smith@example.com"
 
-// Use specific credentials
-cy.login('user@example.com', 'password123');
+- tapOn:
+    id: "login-button"
+
+- assertVisible: "Chats"
+- takeScreenshot: test-result
 ```
 
-### `cy.logout()`
-Clears authentication state.
+### Common Commands
 
-```typescript
-cy.logout();
+| Command | Description | Example |
+|---------|-------------|---------|
+| `launchApp` | Launch/restart the app | `- launchApp: { clearState: true }` |
+| `tapOn` | Tap an element | `- tapOn: { id: "button-id" }` |
+| `inputText` | Type text | `- inputText: "hello"` |
+| `assertVisible` | Check element exists | `- assertVisible: "Text"` |
+| `assertNotVisible` | Check element hidden | `- assertNotVisible: "Error"` |
+| `hideKeyboard` | Dismiss keyboard | `- hideKeyboard` |
+| `scroll` | Scroll the screen | `- scroll: { direction: DOWN }` |
+| `takeScreenshot` | Capture screenshot | `- takeScreenshot: name` |
+| `clearText` | Clear input field | `- clearText` |
+| `back` | Press back button | `- back` |
+
+### Using testID
+
+In your React Native components:
+```tsx
+<TextInput testID="login-email-input" ... />
+<TouchableOpacity testID="login-button" ... />
 ```
 
-### `cy.register(userData)`
-Registers a new user via API.
-
-```typescript
-cy.register({
-  email: 'new@example.com',
-  password: 'Pass123!',
-  firstName: 'John',
-  name: 'Doe',
-  phoneNumber: '0470123456'
-});
+In Maestro tests:
+```yaml
+- tapOn:
+    id: "login-email-input"
 ```
-
-### `cy.getByTestId(testId)`
-Gets an element by `data-testid` attribute.
-
-```typescript
-cy.getByTestId('login-button').click();
-```
-
-### `cy.resetDatabase()`
-Resets the test database and reseeds with DatabaseSeeder data. 
-Requires backend running with `dev` profile.
-
-```typescript
-// Usually in before() hook
-before(() => {
-  cy.resetDatabase();
-});
-```
-
-### `cy.cleanupTestData()`
-Removes users created during tests (users not in the original seed).
-
-```typescript
-// Usually in after() hook
-after(() => {
-  cy.cleanupTestData();
-});
-```
-
-### `cy.seedTestData(type)`
-Seeds specific test data (users, groups, restaurants).
-
-```typescript
-cy.seedTestData('users');
-```
-
-## Test Environment
 
 ### Environment Variables
 
-Configure in `cypress.config.ts`:
-
-```typescript
-env: {
-  API_BASE_URL: 'http://localhost:8080',
-  // Seeded user from DatabaseSeeder
-  TEST_USER_EMAIL: 'john.smith@example.com',
-  TEST_USER_PASSWORD: 'password123',
-}
+Set in `config.yaml`:
+```yaml
+env:
+  TEST_USER_EMAIL: john.smith@example.com
+  TEST_USER_PASSWORD: password123
 ```
 
-### Database Reset & Seeding
-
-Tests automatically reset and reseed the database using the backend's `TestController`:
-
-```typescript
-describe('My Tests', () => {
-  before(() => {
-    // Reset DB and run DatabaseSeeder before all tests
-    cy.resetDatabase();
-  });
-
-  after(() => {
-    // Optional: cleanup test-created users
-    cy.cleanupTestData();
-  });
-});
+Use in tests:
+```yaml
+- inputText: ${TEST_USER_EMAIL}
 ```
 
-### Using Test Database
+## Test Suites
 
-For tests that modify data, you should:
+### Login Tests
+- **login-success.yaml**: Valid credentials → redirect to tabs
+- **login-invalid-credentials.yaml**: Wrong credentials → error message
+- **login-validation.yaml**: Empty/invalid fields → validation errors
+- **login-navigate-to-register.yaml**: Click register link → navigate
 
-1. Run your backend locally with `dev` profile and local MongoDB
-2. Use `cy.resetDatabase()` in `before()` hook to ensure seeded data
-3. Use `cy.cleanupTestData()` in `after()` hook to remove test-created users
-4. Or use unique data for each test (e.g., unique emails with timestamps)
+### Register Tests
+- **register-success.yaml**: Valid form → create account → auto-login
+- **register-validation.yaml**: Empty/invalid fields → validation errors
+- **register-existing-email.yaml**: Duplicate email → error message
+- **register-navigate-to-login.yaml**: Click login link → navigate
 
-## Writing New Tests
+### Navigation Tests
+- **tab-navigation.yaml**: Verify all tabs work
+- **sequential-navigation.yaml**: Navigate through all tabs in order
 
-### Basic Test Structure
+### Auth Flow Tests
+- **complete-auth-flow.yaml**: Login → Navigate → Logout
+- **register-auto-login-flow.yaml**: Register → Auto-login → Access tabs
 
-```typescript
-describe('Feature Name', () => {
-  beforeEach(() => {
-    // Setup before each test
-    cy.logout();
-    cy.visit('/page');
-  });
+## testID Reference
 
-  it('should do something', () => {
-    // Test steps
-    cy.get('input').type('value');
-    cy.contains('button', 'Submit').click();
-    cy.url().should('include', '/expected-path');
-  });
-});
-```
+### Login Page
+| Element | testID |
+|---------|--------|
+| Card container | `login-card` |
+| Email input | `login-email-input` |
+| Password input | `login-password-input` |
+| Login button | `login-button` |
+| Error message | `login-error` |
+| Register link | `register-link` |
 
-### Best Practices
+### Register Page
+| Element | testID |
+|---------|--------|
+| Card container | `register-card` |
+| First name input | `register-firstname-input` |
+| Last name input | `register-lastname-input` |
+| Email input | `register-email-input` |
+| Phone input | `register-phone-input` |
+| Password input | `register-password-input` |
+| Submit button | `register-button` |
+| Error message | `register-error` |
+| Login link | `login-link` |
 
-1. **Use selectors wisely**: Prefer `data-testid` > role > text content > CSS classes
-2. **Wait for elements**: Use Cypress's built-in retry mechanism
-3. **Isolate tests**: Each test should be independent
-4. **Use fixtures**: Store test data in `fixtures/` folder
-5. **Mock API when needed**: Use `cy.intercept()` for controlled responses
-
-### Testing Authenticated Pages
-
-```typescript
-describe('Protected Page', () => {
-  beforeEach(() => {
-    cy.login(); // Login via API
-    cy.visit('/protected-page');
-  });
-
-  it('should show content', () => {
-    cy.contains('Protected Content').should('be.visible');
-  });
-});
-```
-
-### Testing Form Validation
-
-```typescript
-it('should show validation error', () => {
-  cy.get('input[placeholder="email"]').clear();
-  cy.contains('button', 'Submit').click();
-  cy.contains('Email is required').should('be.visible');
-});
-```
-
-### Mocking API Responses
-
-```typescript
-it('should handle API error', () => {
-  cy.intercept('POST', '**/api/endpoint', {
-    statusCode: 500,
-    body: { message: 'Server error' }
-  }).as('apiError');
-
-  cy.get('button').click();
-  cy.wait('@apiError');
-  cy.contains('Server error').should('be.visible');
-});
-```
-
-## Adding Test IDs to Components
-
-To make testing easier, add `testID` props to your React Native components:
-
-```tsx
-// In your component
-<TouchableOpacity 
-  testID="login-button"
-  onPress={handleLogin}
->
-  <Text>Login</Text>
-</TouchableOpacity>
-```
-
-Then select in tests:
-```typescript
-cy.getByTestId('login-button').click();
-```
+### Tab Bar
+| Tab | testID |
+|-----|--------|
+| Chats | `tab-chats` |
+| Discover | `tab-discover` |
+| Revisit | `tab-revisit` |
+| Profile | `tab-profile` |
 
 ## Backend Test Endpoints
 
-The backend includes a `TestController` that provides database management endpoints for testing. These are only available when running with the `dev` or `test` profile.
-
-### Endpoints
+The backend includes a `TestController` for database management:
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/test/health` | GET | Health check for test endpoints |
-| `/test/reset-database` | POST | Drops all collections and reseeds with DatabaseSeeder data |
-| `/test/seed` | POST | Seeds specific data type (users, groups, restaurants, etc.) |
-| `/test/cleanup` | POST | Removes users created during tests |
-
-### Running Backend for Testing
-
-```bash
-cd back-end
-./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
-```
-
-### Configuration (application-dev.properties)
-
-```properties
-spring.data.mongodb.uri=mongodb://localhost:27017/Eat-Up
-spring.profiles.active=dev
-```
-
-### Example TestController
-
-```java
-@RestController
-@RequestMapping("/test")
-@Profile({"dev", "test"})
-public class TestController {
-    
-    @PostMapping("/reset-database")
-    public ResponseEntity<?> resetDatabase() {
-        // Drops all collections and runs DatabaseSeeder
-        return ResponseEntity.ok().build();
-    }
-    
-    @PostMapping("/seed")
-    public ResponseEntity<?> seedData(@RequestBody Map<String, String> request) {
-        String type = request.get("type");
-        // Seeds specific data (users, groups, restaurants, etc.)
-        return ResponseEntity.ok().build();
-    }
-    
-    @PostMapping("/cleanup")
-    public ResponseEntity<?> cleanup() {
-        // Removes test-created users
-        return ResponseEntity.ok().build();
-    }
-}
-```
+| `/test/health` | GET | Health check |
+| `/test/reset-database` | POST | Clear and reseed database |
+| `/test/seed` | POST | Seed specific data |
+| `/test/cleanup` | POST | Remove test-created users |
 
 ## Troubleshooting
 
-### Tests timeout
-- Increase timeout in `cypress.config.ts`
-- Check if backend is running
-- Check network requests in Cypress UI
+### "App not found"
+Make sure the app is installed on the emulator/simulator:
+```bash
+adb devices  # Check connected devices
+adb shell pm list packages | grep eatup
+```
 
-### Element not found
-- Check if element exists in DOM
-- Add appropriate waits
-- Verify selectors
+### "Element not found"
+1. Use `maestro studio` to inspect element hierarchy
+2. Verify `testID` is set in the component
+3. Add a wait: `- assertVisible: { text: "...", timeout: 10000 }`
 
-### Auth issues
-- Check localStorage in browser
-- Verify token format
-- Check backend auth endpoints
+### API calls fail (Android emulator)
+Android emulator uses `10.0.2.2` to reach localhost:
+```yaml
+env:
+  API_BASE_URL: http://10.0.2.2:8080
+```
 
 ## CI/CD Integration
 
-Example GitHub Actions workflow:
-
+### GitHub Actions Example
 ```yaml
-name: E2E Tests
+name: Mobile E2E Tests
+
 on: [push, pull_request]
 
 jobs:
-  cypress:
-    runs-on: ubuntu-latest
+  test:
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      
+      - name: Install Maestro
+        run: curl -Ls "https://get.maestro.mobile.dev" | bash
+        
+      - name: Start Android Emulator
+        uses: reactivecircus/android-emulator-runner@v2
         with:
-          node-version: 18
-      - run: npm ci
-      - run: npm run web &
-      - run: npx wait-on http://localhost:8081
-      - run: npm run cypress:run
+          api-level: 30
+          script: |
+            maestro test maestro/flows/
 ```

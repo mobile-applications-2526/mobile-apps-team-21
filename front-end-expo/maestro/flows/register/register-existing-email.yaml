@@ -1,0 +1,58 @@
+# Register Existing Email Test
+# Tests that registration fails when email already exists
+
+appId: com.eatup.frontend
+---
+# Clear app state and launch fresh
+- launchApp:
+    clearState: true
+
+# Navigate to register
+- assertVisible: "Welcome back!"
+- tapOn:
+    id: "register-link"
+
+# Wait for register screen
+- assertVisible: "Register"
+
+# Fill form with existing user's email (from DatabaseSeeder)
+- tapOn:
+    id: "register-firstname-input"
+- inputText: "Test"
+
+- tapOn:
+    id: "register-lastname-input"
+- inputText: "User"
+
+# Use existing email from seeded data
+- tapOn:
+    id: "register-email-input"
+- inputText: ${TEST_USER_EMAIL}
+
+- tapOn:
+    id: "register-phone-input"
+- inputText: "0470999999"
+
+- tapOn:
+    id: "register-password-input"
+- inputText: "TestPassword123!"
+
+- hideKeyboard
+
+# Take screenshot before submit
+- takeScreenshot: register-existing-email-before
+
+# Tap create account
+- tapOn:
+    id: "register-button"
+
+# Should show error about existing email
+- assertVisible:
+    id: "register-error"
+
+# Should still be on register page
+- assertVisible: "Register"
+- assertVisible: "Create your Eat Up account"
+
+# Take screenshot of error
+- takeScreenshot: register-existing-email-error

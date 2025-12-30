@@ -1,0 +1,58 @@
+# Login Form Validation Test
+# Tests client-side validation (empty fields, invalid email format)
+
+appId: com.eatup.frontend
+---
+# Clear app state and launch fresh
+- launchApp:
+    clearState: true
+
+# Wait for login screen
+- assertVisible: "Welcome back!"
+
+# Test 1: Submit with empty fields
+- tapOn:
+    id: "login-button"
+
+# Should show validation error
+- assertVisible:
+    id: "login-error"
+
+# Take screenshot
+- takeScreenshot: login-validation-empty-fields
+
+# Test 2: Enter only email, no password
+- tapOn:
+    id: "login-email-input"
+- inputText: "test@example.com"
+- hideKeyboard
+
+- tapOn:
+    id: "login-button"
+
+# Should still show error (password required)
+- assertVisible:
+    id: "login-error"
+
+# Take screenshot
+- takeScreenshot: login-validation-no-password
+
+# Test 3: Enter invalid email format
+- tapOn:
+    id: "login-email-input"
+- clearText
+- inputText: "invalid-email"
+- tapOn:
+    id: "login-password-input"
+- inputText: "password123"
+- hideKeyboard
+
+- tapOn:
+    id: "login-button"
+
+# Should show invalid email error
+- assertVisible:
+    id: "login-error"
+
+# Take screenshot
+- takeScreenshot: login-validation-invalid-email

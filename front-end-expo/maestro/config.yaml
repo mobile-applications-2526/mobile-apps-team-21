@@ -1,0 +1,17 @@
+# Maestro Configuration
+# https://maestro.mobile.dev/
+
+# App identifier
+appId: com.eatup.frontend
+
+# Test execution settings
+flows:
+  - flows/
+
+# Environment variables for tests
+env:
+  # Test user credentials (seeded by DatabaseSeeder)
+  TEST_USER_EMAIL: john.smith@example.com
+  TEST_USER_PASSWORD: password123
+  # API URL for database reset (local dev server)
+  API_BASE_URL: http://10.0.2.2:8080  # Android emulator localhost
