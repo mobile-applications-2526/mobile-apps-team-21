@@ -14,11 +14,6 @@
  * - Password: password123
  */
 
-// Helper to click on a specific tab in the tab bar (avoids clicking headers with same text)
-const clickTab = (tabName: string) => {
-  cy.get('[role="tablist"]').contains(tabName).click();
-};
-
 describe('Navigation E2E Tests', () => {
   before(() => {
     // Reset and reseed database before running navigation tests
@@ -61,27 +56,27 @@ describe('Navigation E2E Tests', () => {
     });
 
     it('should navigate to Discover tab when clicked', () => {
-      clickTab('Discover');
+      cy.clickTab('Discover');
       cy.url().should('include', 'discover');
     });
 
     it('should navigate to Revisit tab when clicked', () => {
-      clickTab('Revisit');
+      cy.clickTab('Revisit');
       cy.url().should('include', 'revisit');
     });
 
     it('should navigate to Profile tab when clicked', () => {
-      clickTab('Profile');
+      cy.clickTab('Profile');
       cy.url().should('include', 'profile');
     });
 
     it('should navigate back to Chats tab', () => {
       // Navigate away first
-      clickTab('Discover');
+      cy.clickTab('Discover');
       cy.url().should('include', 'discover');
       
       // Navigate back to Chats
-      clickTab('Chats');
+      cy.clickTab('Chats');
       // Verify we're back on Chats by checking the URL doesn't include other tabs
       cy.url().should('not.include', 'discover');
       cy.url().should('not.include', 'revisit');
@@ -90,19 +85,19 @@ describe('Navigation E2E Tests', () => {
 
     it('should allow sequential navigation through all tabs', () => {
       // Chats -> Discover
-      clickTab('Discover');
+      cy.clickTab('Discover');
       cy.url().should('include', 'discover');
 
       // Discover -> Revisit
-      clickTab('Revisit');
+      cy.clickTab('Revisit');
       cy.url().should('include', 'revisit');
 
       // Revisit -> Profile
-      clickTab('Profile');
+      cy.clickTab('Profile');
       cy.url().should('include', 'profile');
 
       // Profile -> Chats
-      clickTab('Chats');
+      cy.clickTab('Chats');
       cy.url().should('not.include', 'profile');
     });
   });
@@ -115,25 +110,25 @@ describe('Navigation E2E Tests', () => {
     });
 
     it('should highlight Discover tab when selected', () => {
-      clickTab('Discover');
+      cy.clickTab('Discover');
       cy.get('[role="tab"][aria-selected="true"]')
         .should('contain.text', 'Discover');
     });
 
     it('should highlight Revisit tab when selected', () => {
-      clickTab('Revisit');
+      cy.clickTab('Revisit');
       cy.get('[role="tab"][aria-selected="true"]')
         .should('contain.text', 'Revisit');
     });
 
     it('should highlight Profile tab when selected', () => {
-      clickTab('Profile');
+      cy.clickTab('Profile');
       cy.get('[role="tab"][aria-selected="true"]')
         .should('contain.text', 'Profile');
     });
 
     it('should only have one active tab at a time', () => {
-      clickTab('Discover');
+      cy.clickTab('Discover');
       cy.get('[role="tab"][aria-selected="true"]')
         .should('have.length', 1)
         .and('contain.text', 'Discover');
@@ -147,19 +142,19 @@ describe('Navigation E2E Tests', () => {
     });
 
     it('should load Discover page content', () => {
-      clickTab('Discover');
+      cy.clickTab('Discover');
       // Discover page should have some content
       cy.contains('Discover').should('be.visible');
     });
 
     it('should load Revisit page content', () => {
-      clickTab('Revisit');
+      cy.clickTab('Revisit');
       // Revisit page should have some content
       cy.contains('Revisit').should('be.visible');
     });
 
     it('should load Profile page content', () => {
-      clickTab('Profile');
+      cy.clickTab('Profile');
       // Profile page should have some content
       cy.contains('Profile').should('be.visible');
     });
@@ -167,7 +162,7 @@ describe('Navigation E2E Tests', () => {
 
   describe('Navigation State Persistence', () => {
     it('should maintain navigation state after page refresh on Discover', () => {
-      clickTab('Discover');
+      cy.clickTab('Discover');
       cy.url().should('include', 'discover');
       
       // Refresh page
@@ -178,7 +173,7 @@ describe('Navigation E2E Tests', () => {
     });
 
     it('should maintain navigation state after page refresh on Profile', () => {
-      clickTab('Profile');
+      cy.clickTab('Profile');
       cy.url().should('include', 'profile');
       
       // Refresh page
@@ -233,11 +228,11 @@ describe('Navigation E2E Tests', () => {
         cy.viewport(viewport.width, viewport.height);
         
         // Test navigation
-        clickTab('Profile');
+        cy.clickTab('Profile');
         cy.url().should('include', 'profile');
         
         // Navigate back to Chats
-        clickTab('Chats');
+        cy.clickTab('Chats');
         // Verify we're back on Chats by checking the URL doesn't include other tabs
         cy.url().should('not.include', 'discover');
         cy.url().should('not.include', 'revisit');

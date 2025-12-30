@@ -372,6 +372,9 @@ export default function RestaurantOverviewModal({
                             styles.calendarButton,
                             dark && styles.calendarButtonDark,
                           ]}
+                          accessibilityRole="button"
+                          accessibilityLabel="Open availability calendar"
+                          testID="calendar-button"
                         >
                           <MaterialIcons
                             name="calendar-today"

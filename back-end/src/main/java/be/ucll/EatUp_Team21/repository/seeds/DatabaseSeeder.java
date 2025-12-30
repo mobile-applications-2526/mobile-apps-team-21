@@ -15,12 +15,14 @@ import be.ucll.EatUp_Team21.model.Group;
 import be.ucll.EatUp_Team21.model.GroupVisit;
 import be.ucll.EatUp_Team21.model.Message;
 import be.ucll.EatUp_Team21.model.User;
+import be.ucll.EatUp_Team21.model.SuggestedRestaurant;
 import be.ucll.EatUp_Team21.repository.GroupRepository;
 import be.ucll.EatUp_Team21.repository.GroupVisitRepository;
 import be.ucll.EatUp_Team21.repository.MessageRepository;
 import be.ucll.EatUp_Team21.repository.UserRepository;
 import be.ucll.EatUp_Team21.repository.RestaurantRepository;
 import be.ucll.EatUp_Team21.repository.RestRelRepository;
+import be.ucll.EatUp_Team21.repository.SuggestedRestaurantRepository;
 import be.ucll.EatUp_Team21.model.Restaurant;
 import be.ucll.EatUp_Team21.model.RestRel;
 import java.time.LocalDate;
@@ -34,18 +36,21 @@ public class DatabaseSeeder implements CommandLineRunner {
 	private final RestaurantRepository restaurantRepository;
 	private final RestRelRepository restRelRepository;
 	private final GroupVisitRepository groupVisitRepository;
+	private final SuggestedRestaurantRepository suggestedRestaurantRepository;
 
 	private static final Logger logger = LoggerFactory.getLogger(DatabaseSeeder.class);
 
 	public DatabaseSeeder(UserRepository userRepository, GroupRepository groupRepository,
 			MessageRepository messageRepository, RestaurantRepository restaurantRepository, 
-			RestRelRepository restRelRepository, GroupVisitRepository groupVisitRepository) {
+			RestRelRepository restRelRepository, GroupVisitRepository groupVisitRepository,
+			SuggestedRestaurantRepository suggestedRestaurantRepository) {
 		this.userRepository = userRepository;
 		this.groupRepository = groupRepository;
 		this.messageRepository = messageRepository;
 		this.restaurantRepository = restaurantRepository;
 		this.restRelRepository = restRelRepository;
 		this.groupVisitRepository = groupVisitRepository;
+		this.suggestedRestaurantRepository = suggestedRestaurantRepository;
 	}
 
 	/**
@@ -56,6 +61,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 		groupVisitRepository.deleteAll();
 		restRelRepository.deleteAll();
 		messageRepository.deleteAll();
+		suggestedRestaurantRepository.deleteAll();
 		groupRepository.deleteAll();
 		restaurantRepository.deleteAll();
 		userRepository.deleteAll();
@@ -75,6 +81,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 		List<Restaurant> restaurants = seedRestaurants();
 		seedRestRels(users, restaurants);
 		seedGroupVisits(groups, restaurants);
+		seedSuggestedRestaurants(groups, restaurants, users);
 
 		logger.info("Database seeding completed successfully!");
 	}
@@ -129,9 +136,23 @@ public class DatabaseSeeder implements CommandLineRunner {
 
 	public void assignUsersToGroups(List<User> users, List<Group> groups) {
 		Random rnd = new Random(42);
-		for (Group g : groups) {
+		
+		// Find the test user (john.smith@example.com) - always should be in groups for Cypress tests
+		User testUser = users.stream()
+			.filter(u -> "john.smith@example.com".equals(u.getEmail()))
+			.findFirst()
+			.orElse(users.get(0));
+		
+		for (int gi = 0; gi < groups.size(); gi++) {
+			Group g = groups.get(gi);
 			List<User> members = new ArrayList<>();
-			int number = 1 + rnd.nextInt(users.size());
+			
+			// Always add test user to the first two groups for reliable testing
+			if (gi < 2) {
+				members.add(testUser);
+			}
+			
+			int number = 2 + rnd.nextInt(users.size() - 1);
 			for (int i = 0; i < number; i++) {
 				User u = users.get(rnd.nextInt(users.size()));
 				if (!members.contains(u)) {
@@ -263,5 +284,77 @@ public class DatabaseSeeder implements CommandLineRunner {
 		}
 		groupVisitRepository.saveAll(groupVisits);
 		logger.info("Seeded {} group visits", groupVisits.size());
+	}
+
+	/**
+	 * Seed suggested restaurants for groups
+	 * Creates restaurant recommendations with various states:
+	 * - Regular suggestion (can be voted on)
+	 * - Suggestion with votes from multiple members
+	 * - Closed suggestion (ready for availability picking)
+	 * - Suggestion recommended by the test user (john.smith@example.com)
+	 */
+	public void seedSuggestedRestaurants(List<Group> groups, List<Restaurant> restaurants, List<User> users) {
+		if (groups.isEmpty() || restaurants.isEmpty() || users.isEmpty()) return;
+
+		// Find the test user (john.smith@example.com) - this is the user used in Cypress tests
+		User testUser = users.stream()
+			.filter(u -> "john.smith@example.com".equals(u.getEmail()))
+			.findFirst()
+			.orElse(users.get(0));
+
+		int suggestionCount = 0;
+
+		for (Group group : groups) {
+			List<User> members = group.getMembers();
+			if (members == null || members.isEmpty()) continue;
+
+			// Check if test user is a member of this group
+			boolean testUserInGroup = members.stream()
+				.anyMatch(m -> m.getEmail().equals(testUser.getEmail()));
+
+			List<SuggestedRestaurant> groupSuggestions = new ArrayList<>();
+
+			// Add 1-2 suggestions per group
+			int suggestionsForGroup = 1 + (suggestionCount % 2);
+			
+			for (int i = 0; i < suggestionsForGroup && i < restaurants.size(); i++) {
+				Restaurant restaurant = restaurants.get((suggestionCount + i) % restaurants.size());
+				
+				// Determine recommender - make sure test user recommends at least one
+				User recommender;
+				if (testUserInGroup && i == 0) {
+					// First suggestion in groups where test user is member - recommended by test user
+					recommender = testUser;
+				} else {
+					// Other suggestions - recommended by a random member
+					recommender = members.get(i % members.size());
+				}
+
+				SuggestedRestaurant suggestion = new SuggestedRestaurant(restaurant, recommender.getEmail());
+				
+				// Add votes - make sure some suggestions have enough votes to be "closed"
+				int voteCount = i == 0 ? Math.max(2, (members.size() / 2) + 1) : 1;
+				for (int v = 0; v < Math.min(voteCount, members.size()); v++) {
+					suggestion.addVoter(members.get(v).getEmail());
+				}
+
+				// If more than half voted, mark as closed (for availability picking)
+				if (suggestion.getVoters().size() > members.size() / 2) {
+					suggestion.setClosed(true);
+				}
+
+				// Save the suggestion first to get an ID
+				suggestion = suggestedRestaurantRepository.save(suggestion);
+				groupSuggestions.add(suggestion);
+				suggestionCount++;
+			}
+
+			// Update the group with its suggestions
+			group.setSuggestedRestaurants(groupSuggestions);
+			groupRepository.save(group);
+		}
+
+		logger.info("Seeded {} suggested restaurants across groups", suggestionCount);
 	}
 }

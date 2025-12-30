@@ -68,6 +68,13 @@ declare global {
        * @example cy.waitForApi('/auth/login')
        */
       waitForApi(endpoint: string): Chainable<void>;
+      
+      /**
+       * Custom command to click on a tab in the tab bar
+       * (avoids clicking headers with same text)
+       * @example cy.clickTab('Discover')
+       */
+      clickTab(tabName: string): Chainable<void>;
     }
   }
 }

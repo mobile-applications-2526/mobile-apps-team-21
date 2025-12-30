@@ -39,6 +39,10 @@ Cypress.Commands.add('login', (email?: string, password?: string) => {
 
   cy.log(`Logging in as ${userEmail}`);
 
+  // Clear any existing auth state first
+  window.localStorage.removeItem('auth_token');
+  window.localStorage.removeItem('auth_email');
+
   cy.request({
     method: 'POST',
     url: `${getApiUrl()}/auth/login`,
@@ -157,6 +161,15 @@ Cypress.Commands.add('waitForApi', (endpoint: string) => {
   const aliasName = endpoint.replace(/[^a-zA-Z0-9]/g, '_');
   cy.intercept('*', `**${endpoint}**`).as(aliasName);
   cy.wait(`@${aliasName}`, { timeout: 10000 });
+});
+
+// ============================================
+// CLICK TAB COMMAND
+// Helper to click on a specific tab in the tab bar
+// (avoids clicking headers with same text)
+// ============================================
+Cypress.Commands.add('clickTab', (tabName: string) => {
+  cy.get('[role="tablist"]').contains(tabName).click();
 });
 
 export {};
