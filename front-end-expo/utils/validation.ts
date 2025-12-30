@@ -29,8 +29,9 @@ export const mapLoginError = (message?: string): string => {
 };
 
 export const mapRegisterError = (message?: string): string => {
+  console.log('Register error message:', message);
   if (!message) return 'Registration failed';
-  if (message.includes('already exists') || message.includes('duplicate')) return 'This email is already registered';
+  if (message.includes('already exists')) return 'This email is already registered';
   if (message.includes('Invalid')) return 'Invalid data. Please check your input';
   if (message.includes('Network')) return 'Network error. Check your internet connection';
   if (message.includes('400') || message.includes('Bad Request')) return 'Invalid data. Please check your input';

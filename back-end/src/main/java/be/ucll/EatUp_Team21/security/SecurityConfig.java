@@ -39,6 +39,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/users/register/**").permitAll()
+                .requestMatchers("/test/**").permitAll()  // Test endpoints for Cypress E2E tests (only available in dev/test profile)
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 // allow websocket handshake endpoints (SockJS)
                 .requestMatchers("/ws", "/ws/**", "/ws/websocket").permitAll()

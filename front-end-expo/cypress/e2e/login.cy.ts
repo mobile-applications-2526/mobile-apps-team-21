@@ -27,96 +27,96 @@ describe('Login Page', () => {
     cy.visit('/login');
   });
 
-//   describe('DOM Elements & Rendering', () => {
-//     it('should display the app title and subtitle', () => {
-//       cy.contains('Eat Up').should('be.visible');
-//       cy.contains('Discover restaurants together with friends').should('be.visible');
-//     });
+  describe('DOM Elements & Rendering', () => {
+    it('should display the app title and subtitle', () => {
+      cy.contains('Eat Up').should('be.visible');
+      cy.contains('Discover restaurants together with friends').should('be.visible');
+    });
 
-//     it('should display the welcome message', () => {
-//       cy.contains('Welcome back!').should('be.visible');
-//     });
+    it('should display the welcome message', () => {
+      cy.contains('Welcome back!').should('be.visible');
+    });
 
-//     it('should display email input field with correct placeholder', () => {
-//       cy.get('input[placeholder="your@email.com"]').should('be.visible');
-//     });
+    it('should display email input field with correct placeholder', () => {
+      cy.get('input[placeholder="your@email.com"]').should('be.visible');
+    });
 
-//     it('should display password input field with correct placeholder', () => {
-//       cy.get('input[placeholder="password"]').should('be.visible');
-//     });
+    it('should display password input field with correct placeholder', () => {
+      cy.get('input[placeholder="password"]').should('be.visible');
+    });
 
-//     it('should display the login button', () => {
-//       cy.contains('button', 'Log in').should('be.visible');
-//       // Alternative: check by role
-//       cy.get('[role="button"]').contains('Log in').should('be.visible');
-//     });
+    it('should display the login button', () => {
+      cy.contains('button', 'Log in').should('be.visible');
+      // Alternative: check by role
+      cy.get('[role="button"]').contains('Log in').should('be.visible');
+    });
 
-//     it('should display register link', () => {
-//       cy.contains("Don't have an account?").should('be.visible');
-//       cy.contains('Register here').should('be.visible');
-//     });
+    it('should display register link', () => {
+      cy.contains("Don't have an account?").should('be.visible');
+      cy.contains('Register here').should('be.visible');
+    });
 
-//     it('should have the correct form labels', () => {
-//       cy.contains('E-mail').should('be.visible');
-//       cy.contains('Password').should('be.visible');
-//     });
-//   });
+    it('should have the correct form labels', () => {
+      cy.contains('E-mail').should('be.visible');
+      cy.contains('Password').should('be.visible');
+    });
+  });
 
-//   describe('Form Interaction', () => {
-//     it('should allow typing in the email field', () => {
-//       const testEmail = 'test@example.com';
-//       cy.get('input[placeholder="your@email.com"]')
-//         .type(testEmail)
-//         .should('have.value', testEmail);
-//     });
+  describe('Form Interaction', () => {
+    it('should allow typing in the email field', () => {
+      const testEmail = 'test@example.com';
+      cy.get('input[placeholder="your@email.com"]')
+        .type(testEmail)
+        .should('have.value', testEmail);
+    });
 
-//     it('should allow typing in the password field', () => {
-//       const testPassword = 'myPassword123';
-//       cy.get('input[placeholder="password"]')
-//         .type(testPassword)
-//         .should('have.value', testPassword);
-//     });
+    it('should allow typing in the password field', () => {
+      const testPassword = 'myPassword123';
+      cy.get('input[placeholder="password"]')
+        .type(testPassword)
+        .should('have.value', testPassword);
+    });
 
-//     it('should mask the password input', () => {
-//       cy.get('input[placeholder="password"]')
-//         .should('have.attr', 'type', 'password');
-//     });
+    it('should mask the password input', () => {
+      cy.get('input[placeholder="password"]')
+        .should('have.attr', 'type', 'password');
+    });
 
-//     it('should clear inputs when cleared', () => {
-//       cy.get('input[placeholder="your@email.com"]')
-//         .type('test@test.com')
-//         .clear()
-//         .should('have.value', '');
-//     });
-//   });
+    it('should clear inputs when cleared', () => {
+      cy.get('input[placeholder="your@email.com"]')
+        .type('test@test.com')
+        .clear()
+        .should('have.value', '');
+    });
+  });
 
-//   describe('Form Validation (Client-Side)', () => {
-//     it('should show error when email is empty', () => {
-//       cy.get('input[placeholder="password"]').type('password123');
-//       cy.contains('button', 'Log in').click();
-//       cy.contains('Email is required').should('be.visible');
-//     });
+  describe('Form Validation (Client-Side)', () => {
+    it('should show error when email is empty', () => {
+      cy.get('input[placeholder="password"]').type('password123');
+      cy.contains('button', 'Log in').click();
+      cy.contains('Email is required').should('be.visible');
+    });
 
-//     it('should show error when password is empty', () => {
-//       cy.get('input[placeholder="your@email.com"]').type('test@example.com');
-//       cy.contains('button', 'Log in').click();
-//       cy.contains('Password is required').should('be.visible');
-//     });
+    it('should show error when password is empty', () => {
+      cy.get('input[placeholder="your@email.com"]').type('test@example.com');
+      cy.contains('button', 'Log in').click();
+      cy.contains('Password is required').should('be.visible');
+    });
 
-//     it('should show error when both fields are empty', () => {
-//       cy.contains('button', 'Log in').click();
-//       cy.contains('Email is required').should('be.visible');
-//     });
+    it('should show error when both fields are empty', () => {
+      cy.contains('button', 'Log in').click();
+      cy.contains('Email is required').should('be.visible');
+    });
 
-//     it('should clear error when user starts typing', () => {
-//       // Trigger error first
-//       cy.contains('button', 'Log in').click();
-//       cy.contains('Email is required').should('be.visible');
+    it('should clear error when user starts typing', () => {
+      // Trigger error first
+      cy.contains('button', 'Log in').click();
+      cy.contains('Email is required').should('be.visible');
       
-//       // Start typing - error should remain until next submit or be handled
-//       cy.get('input[placeholder="your@email.com"]').type('t');
-//     });
-//   });
+      // Start typing - error should remain until next submit or be handled
+      cy.get('input[placeholder="your@email.com"]').type('t');
+    });
+  });
 
   // Test user credentials from DatabaseSeeder
   const TEST_USER = {
@@ -146,8 +146,9 @@ describe('Login Page', () => {
         });
       });
 
-      // After successful login, should redirect to tabs
-      cy.url().should('match', /\(tabs\)|tabs/);
+      // After successful login, should redirect to main app
+      cy.url().should('not.include', '/login');
+      cy.contains('Chats').should('be.visible');
     });
 
     it('should show error with invalid credentials', () => {
@@ -230,9 +231,9 @@ describe('Login Page', () => {
 
   describe('Accessibility', () => {
     it('should have accessible button', () => {
-      cy.get('[role="button"]')
-        .contains('Log in')
-        .should('have.attr', 'accessibilityRole', 'button');
+      // React Native Web converts accessibilityRole to standard HTML role attribute
+      // The button element has role="button", and contains the text "Log in"
+      cy.get('[role="button"]').filter(':contains("Log in")').should('exist');
     });
 
     it('should have correct input types for accessibility', () => {

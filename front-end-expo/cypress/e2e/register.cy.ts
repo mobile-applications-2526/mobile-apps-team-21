@@ -70,37 +70,32 @@ describe('Register Page', () => {
   describe('Form Interaction', () => {
     it('should allow typing in the first name field', () => {
       const firstName = 'John';
-      cy.get('input[placeholder="First name"]')
-        .type(firstName)
-        .should('have.value', firstName);
+      cy.get('input[placeholder="First name"]').type(firstName);
+      cy.get('input[placeholder="First name"]').should('have.value', firstName);
     });
 
     it('should allow typing in the last name field', () => {
       const lastName = 'Doe';
-      cy.get('input[placeholder="Last name"]')
-        .type(lastName)
-        .should('have.value', lastName);
+      cy.get('input[placeholder="Last name"]').type(lastName);
+      cy.get('input[placeholder="Last name"]').should('have.value', lastName);
     });
 
     it('should allow typing in the email field', () => {
       const email = 'john.doe@example.com';
-      cy.get('input[placeholder="your@email.com"]')
-        .type(email)
-        .should('have.value', email);
+      cy.get('input[placeholder="your@email.com"]').type(email);
+      cy.get('input[placeholder="your@email.com"]').should('have.value', email);
     });
 
     it('should allow typing in the phone number field', () => {
       const phone = '0470123456';
-      cy.get('input[placeholder*="0470"]')
-        .type(phone)
-        .should('have.value', phone);
+      cy.get('input[placeholder*="0470"]').type(phone);
+      cy.get('input[placeholder*="0470"]').should('have.value', phone);
     });
 
     it('should allow typing in the password field', () => {
       const password = 'SecurePass123!';
-      cy.get('input[placeholder="password"]')
-        .type(password)
-        .should('have.value', password);
+      cy.get('input[placeholder="password"]').type(password);
+      cy.get('input[placeholder="password"]').should('have.value', password);
     });
 
     it('should mask the password input', () => {
@@ -205,7 +200,8 @@ describe('Register Page', () => {
 
       // After successful registration, should auto-login and redirect
       cy.wait('@loginRequest');
-      cy.url().should('match', /\(tabs\)|tabs/);
+      cy.url().should('not.include', '/register');
+      cy.contains('Chats').should('be.visible');
     });
 
     it('should show error when email already exists', () => {
@@ -351,14 +347,15 @@ describe('Register Page', () => {
 
   describe('Accessibility', () => {
     it('should have accessible button', () => {
-      cy.get('[role="button"]')
-        .contains('Create account')
-        .should('have.attr', 'accessibilityRole', 'button');
+      // React Native Web converts accessibilityRole to standard HTML role attribute
+      // The button element has role="button", and contains the text "Create account"
+      cy.get('[role="button"]').filter(':contains("Create account")').should('exist');
     });
   });
 });
 
 // Helper function to fill the registration form
+// Note: We use {force: true} and separate clear/type to avoid React re-render issues
 function fillForm(data: {
   firstName: string;
   lastName: string;
@@ -366,11 +363,16 @@ function fillForm(data: {
   phone: string;
   password: string;
 }) {
-  cy.get('input[placeholder="First name"]').clear().type(data.firstName);
-  cy.get('input[placeholder="Last name"]').clear().type(data.lastName);
-  cy.get('input[placeholder="your@email.com"]').clear().type(data.email);
-  cy.get('input[placeholder*="0470"]').clear().type(data.phone);
-  cy.get('input[placeholder="password"]').clear().type(data.password);
+  cy.get('input[placeholder="First name"]').clear();
+  cy.get('input[placeholder="First name"]').type(data.firstName);
+  cy.get('input[placeholder="Last name"]').clear();
+  cy.get('input[placeholder="Last name"]').type(data.lastName);
+  cy.get('input[placeholder="your@email.com"]').clear();
+  cy.get('input[placeholder="your@email.com"]').type(data.email);
+  cy.get('input[placeholder*="0470"]').clear();
+  cy.get('input[placeholder*="0470"]').type(data.phone);
+  cy.get('input[placeholder="password"]').clear();
+  cy.get('input[placeholder="password"]').type(data.password);
 }
 
 // Helper function to fill all fields except one

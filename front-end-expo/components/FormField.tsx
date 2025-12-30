@@ -11,7 +11,6 @@ type FormFieldProps = {
   keyboardType?: TextInputProps['keyboardType'];
   autoCapitalize?: TextInputProps['autoCapitalize'];
   containerStyle?: ViewStyle;
-  testID?: string;
 };
 
 export const FormField: React.FC<FormFieldProps> = ({
@@ -23,7 +22,6 @@ export const FormField: React.FC<FormFieldProps> = ({
   keyboardType,
   autoCapitalize,
   containerStyle,
-  testID,
 }) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -42,7 +40,6 @@ export const FormField: React.FC<FormFieldProps> = ({
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
         autoCapitalize={autoCapitalize}
-        testID={testID}
       />
     </View>
   );

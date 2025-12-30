@@ -29,7 +29,6 @@ export default function TabLayout() {
         options={{
           title: 'Chats',
           headerShown: false,
-          tabBarTestID: 'tab-chats',
           tabBarIcon: ({ color }) => (
             <Ionicons name="chatbubbles-outline" color={color} size={24} />
           ),
@@ -40,7 +39,6 @@ export default function TabLayout() {
         options={{
           title: 'Discover',
           headerShown: false,
-          tabBarTestID: 'tab-discover',
           tabBarIcon: ({ color }) => (
             <Ionicons name="compass-outline" color={color} size={24}/>
           ),
@@ -51,7 +49,6 @@ export default function TabLayout() {
         options={{
           title: 'Revisit',
           headerShown: false,
-          tabBarTestID: 'tab-revisit',
           tabBarIcon: ({ color }) => (
             <Ionicons name="time-outline" color={color} size={24}/>
           ),
@@ -62,7 +59,6 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           headerShown: false,
-          tabBarTestID: 'tab-profile',
           tabBarIcon: ({ color }) => (
             <Ionicons name="person-outline" color={color} size={24}/>
           ),

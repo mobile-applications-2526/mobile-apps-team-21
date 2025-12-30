@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { StyleSheet, TouchableOpacity, ScrollView, Modal, Alert, View, Text, useColorScheme } from 'react-native';
+import { StyleSheet, TouchableOpacity, ScrollView, Modal, Alert, View, Text, useColorScheme, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/components/AuthContext';
 import { useRouter, useFocusEffect } from 'expo-router';
@@ -33,21 +33,30 @@ export default function ProfileScreen() {
   };
 
   const handleLogout = () => {
-    Alert.alert(
-      "Log Out",
-      "Are you sure you want to log out?",
-      [
-        { text: "Cancel", style: "cancel" },
-        { 
-          text: "Log Out", 
-          style: "destructive", 
-          onPress: () => {
-            logout();
-            router.replace('/login');
+    // Alert.alert doesn't work on web, so use window.confirm for web platform
+    if (Platform.OS === 'web') {
+      const confirmed = window.confirm('Are you sure you want to log out?');
+      if (confirmed) {
+        logout();
+        router.replace('/login');
+      }
+    } else {
+      Alert.alert(
+        "Log Out",
+        "Are you sure you want to log out?",
+        [
+          { text: "Cancel", style: "cancel" },
+          { 
+            text: "Log Out", 
+            style: "destructive", 
+            onPress: () => {
+              logout();
+              router.replace('/login');
+            }
           }
-        }
-      ]
-    );
+        ]
+      );
+    }
   };
 
   const toggleNotifications = () => {

@@ -6,10 +6,9 @@ type LoadingButtonProps = {
   loading?: boolean;
   disabled?: boolean;
   onPress?: (event: GestureResponderEvent) => void;
-  testID?: string;
 };
 
-const LoadingButton: React.FC<LoadingButtonProps> = ({ title, loading, disabled, onPress, testID }) => {
+const LoadingButton: React.FC<LoadingButtonProps> = ({ title, loading, disabled, onPress }) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   return (
@@ -19,7 +18,6 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({ title, loading, disabled,
       disabled={disabled || loading}
       accessibilityRole="button"
       accessibilityState={{ disabled: disabled || loading, busy: !!loading }}
-      testID={testID}
     >
       {loading ? (
         <ActivityIndicator color="#ffffff" />
