@@ -35,12 +35,15 @@ describe('Authentication Flow', () => {
       cy.visit('/register');
       cy.contains('Create your Eat Up account').should('be.visible');
 
-      // 2. Fill form
-      cy.get('input[placeholder="First name"]').type('Flow');
-      cy.get('input[placeholder="Last name"]').type('Test');
-      cy.get('input[placeholder="your@email.com"]').type(uniqueEmail);
-      cy.get('input[placeholder*="0470"]').type('0470999888');
-      cy.get('input[placeholder="password"]').type('FlowTest123!');
+      cy.wait(500); 
+
+      // 2. Fill form - wait for first input to be fully interactive
+      cy.get('input[placeholder="First name"]').should('be.visible').click({ force: true });
+      cy.get('input[placeholder="First name"]').type('Flow', { delay: 10, force: true });
+      cy.get('input[placeholder="Last name"]').click({ force: true }).type('Test', { delay: 10, force: true });
+      cy.get('input[placeholder="your@email.com"]').click({ force: true }).type(uniqueEmail, { delay: 10, force: true });
+      cy.get('input[placeholder*="0470"]').click({ force: true }).type('0470999888', { delay: 10, force: true });
+      cy.get('input[placeholder="password"]').click({ force: true }).type('FlowTest123!', { delay: 10, force: true });
 
       // 3. Submit
       cy.contains('button', 'Create account').click();
@@ -73,9 +76,11 @@ describe('Authentication Flow', () => {
       cy.visit('/login');
       cy.contains('Welcome back!').should('be.visible');
 
-      // 2. Fill form
-      cy.get('input[placeholder="your@email.com"]').type(email);
-      cy.get('input[placeholder="password"]').type(password);
+      // 2. Fill form - wait for first input to be fully interactive
+      cy.get('input[placeholder="your@email.com"]').should('be.visible').click({ force: true });
+      cy.wait(500); 
+      cy.get('input[placeholder="your@email.com"]').type(email, { delay: 10, force: true });
+      cy.get('input[placeholder="password"]').click({ force: true }).type(password, { delay: 10, force: true });
 
       // 3. Submit
       cy.contains('button', 'Log in').click();

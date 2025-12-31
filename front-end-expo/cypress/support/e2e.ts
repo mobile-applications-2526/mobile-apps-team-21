@@ -75,6 +75,13 @@ declare global {
        * @example cy.clickTab('Discover')
        */
       clickTab(tabName: string): Chainable<void>;
+      
+      /**
+       * Custom command to type in a React Native Web input reliably
+       * Handles headless mode by clicking to focus first
+       * @example cy.typeInInput('input[placeholder="email"]', 'test@test.com')
+       */
+      typeInInput(selector: string, text: string): Chainable<void>;
     }
   }
 }

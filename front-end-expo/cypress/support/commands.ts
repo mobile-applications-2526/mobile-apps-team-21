@@ -172,4 +172,18 @@ Cypress.Commands.add('clickTab', (tabName: string) => {
   cy.get('[role="tablist"]').contains(tabName).click();
 });
 
+// ============================================
+// TYPE IN INPUT COMMAND
+// Handles React Native Web inputs more reliably in headless mode
+// Clicks to focus, then types with force option
+// ============================================
+Cypress.Commands.add('typeInInput', (selector: string, text: string) => {
+  cy.get(selector)
+    .should('be.visible')
+    .click()
+    .should('be.focused')
+    .clear()
+    .type(text, { force: true, delay: 10 });
+});
+
 export {};

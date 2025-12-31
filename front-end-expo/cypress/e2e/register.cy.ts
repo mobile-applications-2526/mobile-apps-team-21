@@ -70,31 +70,41 @@ describe('Register Page', () => {
   describe('Form Interaction', () => {
     it('should allow typing in the first name field', () => {
       const firstName = 'John';
-      cy.get('input[placeholder="First name"]').type(firstName);
+      cy.wait(500); 
+      cy.get('input[placeholder="First name"]').should('be.visible').click({ force: true });
+      cy.get('input[placeholder="First name"]').type(firstName, { delay: 10, force: true });
       cy.get('input[placeholder="First name"]').should('have.value', firstName);
     });
 
     it('should allow typing in the last name field', () => {
       const lastName = 'Doe';
-      cy.get('input[placeholder="Last name"]').type(lastName);
+      cy.wait(500); 
+      cy.get('input[placeholder="Last name"]').should('be.visible').click({ force: true });
+      cy.get('input[placeholder="Last name"]').type(lastName, { delay: 10, force: true });
       cy.get('input[placeholder="Last name"]').should('have.value', lastName);
     });
 
     it('should allow typing in the email field', () => {
       const email = 'john.doe@example.com';
-      cy.get('input[placeholder="your@email.com"]').type(email);
+      cy.wait(500); 
+      cy.get('input[placeholder="your@email.com"]').should('be.visible').click({ force: true });
+      cy.get('input[placeholder="your@email.com"]').type(email, { delay: 10, force: true });
       cy.get('input[placeholder="your@email.com"]').should('have.value', email);
     });
 
     it('should allow typing in the phone number field', () => {
       const phone = '0470123456';
-      cy.get('input[placeholder*="0470"]').type(phone);
+      cy.wait(500); 
+      cy.get('input[placeholder*="0470"]').should('be.visible').click({ force: true });
+      cy.get('input[placeholder*="0470"]').type(phone, { delay: 10, force: true });
       cy.get('input[placeholder*="0470"]').should('have.value', phone);
     });
 
     it('should allow typing in the password field', () => {
       const password = 'SecurePass123!';
-      cy.get('input[placeholder="password"]').type(password);
+      cy.wait(500);
+      cy.get('input[placeholder="password"]').should('be.visible').click({ force: true });
+      cy.get('input[placeholder="password"]').type(password, { delay: 10, force: true });
       cy.get('input[placeholder="password"]').should('have.value', password);
     });
 
@@ -121,47 +131,55 @@ describe('Register Page', () => {
   describe('Form Validation (Client-Side)', () => {
     it('should show error when first name is empty', () => {
       fillFormExcept('firstName');
-      cy.contains('button', 'Create account').click();
+      cy.contains('button', 'Create account').click({ force: true });
       cy.contains('First name is required').should('be.visible');
     });
 
     it('should show error when last name is empty', () => {
       fillFormExcept('lastName');
-      cy.contains('button', 'Create account').click();
+      cy.contains('button', 'Create account').click({ force: true });
       cy.contains('Last name is required').should('be.visible');
     });
 
     it('should show error when email is empty', () => {
       fillFormExcept('email');
-      cy.contains('button', 'Create account').click();
+      cy.contains('button', 'Create account').click({ force: true });
       cy.contains('Email is required').should('be.visible');
     });
 
     it('should show error when phone number is empty', () => {
       fillFormExcept('phone');
-      cy.contains('button', 'Create account').click();
+      cy.contains('button', 'Create account').click({ force: true });
       cy.contains('Phone number is required').should('be.visible');
     });
 
     it('should show error when password is empty', () => {
       fillFormExcept('password');
-      cy.contains('button', 'Create account').click();
+      cy.contains('button', 'Create account').click({ force: true });
       cy.contains('Password is required').should('be.visible');
     });
 
     it('should show error for invalid email format', () => {
-      cy.get('input[placeholder="First name"]').type('John');
-      cy.get('input[placeholder="Last name"]').type('Doe');
-      cy.get('input[placeholder="your@email.com"]').type('invalid-email');
-      cy.get('input[placeholder*="0470"]').type('0470123456');
-      cy.get('input[placeholder="password"]').type('Password123');
+      cy.wait(500); 
+      cy.get('input[placeholder="First name"]').should('be.visible').click({ force: true });
+      cy.get('input[placeholder="First name"]').type('John', { delay: 10, force: true });
+      cy.get('input[placeholder="Last name"]').click({ force: true }).type('Doe', { delay: 10, force: true });
+      cy.get('input[placeholder="your@email.com"]').click({ force: true }).type('invalid-email', { delay: 10, force: true });
+      cy.get('input[placeholder*="0470"]').click({ force: true }).type('0470123456', { delay: 10, force: true });
+      cy.get('input[placeholder="password"]').click({ force: true }).type('Password123', { delay: 10, force: true });
       
-      cy.contains('button', 'Create account').click();
+      cy.contains('button', 'Create account').click({ force: true });
       cy.contains('Please enter a valid email address').should('be.visible');
     });
 
     it('should show error when all fields are empty', () => {
-      cy.contains('button', 'Create account').click();
+      cy.wait(500);
+      // Click on first input field to focus the form area, then click elsewhere
+      cy.get('input[placeholder="First name"]').click({ force: true });
+      cy.get('body').click({ force: true });
+      // Now click the button
+      cy.contains('button', 'Create account').click({ force: true });
+      cy.wait(500);
       cy.contains(/required/i).should('be.visible');
     });
   });
@@ -184,7 +202,7 @@ describe('Register Page', () => {
       fillForm(userData);
 
       // Submit
-      cy.contains('button', 'Create account').click();
+      cy.contains('button', 'Create account').click({ force: true });
 
       // Wait for the API call
       cy.wait('@registerRequest').then((interception) => {
@@ -216,7 +234,7 @@ describe('Register Page', () => {
         password: 'TestPassword123!',
       });
 
-      cy.contains('button', 'Create account').click();
+      cy.contains('button', 'Create account').click({ force: true });
 
       // Wait for API response
       cy.wait('@registerRequest');
@@ -246,7 +264,7 @@ describe('Register Page', () => {
         password: 'TestPassword123!',
       });
 
-      cy.contains('button', 'Create account').click();
+      cy.contains('button', 'Create account').click({ force: true });
 
       // Check for loading indicator
       cy.get('[role="button"]').find('svg, [role="progressbar"]', { timeout: 500 })
@@ -267,7 +285,7 @@ describe('Register Page', () => {
         password: 'TestPassword123!',
       });
 
-      cy.contains('button', 'Create account').click();
+      cy.contains('button', 'Create account').click({ force: true });
 
       // Should show network error message
       cy.contains(/Network error|Check your internet|failed/i, { timeout: 10000 })
@@ -289,7 +307,7 @@ describe('Register Page', () => {
         password: 'weak', // Server might reject weak passwords
       });
 
-      cy.contains('button', 'Create account').click();
+      cy.contains('button', 'Create account').click({ force: true });
 
       // Wait for API and check error
       cy.wait('@validationError');
@@ -299,13 +317,13 @@ describe('Register Page', () => {
 
   describe('Navigation', () => {
     it('should navigate to login page when clicking login link', () => {
-      cy.contains('Log in').click();
+      cy.contains('Log in').click({ force: true });
       cy.url().should('include', '/login');
     });
 
     it('should be accessible from login page', () => {
       cy.visit('/login');
-      cy.contains('Register here').click();
+      cy.contains('Register here').click({ force: true });
       cy.url().should('include', '/register');
       cy.contains('Create your Eat Up account').should('be.visible');
     });
@@ -355,7 +373,7 @@ describe('Register Page', () => {
 });
 
 // Helper function to fill the registration form
-// Note: We use {force: true} and separate clear/type to avoid React re-render issues
+// Note: We use click() before type() and delay for headless mode compatibility
 function fillForm(data: {
   firstName: string;
   lastName: string;
@@ -363,16 +381,14 @@ function fillForm(data: {
   phone: string;
   password: string;
 }) {
-  cy.get('input[placeholder="First name"]').clear();
-  cy.get('input[placeholder="First name"]').type(data.firstName);
-  cy.get('input[placeholder="Last name"]').clear();
-  cy.get('input[placeholder="Last name"]').type(data.lastName);
-  cy.get('input[placeholder="your@email.com"]').clear();
-  cy.get('input[placeholder="your@email.com"]').type(data.email);
-  cy.get('input[placeholder*="0470"]').clear();
-  cy.get('input[placeholder*="0470"]').type(data.phone);
-  cy.get('input[placeholder="password"]').clear();
-  cy.get('input[placeholder="password"]').type(data.password);
+  // First field needs special handling - wait for visibility and separate click/type
+  cy.wait(500); 
+  cy.get('input[placeholder="First name"]').should('be.visible').click({ force: true });
+  cy.get('input[placeholder="First name"]').clear().type(data.firstName, { delay: 10, force: true });
+  cy.get('input[placeholder="Last name"]').click({ force: true }).clear().type(data.lastName, { delay: 10, force: true });
+  cy.get('input[placeholder="your@email.com"]').click({ force: true }).clear().type(data.email, { delay: 10, force: true });
+  cy.get('input[placeholder*="0470"]').click({ force: true }).clear().type(data.phone, { delay: 10, force: true });
+  cy.get('input[placeholder="password"]').click({ force: true }).clear().type(data.password, { delay: 10, force: true });
 }
 
 // Helper function to fill all fields except one
@@ -385,19 +401,21 @@ function fillFormExcept(skipField: 'firstName' | 'lastName' | 'email' | 'phone' 
     password: 'Password123!',
   };
 
+  cy.wait(500); 
   if (skipField !== 'firstName') {
-    cy.get('input[placeholder="First name"]').type(defaults.firstName);
+    cy.get('input[placeholder="First name"]').should('be.visible').click({ force: true });
+    cy.get('input[placeholder="First name"]').type(defaults.firstName, { delay: 10, force: true });
   }
   if (skipField !== 'lastName') {
-    cy.get('input[placeholder="Last name"]').type(defaults.lastName);
+    cy.get('input[placeholder="Last name"]').click({ force: true }).type(defaults.lastName, { delay: 10, force: true });
   }
   if (skipField !== 'email') {
-    cy.get('input[placeholder="your@email.com"]').type(defaults.email);
+    cy.get('input[placeholder="your@email.com"]').click({ force: true }).type(defaults.email, { delay: 10, force: true });
   }
   if (skipField !== 'phone') {
-    cy.get('input[placeholder*="0470"]').type(defaults.phone);
+    cy.get('input[placeholder*="0470"]').click({ force: true }).type(defaults.phone, { delay: 10, force: true });
   }
   if (skipField !== 'password') {
-    cy.get('input[placeholder="password"]').type(defaults.password);
+    cy.get('input[placeholder="password"]').click({ force: true }).type(defaults.password, { delay: 10, force: true });
   }
 }

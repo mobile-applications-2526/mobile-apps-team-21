@@ -87,9 +87,12 @@ describe('Chats Page E2E Tests', () => {
       const uniqueGroupName = `Test Group ${Date.now()}`;
       
       cy.contains('+ Group').click();
+
+      cy.wait(500); 
       
       // Fill in group name
-      cy.get('input[placeholder="e.g. Project Team"]').type(uniqueGroupName);
+      cy.get('input[placeholder="e.g. Project Team"]').should('be.visible').click({ force: true });
+      cy.get('input[placeholder="e.g. Project Team"]').type(uniqueGroupName, { delay: 10, force: true });
       
       // Submit
       cy.contains('Create Group').click();
@@ -186,7 +189,9 @@ describe('Chats Page E2E Tests', () => {
     });
 
     it('should allow typing a message', () => {
-      cy.get('input[placeholder="Message"]').type('Test message');
+      cy.wait(500); 
+      cy.get('input[placeholder="Message"]').should('be.visible').click({ force: true });
+      cy.get('input[placeholder="Message"]').type('Test message', { delay: 10, force: true });
       cy.get('input[placeholder="Message"]').should('have.value', 'Test message');
     });
   });

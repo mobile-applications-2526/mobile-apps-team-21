@@ -20,6 +20,13 @@ Notifications.setNotificationHandler({
  * This token should be sent to your backend
  */
 export async function registerForPushNotificationsAsync(): Promise<string | undefined> {
+  // Skip push notifications on web - requires VAPID key configuration
+  // Web push notifications are not supported in this app
+  if (Platform.OS === 'web') {
+    console.log('Push notifications not supported on web platform');
+    return undefined;
+  }
+
   let token;
 
   if (Platform.OS === 'android') {

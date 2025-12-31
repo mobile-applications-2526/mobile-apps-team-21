@@ -65,15 +65,19 @@ describe('Login Page', () => {
   describe('Form Interaction', () => {
     it('should allow typing in the email field', () => {
       const testEmail = 'test@example.com';
+      cy.wait(500); 
+      cy.get('input[placeholder="your@email.com"]').should('be.visible').click({ force: true });
       cy.get('input[placeholder="your@email.com"]')
-        .type(testEmail)
+        .type(testEmail, { delay: 10, force: true })
         .should('have.value', testEmail);
     });
 
     it('should allow typing in the password field', () => {
       const testPassword = 'myPassword123';
+      cy.wait(500); 
+      cy.get('input[placeholder="password"]').should('be.visible').click({ force: true });
       cy.get('input[placeholder="password"]')
-        .type(testPassword)
+        .type(testPassword, { delay: 10, force: true })
         .should('have.value', testPassword);
     });
 
@@ -83,8 +87,10 @@ describe('Login Page', () => {
     });
 
     it('should clear inputs when cleared', () => {
+      cy.wait(500); 
+      cy.get('input[placeholder="your@email.com"]').should('be.visible').click({ force: true });
       cy.get('input[placeholder="your@email.com"]')
-        .type('test@test.com')
+        .type('test@test.com', { delay: 10, force: true })
         .clear()
         .should('have.value', '');
     });
@@ -92,29 +98,48 @@ describe('Login Page', () => {
 
   describe('Form Validation (Client-Side)', () => {
     it('should show error when email is empty', () => {
-      cy.get('input[placeholder="password"]').type('password123');
-      cy.contains('button', 'Log in').click();
+      cy.wait(500); 
+      cy.get('input[placeholder="password"]').should('be.visible').click({ force: true });
+      cy.get('input[placeholder="password"]').type('password123', { delay: 10, force: true });
+      cy.contains('button', 'Log in').click({ force: true });
       cy.contains('Email is required').should('be.visible');
     });
 
     it('should show error when password is empty', () => {
-      cy.get('input[placeholder="your@email.com"]').type('test@example.com');
-      cy.contains('button', 'Log in').click();
+      cy.wait(500); 
+      cy.get('input[placeholder="your@email.com"]').should('be.visible').click({ force: true });
+      cy.get('input[placeholder="your@email.com"]').type('test@example.com', { delay: 10, force: true });
+      cy.contains('button', 'Log in').click({ force: true });
       cy.contains('Password is required').should('be.visible');
     });
 
     it('should show error when both fields are empty', () => {
-      cy.contains('button', 'Log in').click();
+      cy.wait(500);
+      // Click on email field first to focus the form area, then click elsewhere
+      cy.get('input[placeholder="your@email.com"]').click({ force: true });
+      cy.get('body').click({ force: true });
+      // Now click the button
+      cy.contains('button', 'Log in').click({ force: true });
+      cy.wait(500); 
       cy.contains('Email is required').should('be.visible');
     });
 
     it('should clear error when user starts typing', () => {
-      // Trigger error first
-      cy.contains('button', 'Log in').click();
+      // Trigger error first - click form area first
+      cy.wait(500);
+      cy.get('input[placeholder="your@email.com"]').click({ force: true });
+      cy.get('body').click({ force: true });
+      cy.contains('button', 'Log in').click({ force: true });
+      cy.wait(500); 
       cy.contains('Email is required').should('be.visible');
       
-      // Start typing - error should remain until next submit or be handled
-      cy.get('input[placeholder="your@email.com"]').type('t');
+      // Start typing - error should be cleared
+      cy.wait(500); 
+      cy.get('input[placeholder="your@email.com"]').click({ force: true }).type('t', { delay: 10, force: true });
+      cy.wait(500);
+      
+      // Error should no longer be visible
+      cy.contains('Email is required').should('not.exist');
     });
   });
 
@@ -131,11 +156,13 @@ describe('Login Page', () => {
       const { email, password } = TEST_USER;
 
       // Fill in the form
-      cy.get('input[placeholder="your@email.com"]').type(email);
-      cy.get('input[placeholder="password"]').type(password);
+      cy.wait(500); 
+      cy.get('input[placeholder="your@email.com"]').should('be.visible').click({ force: true });
+      cy.get('input[placeholder="your@email.com"]').type(email, { delay: 10, force: true });
+      cy.get('input[placeholder="password"]').click({ force: true }).type(password, { delay: 10, force: true });
 
       // Submit
-      cy.contains('button', 'Log in').click();
+      cy.contains('button', 'Log in').click({ force: true });
 
       // Wait for the API call
       cy.wait('@loginRequest').then((interception) => {
@@ -153,11 +180,13 @@ describe('Login Page', () => {
 
     it('should show error with invalid credentials', () => {
       // Fill in with invalid credentials
-      cy.get('input[placeholder="your@email.com"]').type('invalid@email.com');
-      cy.get('input[placeholder="password"]').type('wrongpassword');
+      cy.wait(500); 
+      cy.get('input[placeholder="your@email.com"]').should('be.visible').click({ force: true });
+      cy.get('input[placeholder="your@email.com"]').type('invalid@email.com', { delay: 10, force: true });
+      cy.get('input[placeholder="password"]').click({ force: true }).type('wrongpassword', { delay: 10, force: true });
 
       // Submit
-      cy.contains('button', 'Log in').click();
+      cy.contains('button', 'Log in').click({ force: true });
 
       // Wait for API response
       cy.wait('@loginRequest');
@@ -180,9 +209,11 @@ describe('Login Page', () => {
       }).as('delayedLogin');
 
       // Fill and submit
-      cy.get('input[placeholder="your@email.com"]').type(email);
-      cy.get('input[placeholder="password"]').type(password);
-      cy.contains('button', 'Log in').click();
+      cy.wait(500); 
+      cy.get('input[placeholder="your@email.com"]').should('be.visible').click({ force: true });
+      cy.get('input[placeholder="your@email.com"]').type(email, { delay: 10, force: true });
+      cy.get('input[placeholder="password"]').click({ force: true }).type(password, { delay: 10, force: true });
+      cy.contains('button', 'Log in').click({ force: true });
 
       // Check for loading indicator
       cy.get('[role="button"]').find('svg, [role="progressbar"]', { timeout: 500 })
@@ -195,9 +226,11 @@ describe('Login Page', () => {
         forceNetworkError: true,
       }).as('networkError');
 
-      cy.get('input[placeholder="your@email.com"]').type('test@example.com');
-      cy.get('input[placeholder="password"]').type('password123');
-      cy.contains('button', 'Log in').click();
+      cy.wait(500); 
+      cy.get('input[placeholder="your@email.com"]').should('be.visible').click({ force: true });
+      cy.get('input[placeholder="your@email.com"]').type('test@example.com', { delay: 10, force: true });
+      cy.get('input[placeholder="password"]').click({ force: true }).type('password123', { delay: 10, force: true });
+      cy.contains('button', 'Log in').click({ force: true });
 
       // Should show network error message
       cy.contains(/Network error|Check your internet|failed/i, { timeout: 10000 })
@@ -207,7 +240,7 @@ describe('Login Page', () => {
 
   describe('Navigation', () => {
     it('should navigate to register page when clicking register link', () => {
-      cy.contains('Register here').click();
+      cy.contains('Register here').click({ force: true });
       cy.url().should('include', '/register');
     });
 
@@ -215,10 +248,12 @@ describe('Login Page', () => {
       const testEmail = 'persist@test.com';
       
       // Type email
-      cy.get('input[placeholder="your@email.com"]').type(testEmail);
+      cy.wait(500); 
+      cy.get('input[placeholder="your@email.com"]').should('be.visible').click({ force: true });
+      cy.get('input[placeholder="your@email.com"]').type(testEmail, { delay: 10, force: true });
       
       // Navigate to register
-      cy.contains('Register here').click();
+      cy.contains('Register here').click({ force: true });
       cy.url().should('include', '/register');
       
       // Go back
