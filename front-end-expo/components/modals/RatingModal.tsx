@@ -68,6 +68,8 @@ export const RatingModal: React.FC<RatingModalProps> = ({
           onPressIn={() => setHoveredRating(i)}
           onPressOut={() => setHoveredRating(0)}
           style={styles.starButton}
+          testID={`star-button-${i}`}
+          accessibilityRole="button"
         >
           <Ionicons
             name={isActive ? 'star' : 'star-outline'}
@@ -88,7 +90,7 @@ export const RatingModal: React.FC<RatingModalProps> = ({
       onRequestClose={handleClose}
     >
       <View style={[styles.overlay, { backgroundColor: overlayColor }]}>
-        <View style={[styles.modalContainer, { backgroundColor }]}>
+        <View style={[styles.modalContainer, { backgroundColor }]} testID="rating-modal">
           <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
             <Ionicons name="close" size={24} color={textColor} />
           </TouchableOpacity>
@@ -111,6 +113,8 @@ export const RatingModal: React.FC<RatingModalProps> = ({
               style={[styles.skipButton, { borderColor: isDark ? '#4a5568' : '#e2e8f0' }]}
               onPress={handleSkip}
               disabled={loading}
+              testID="skip-rating-button"
+              accessibilityRole="button"
             >
               <Text style={[styles.skipButtonText, { color: textColor, opacity: 0.7 }]}>
                 Skip
@@ -125,6 +129,8 @@ export const RatingModal: React.FC<RatingModalProps> = ({
               ]}
               onPress={handleSubmit}
               disabled={rating === 0 || loading}
+              testID="submit-rating-button"
+              accessibilityRole="button"
             >
               {loading ? (
                 <ActivityIndicator color="#fff" size="small" />

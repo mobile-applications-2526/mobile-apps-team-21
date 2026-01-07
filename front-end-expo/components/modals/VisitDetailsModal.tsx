@@ -157,7 +157,7 @@ const VisitDetailsModal: React.FC<Props> = ({
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.overlay}>
-        <View style={[styles.modalContainer, { backgroundColor }]}>
+        <View style={[styles.modalContainer, { backgroundColor }]} testID="visit-details-modal">
           {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
@@ -197,7 +197,7 @@ const VisitDetailsModal: React.FC<Props> = ({
             {/* Rating Section */}
             <View style={styles.section}>
               <Text style={[styles.sectionTitle, { color: textColor }]}>Your Rating</Text>
-              <TouchableOpacity style={styles.ratingButton} onPress={onRate}>
+              <TouchableOpacity style={styles.ratingButton} onPress={onRate} testID="rating-section-button" accessibilityRole="button">
                 {visit.userRating !== null ? (
                   <View style={styles.ratingDisplay}>
                     {renderStars(visit.userRating)}
@@ -227,6 +227,7 @@ const VisitDetailsModal: React.FC<Props> = ({
                   placeholder="0.00"
                   placeholderTextColor={secondaryTextColor}
                   keyboardType="decimal-pad"
+                  testID="total-bill-input"
                 />
               </View>
             </View>
@@ -242,6 +243,7 @@ const VisitDetailsModal: React.FC<Props> = ({
                   onChangeText={setPaidByName}
                   placeholder="Who paid?"
                   placeholderTextColor={secondaryTextColor}
+                  testID="paid-by-input"
                 />
               </View>
             </View>
@@ -290,6 +292,8 @@ const VisitDetailsModal: React.FC<Props> = ({
                 style={[styles.saveButton, { backgroundColor: tintColor }]}
                 onPress={handleSave}
                 disabled={loading}
+                testID="save-changes-button"
+                accessibilityRole="button"
               >
                 {loading ? (
                   <ActivityIndicator color="#ffffff" />

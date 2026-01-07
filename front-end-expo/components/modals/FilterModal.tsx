@@ -250,7 +250,7 @@ const FilterModal: React.FC<Props> = ({
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.overlay}>
-        <View style={[styles.modalContainer, { backgroundColor }]}>
+        <View style={[styles.modalContainer, { backgroundColor }]} testID="filter-modal">
           {/* Header */}
           <View style={styles.header}>
             <Text style={[styles.title, { color: textColor }]}>Filters</Text>
@@ -273,6 +273,8 @@ const FilterModal: React.FC<Props> = ({
               <TouchableOpacity
                 style={[styles.resetButton, { borderColor: borderColor }]}
                 onPress={handleReset}
+                testID="filter-reset-button"
+                accessibilityRole="button"
               >
                 <Text style={[styles.resetButtonText, { color: secondaryTextColor }]}>Reset</Text>
               </TouchableOpacity>
@@ -280,6 +282,8 @@ const FilterModal: React.FC<Props> = ({
             <TouchableOpacity
               style={[styles.applyButton, { backgroundColor: tintColor }, !hasActiveFilters && styles.applyButtonFull]}
               onPress={handleApply}
+              testID="filter-apply-button"
+              accessibilityRole="button"
             >
               <Text style={styles.applyButtonText}>Apply Filters</Text>
             </TouchableOpacity>
