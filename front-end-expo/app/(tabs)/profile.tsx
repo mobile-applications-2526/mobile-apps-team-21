@@ -93,6 +93,8 @@ export default function ProfileScreen() {
         <TouchableOpacity 
             style={[styles.editProfileBtn, { backgroundColor: tintColor }]}
             onPress={() => router.push('/profile/edit-profile')}
+            testID="edit-profile-button"
+            accessibilityRole="button"
         >
             <Text style={styles.editProfileText}>Edit Profile</Text>
         </TouchableOpacity>
@@ -114,7 +116,7 @@ export default function ProfileScreen() {
             </View>
         </View>
         <View style={[styles.separator, { backgroundColor: borderColor }]} />
-        <TouchableOpacity style={styles.row} onPress={() => router.push('/profile/privacy')}>
+        <TouchableOpacity style={styles.row} onPress={() => router.push('/profile/privacy')} testID="privacy-button" accessibilityRole="button">
             <View style={styles.rowLeft}>
                 <Ionicons name="shield-checkmark-outline" size={24} color={textColor} />
                 <Text style={[styles.rowLabel, { color: textColor }]}>Privacy</Text>
@@ -126,7 +128,7 @@ export default function ProfileScreen() {
       {/* Statistics Section */}
       <Text style={[styles.sectionHeader, { color: colorScheme === 'dark' ? '#999' : '#666' }]}>Statistics</Text>
       <View style={[styles.sectionContainer, { backgroundColor: cardBackgroundColor, borderColor: borderColor }]}>
-        <TouchableOpacity style={styles.row} onPress={() => router.push('/profile/visited-restaurants')}>
+        <TouchableOpacity style={styles.row} onPress={() => router.push('/profile/visited-restaurants')} testID="visited-restaurants-button" accessibilityRole="button">
             <View style={[styles.rowLeft, { backgroundColor: 'transparent' }]}>
                 <Ionicons name="restaurant-outline" size={24} color={textColor} />
                 <Text style={[styles.rowLabel, { color: textColor }]}>Total restaurants visited</Text>
@@ -137,7 +139,7 @@ export default function ProfileScreen() {
             </View>
         </TouchableOpacity>
         <View style={[styles.separator, { backgroundColor: borderColor }]} />
-        <TouchableOpacity style={styles.row} onPress={() => router.push('/profile/favorite-restaurants')}>
+        <TouchableOpacity style={styles.row} onPress={() => router.push('/profile/favorite-restaurants')} testID="favorite-restaurants-button" accessibilityRole="button">
             <View style={[styles.rowLeft, { backgroundColor: 'transparent' }]}>
                 <Ionicons name="heart-outline" size={24} color={textColor} />
                 <Text style={[styles.rowLabel, { color: textColor }]}>Favorite restaurants</Text>
@@ -152,7 +154,7 @@ export default function ProfileScreen() {
       {/* Help Section */}
       <Text style={[styles.sectionHeader, { color: colorScheme === 'dark' ? '#999' : '#666' }]}>Help</Text>
       <View style={[styles.sectionContainer, { backgroundColor: cardBackgroundColor, borderColor: borderColor }]}>
-        <TouchableOpacity style={styles.row} onPress={() => router.push('/profile/help-support')}>
+        <TouchableOpacity style={styles.row} onPress={() => router.push('/profile/help-support')} testID="help-support-button" accessibilityRole="button">
             <View style={[styles.rowLeft, { backgroundColor: 'transparent' }]}>
                 <Ionicons name="help-circle-outline" size={24} color={textColor} />
                 <Text style={[styles.rowLabel, { color: textColor }]}>Help & Support</Text>
@@ -162,7 +164,7 @@ export default function ProfileScreen() {
       </View>
 
       {/* Logout Button */}
-      <TouchableOpacity style={[styles.logoutBtn, { backgroundColor: cardBackgroundColor }]} onPress={handleLogout}>
+      <TouchableOpacity style={[styles.logoutBtn, { backgroundColor: cardBackgroundColor }]} onPress={handleLogout} testID="logout-button" accessibilityRole="button">
         <Ionicons name="log-out-outline" size={20} color="#ef5350" style={{ marginRight: 8 }} />
         <Text style={styles.logoutText}>Log Out</Text>
       </TouchableOpacity>

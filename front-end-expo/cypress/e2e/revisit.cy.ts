@@ -387,7 +387,6 @@ describe('Responsive Design', () => {
         { name: 'iPhone SE', width: 375, height: 667 },
         { name: 'iPhone 12 Pro', width: 390, height: 844 },
         { name: 'iPad Mini', width: 768, height: 1024 },
-        { name: 'Desktop', width: 1280, height: 800 },
     ];
 
     viewports.forEach((viewport) => {

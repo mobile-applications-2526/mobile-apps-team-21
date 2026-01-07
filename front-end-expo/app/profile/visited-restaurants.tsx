@@ -115,6 +115,8 @@ export default function VisitedRestaurantsScreen() {
             style={[styles.card, { backgroundColor: cardBackgroundColor }]}
             onPress={() => handleCardPress(item)}
             activeOpacity={0.7}
+            testID="visited-restaurant-card"
+            accessibilityRole="button"
           >
             <View style={styles.cardHeader}>
               <Text style={[styles.name, { color: textColor }]}>{item.restaurantName}</Text>

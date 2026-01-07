@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, FlatList, View, Text, useColorScheme, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, FlatList, View, Text, useColorScheme, TouchableOpacity, Alert, Platform } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Entypo from '@expo/vector-icons/Entypo';
@@ -52,28 +52,38 @@ export default function FavoriteRestaurantsScreen() {
   const handleUnfavorite = async (restaurantId: string) => {
     if (!token) return;
     
-    Alert.alert(
-      'Remove from favorites',
-      'Are you sure you want to remove this restaurant from your favorites?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Remove',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await UserService.toggleFavorite(restaurantId, token);
-              // Remove from local state for instant UI update
-              setRestaurants(prev => prev.filter(r => r.restaurantId !== restaurantId));
-              setFeedback({ message: 'Removed from favorites', type: 'success' });
-            } catch (error) {
-              console.error(error);
-              setFeedback({ message: 'Failed to remove from favorites', type: 'error' });
-            }
+    const performUnfavorite = async () => {
+      try {
+        await UserService.toggleFavorite(restaurantId, token);
+        // Remove from local state for instant UI update
+        setRestaurants(prev => prev.filter(r => r.restaurantId !== restaurantId));
+        setFeedback({ message: 'Removed from favorites', type: 'success' });
+      } catch (error) {
+        console.error(error);
+        setFeedback({ message: 'Failed to remove from favorites', type: 'error' });
+      }
+    };
+
+    // Use window.confirm for web platform since Alert.alert doesn't work on web
+    if (Platform.OS === 'web') {
+      const confirmed = window.confirm('Are you sure you want to remove this restaurant from your favorites?');
+      if (confirmed) {
+        await performUnfavorite();
+      }
+    } else {
+      Alert.alert(
+        'Remove from favorites',
+        'Are you sure you want to remove this restaurant from your favorites?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Remove',
+            style: 'destructive',
+            onPress: performUnfavorite
           }
-        }
-      ]
-    );
+        ]
+      );
+    }
   };
 
   const handleRecommend = (restaurant: RestRelResponse) => {
@@ -108,7 +118,7 @@ export default function FavoriteRestaurantsScreen() {
         data={restaurants}
         keyExtractor={(item) => item.restaurantId}
         renderItem={({ item }) => (
-          <View style={[styles.card, { backgroundColor: cardBackgroundColor }]}>
+          <View style={[styles.card, { backgroundColor: cardBackgroundColor }]} testID="favorite-restaurant-card">
             <View style={styles.cardContent}>
               <View style={styles.textContainer}>
                 <Text style={[styles.name, { color: textColor }]}>{item.restaurantName}</Text>
@@ -118,12 +128,16 @@ export default function FavoriteRestaurantsScreen() {
                 <TouchableOpacity 
                   style={styles.actionButton}
                   onPress={() => handleRecommend(item)}
+                  testID="recommend-restaurant-button"
+                  accessibilityRole="button"
                 >
                   <Entypo name="forward" size={22} color={Colors[colorScheme ?? 'light'].tint} />
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={styles.actionButton}
                   onPress={() => handleUnfavorite(item.restaurantId)}
+                  testID="unfavorite-restaurant-button"
+                  accessibilityRole="button"
                 >
                   <Ionicons name="heart" size={22} color="#e53935" />
                 </TouchableOpacity>
