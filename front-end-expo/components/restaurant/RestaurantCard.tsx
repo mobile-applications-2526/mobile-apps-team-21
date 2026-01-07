@@ -67,14 +67,27 @@ const RestaurantCard: React.FC<Props> = ({ restaurant, onRecommend, onStatusChan
         <View style={styles.nameRow}>
           <Text style={[styles.title, isDark && styles.textDark]} numberOfLines={1}>{restaurant.name}</Text>
           <View style={styles.actionButtons}>
-            <TouchableOpacity onPress={handleToggleFavorite} style={styles.iconButton} disabled={loading}>
+            <TouchableOpacity 
+              onPress={handleToggleFavorite} 
+              style={styles.iconButton} 
+              disabled={loading}
+              accessibilityRole="button"
+              accessibilityLabel={isFavorite ? "Unlike restaurant" : "Like restaurant"}
+              testID="favorite-button"
+            >
               <Ionicons 
                 name={isFavorite ? "heart" : "heart-outline"} 
                 size={26} 
                 color={isFavorite ? "#ef5350" : (isDark ? '#ffffff' : '#1f2933')} 
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={onRecommend} style={styles.iconButton}>
+            <TouchableOpacity 
+              onPress={onRecommend} 
+              style={styles.iconButton}
+              accessibilityRole="button"
+              accessibilityLabel="Recommend to group"
+              testID="recommend-button"
+            >
               <Entypo name="add-to-list" size={26} color={isDark ? '#ffffff' : '#1f2933'} />
             </TouchableOpacity>
           </View>

@@ -71,7 +71,7 @@ export default function RecommendModal({ visible, groups, dark = false, title = 
   return (
     <Modal transparent animationType="none" visible={true} onRequestClose={handleClose}>
       <Animated.View style={[styles.backdrop, dark && styles.backdropDark, { opacity: backdrop }]}>
-        <Animated.View style={[styles.card, dark && styles.cardDark, { transform: [{ translateY: content }] }]}>
+        <Animated.View style={[styles.card, dark && styles.cardDark, { transform: [{ translateY: content }] }]} testID="recommend-modal">
           <Text style={[styles.title, dark && styles.titleDark]}>{title}</Text>
 
           {groups.length === 0 ? (
@@ -87,6 +87,7 @@ export default function RecommendModal({ visible, groups, dark = false, title = 
                   onPress={() => onPressGroup(g)} 
                   disabled={busy}
                   activeOpacity={0.7}
+                  testID="recommend-modal-group"
                 >
                   <View style={styles.groupContent}>
                     <Text style={[styles.groupName, dark && styles.groupNameDark]}>{g.name}</Text>
