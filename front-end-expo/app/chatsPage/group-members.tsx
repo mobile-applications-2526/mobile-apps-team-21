@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, useColorScheme } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, ActivityIndicator, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useAuth } from '@/components/AuthContext';
-import { fetchGroupMemberDetails, GroupMember } from '@/services/groupChatService';
+import { fetchGroupMemberDetails, addUserToGroup, GroupMember } from '@/services/groupChatService';
 import LoadingScreen from '@/components/LoadingScreen';
 
 export default function GroupMembersScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { token } = useAuth();
+  const { token, userEmail } = useAuth();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
   const [members, setMembers] = useState<GroupMember[]>([]);
   const [loading, setLoading] = useState(true);
+  const [newMemberEmail, setNewMemberEmail] = useState('');
+  const [addingMember, setAddingMember] = useState(false);
+  const [addError, setAddError] = useState('');
+  const [addSuccess, setAddSuccess] = useState('');
 
   const groupId = params.groupId as string;
   const groupName = params.groupName as string;
@@ -34,6 +38,23 @@ export default function GroupMembersScreen() {
       console.error('Failed to load members:', e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddMember = async () => {
+    if (!newMemberEmail.trim() || !groupId || !token || !userEmail) return;
+    setAddingMember(true);
+    setAddError('');
+    setAddSuccess('');
+    try {
+      await addUserToGroup(newMemberEmail.trim(), groupId, userEmail, token);
+      setAddSuccess(`${newMemberEmail.trim()} has been added to the group`);
+      setNewMemberEmail('');
+      loadMembers(); // Refresh the member list
+    } catch (e: any) {
+      setAddError(e.message || 'Failed to add member');
+    } finally {
+      setAddingMember(false);
     }
   };
 
@@ -76,6 +97,39 @@ export default function GroupMembersScreen() {
           </Text>
         </View>
         <View style={{ width: 32 }} />
+      </View>
+
+      <View style={[styles.addMemberSection, isDark && styles.addMemberSectionDark]}>
+        <Text style={[styles.addMemberLabel, isDark && styles.textDark]}>Add a member</Text>
+        <View style={styles.addMemberRow}>
+          <TextInput
+            style={[styles.addMemberInput, isDark && styles.addMemberInputDark]}
+            placeholder="Enter email address"
+            placeholderTextColor={isDark ? '#8894a0' : '#99a1ab'}
+            value={newMemberEmail}
+            onChangeText={(text) => {
+              setNewMemberEmail(text);
+              setAddError('');
+              setAddSuccess('');
+            }}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            editable={!addingMember}
+          />
+          <TouchableOpacity
+            style={[styles.addMemberButton, (!newMemberEmail.trim() || addingMember) && styles.addMemberButtonDisabled]}
+            onPress={handleAddMember}
+            disabled={!newMemberEmail.trim() || addingMember}
+          >
+            {addingMember ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <MaterialIcons name="person-add" size={20} color="#fff" />
+            )}
+          </TouchableOpacity>
+        </View>
+        {addError ? <Text style={styles.errorText}>{addError}</Text> : null}
+        {addSuccess ? <Text style={styles.successText}>{addSuccess}</Text> : null}
       </View>
 
       <FlatList
@@ -199,5 +253,62 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 15,
     color: '#6a7282',
+  },
+  addMemberSection: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.05)',
+  },
+  addMemberSectionDark: {
+    borderBottomColor: 'rgba(255,255,255,0.1)',
+  },
+  addMemberLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1f2933',
+    marginBottom: 10,
+  },
+  addMemberRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  addMemberInput: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: '#1f2933',
+    borderWidth: 1,
+    borderColor: '#e1e4e8',
+  },
+  addMemberInputDark: {
+    backgroundColor: '#25323d',
+    color: '#ffffff',
+    borderColor: '#405060',
+  },
+  addMemberButton: {
+    backgroundColor: '#4caf50',
+    borderRadius: 12,
+    padding: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addMemberButtonDisabled: {
+    opacity: 0.5,
+  },
+  errorText: {
+    color: '#d32f2f',
+    fontSize: 13,
+    marginTop: 8,
+  },
+  successText: {
+    color: '#4caf50',
+    fontSize: 13,
+    marginTop: 8,
   },
 });

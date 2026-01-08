@@ -202,4 +202,15 @@ export async function fetchGroupMemberDetails(groupId: string, token?: string): 
   return await handleJson<GroupMember[]>(res);
 }
 
+export async function addUserToGroup(newUserEmail: string, groupId: string, adderEmail: string, token?: string): Promise<string> {
+  if (!token) throw new Error('No authentication');
+  if (!newUserEmail.trim()) throw new Error('Email is required');
+  const res = await request('/groups/addUser', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ newUserEmail: newUserEmail.trim(), groupId, adderEmail })
+  }, token);
+  return await handleJson<string>(res);
+}
+
 export type { Group, Message, GroupCreationResult, GroupMember };
