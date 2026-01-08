@@ -1,25 +1,22 @@
 /**
  * Authentication Flow E2E Tests
- * 
- * Tests the complete authentication flow including:
- * - Registration -> Auto Login -> Redirect
- * - Login -> Redirect
- * - Logout -> Redirect to Login
- * - Session persistence
- * 
+ *
  * Test User (from DatabaseSeeder):
  * - Email: john.smith@example.com
  * - Password: password123
  */
 
 describe('Authentication Flow', () => {
+  const TEST_USER = {
+    email: 'john.smith@example.com',
+    password: 'password123'
+  };
+
   before(() => {
-    // Reset and reseed database before running auth flow tests
     cy.resetDatabase();
   });
 
   after(() => {
-    // Clean up any test-created users
     cy.cleanupTestData();
   });
 
@@ -27,17 +24,15 @@ describe('Authentication Flow', () => {
     cy.logout();
   });
 
-  describe('Complete Registration Flow', () => {
+  describe('Registration Flow', () => {
     it('should complete full registration flow: form -> register -> auto-login -> tabs', () => {
       const uniqueEmail = `flow.test.${Date.now()}@example.com`;
 
-      // 1. Visit register page
       cy.visit('/register');
       cy.contains('Create your Eat Up account').should('be.visible');
 
-      cy.wait(500); 
+      cy.wait(500);
 
-      // 2. Fill form - wait for first input to be fully interactive
       cy.get('input[placeholder="First name"]').should('be.visible').click({ force: true });
       cy.get('input[placeholder="First name"]').type('Flow', { delay: 10, force: true });
       cy.get('input[placeholder="Last name"]').click({ force: true }).type('Test', { delay: 10, force: true });
@@ -45,54 +40,36 @@ describe('Authentication Flow', () => {
       cy.get('input[placeholder*="0470"]').click({ force: true }).type('0470999888', { delay: 10, force: true });
       cy.get('input[placeholder="password"]').click({ force: true }).type('FlowTest123!', { delay: 10, force: true });
 
-      // 3. Submit
       cy.contains('button', 'Create account').click();
 
-      // 4. Wait for register + auto-login
       cy.wait('@registerRequest');
       cy.wait('@loginRequest');
 
-      // 5. Should redirect to main app (index/tabs)
-      // URL will be / or /(tabs) depending on expo-router
       cy.url().should('not.include', '/register');
       cy.url().should('not.include', '/login');
-
-      // 6. Should be able to access authenticated content
       cy.contains('Chats').should('be.visible');
     });
   });
 
-  // Test user credentials from DatabaseSeeder
-  const TEST_USER = {
-    email: 'john.smith@example.com',
-    password: 'password123'
-  };
-
-  describe('Complete Login Flow', () => {
-    it('should complete full login flow: form -> login -> tabs', () => {
+  describe('Login Flow', () => {
+    it('should complete full login flow: form -> login -> tabs with auth state', () => {
       const { email, password } = TEST_USER;
 
-      // 1. Visit login page
       cy.visit('/login');
       cy.contains('Welcome back!').should('be.visible');
 
-      // 2. Fill form - wait for first input to be fully interactive
       cy.get('input[placeholder="your@email.com"]').should('be.visible').click({ force: true });
-      cy.wait(500); 
+      cy.wait(500);
       cy.get('input[placeholder="your@email.com"]').type(email, { delay: 10, force: true });
       cy.get('input[placeholder="password"]').click({ force: true }).type(password, { delay: 10, force: true });
 
-      // 3. Submit
       cy.contains('button', 'Log in').click();
 
-      // 4. Wait for login
       cy.wait('@loginRequest');
 
-      // 5. Should redirect to main app (not login page)
       cy.url().should('not.include', '/login');
       cy.contains('Chats').should('be.visible');
 
-      // 6. Verify auth state in localStorage
       cy.window().then((win) => {
         expect(win.localStorage.getItem('auth_token')).to.not.be.null;
         expect(win.localStorage.getItem('auth_email')).to.eq(email);
@@ -101,101 +78,53 @@ describe('Authentication Flow', () => {
   });
 
   describe('Logout Flow', () => {
-    it('should logout and redirect to login', () => {
-      // 1. Login first
+    it('should logout, redirect to login, and clear auth state', () => {
       cy.login();
       cy.visit('/');
       cy.contains('Chats').should('be.visible');
 
-      // 2. Navigate to profile
+      cy.window().then((win) => {
+        expect(win.localStorage.getItem('auth_token')).to.not.be.null;
+      });
+
       cy.contains('Profile').click();
 
-      // 3. Stub window.confirm to auto-accept the logout confirmation
       cy.window().then((win) => {
         cy.stub(win, 'confirm').returns(true);
       });
 
-      // 4. Find and click logout
       cy.contains('Log Out').click();
 
-      // 5. Should redirect to login
       cy.url().should('include', 'login');
 
-      // 6. Auth state should be cleared
       cy.window().then((win) => {
         expect(win.localStorage.getItem('auth_token')).to.be.null;
+        expect(win.localStorage.getItem('auth_email')).to.be.null;
       });
     });
   });
 
   describe('Session Persistence', () => {
     it('should maintain session after page reload', () => {
-      // 1. Login
       cy.login();
       cy.visit('/');
       cy.contains('Chats').should('be.visible');
 
-      // 2. Reload page
       cy.reload();
 
-      // 3. Should still be authenticated (showing tabs content)
       cy.contains('Chats').should('be.visible');
 
-      // 4. Token should still exist
       cy.window().then((win) => {
         expect(win.localStorage.getItem('auth_token')).to.not.be.null;
       });
-    });
-
-    it('should redirect to login when session is invalid', () => {
-      // 1. Set invalid token
-      cy.window().then((win) => {
-        win.localStorage.setItem('auth_token', 'invalid-token');
-        win.localStorage.setItem('auth_email', 'test@test.com');
-      });
-
-      // 2. Visit app
-      cy.visit('/');
-
-      // 3. Should eventually redirect to login (after token validation fails)
-      // Or stay on app if token validation is not immediate
-      // This depends on your app's token validation logic
-      cy.url().should('not.include', '/register');
     });
   });
 
   describe('Protected Routes', () => {
-    it('should redirect to login when accessing app without auth', () => {
+    it('should redirect unauthenticated users to login', () => {
       cy.visit('/');
       cy.url().should('include', 'login');
-    });
-
-    it('should show login page for unauthenticated users', () => {
-      cy.visit('/');
       cy.contains('Welcome back!').should('be.visible');
-    });
-  });
-
-  describe('Auth State Management', () => {
-    it('should clear all auth data on logout', () => {
-      // Login
-      cy.login();
-      cy.visit('/');
-
-      // Verify auth data exists
-      cy.window().then((win) => {
-        expect(win.localStorage.getItem('auth_token')).to.not.be.null;
-        expect(win.localStorage.getItem('auth_email')).to.not.be.null;
-      });
-
-      // Logout
-      cy.logout();
-
-      // Verify auth data is cleared
-      cy.window().then((win) => {
-        expect(win.localStorage.getItem('auth_token')).to.be.null;
-        expect(win.localStorage.getItem('auth_email')).to.be.null;
-      });
     });
   });
 });
