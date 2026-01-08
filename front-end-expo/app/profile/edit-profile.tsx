@@ -105,6 +105,7 @@ export default function EditProfileScreen() {
             onChangeText={setFirstName}
             placeholder="First Name"
             placeholderTextColor="#999"
+            testID="first-name-input"
           />
         </View>
 
@@ -116,6 +117,7 @@ export default function EditProfileScreen() {
             onChangeText={setName}
             placeholder="Last Name"
             placeholderTextColor="#999"
+            testID="last-name-input"
           />
         </View>
 
@@ -128,6 +130,7 @@ export default function EditProfileScreen() {
             placeholder="Phone Number"
             placeholderTextColor="#999"
             keyboardType="phone-pad"
+            testID="phone-number-input"
           />
         </View>
       </View>
@@ -191,6 +194,8 @@ export default function EditProfileScreen() {
         style={[styles.saveBtn, { backgroundColor: Colors[colorScheme ?? 'light'].tint }]} 
         onPress={handleSave} 
         disabled={loading}
+        testID="save-profile-button"
+        accessibilityRole="button"
       >
         {loading ? (
           <ActivityIndicator color="#fff" />

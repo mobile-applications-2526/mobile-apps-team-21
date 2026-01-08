@@ -85,6 +85,8 @@ const RevisitCard: React.FC<Props> = ({ visit, onPress, onViewReceipt }) => {
       style={[styles.card, { backgroundColor: cardBackgroundColor }]}
       onPress={onPress}
       activeOpacity={0.7}
+      testID="revisit-card"
+      accessibilityRole="button"
     >
       {/* Header Row: Name + Receipt Button */}
       <View style={styles.headerRow}>

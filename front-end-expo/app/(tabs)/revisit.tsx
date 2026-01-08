@@ -273,6 +273,7 @@ export default function RevisitScreen() {
             placeholderTextColor={secondaryTextColor}
             value={searchQuery}
             onChangeText={setSearchQuery}
+            testID="search-input"
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
@@ -287,6 +288,7 @@ export default function RevisitScreen() {
             hasActiveFilters && { backgroundColor: tintColor, borderColor: tintColor },
           ]}
           onPress={() => setShowFilterModal(true)}
+          testID="filter-button"
         >
           <Ionicons
             name="options-outline"

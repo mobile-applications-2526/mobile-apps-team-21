@@ -87,18 +87,31 @@ export default function ChatScreen() {
       <KeyboardAvoidingView behavior={'height'} style={{ flex: 1 }}>
         <View style={[styles.chatHeaderWrap, isDark && styles.chatHeaderWrapDark]}>
           <View style={styles.chatHeader}>
-            <TouchableOpacity onPress={async () => { leaveGroupBackend(); router.back(); }} style={styles.backTouch}>
+            <TouchableOpacity 
+              onPress={async () => { leaveGroupBackend(); router.back(); }} 
+              style={styles.backTouch}
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+            >
               <MaterialIcons name="arrow-back" size={24} color={isDark ? '#fff' : '#1f2933'} />
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.chatHeaderText} 
               onPress={() => router.push({ pathname: '/chatsPage/group-members', params: { groupId: chatGroup.id, groupName: chatGroup.name } })}
               activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="View group members"
+              testID="group-members-button"
             >
               <Text style={[styles.chatTitle, isDark && styles.headerTitleDark]} numberOfLines={1}>{chatGroup.name}</Text>
               <Text style={[styles.memberCount, isDark && styles.memberCountDark]}>{chatGroup.memberNames.length} {chatGroup.memberNames.length === 1 ? 'member' : 'members'}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => openRestaurantsModal()}>
+            <TouchableOpacity 
+              onPress={() => openRestaurantsModal()}
+              accessibilityRole="button"
+              accessibilityLabel="Restaurant recommendations"
+              testID="restaurant-modal-button"
+            >
               <MaterialIcons name="restaurant" size={24} color={isDark ? '#fff' : '#1f2933'} />
             </TouchableOpacity>
           </View>

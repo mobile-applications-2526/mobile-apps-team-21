@@ -56,8 +56,15 @@ export const UserService = {
     if (!res.ok) {
       let message = `Register failed (${res.status})`;
       try {
-        const data = await handleJson<{ message?: string }>(res.clone());
-        if (data?.message) message = data.message;
+        const text = await res.text();
+        try {
+          // Try to parse as JSON - Spring Boot can return { message, error } or other formats
+          const data = JSON.parse(text);
+          message = data.message || data.error || data.detail || text;
+        } catch {
+          // If not JSON, use the plain text response
+          if (text) message = text;
+        }
       } catch (_) {}
       throw new Error(message);
     }

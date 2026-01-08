@@ -28,7 +28,7 @@ public class GroupVisitService {
     private UserRepository userRepository;
 
     @Autowired
-    private BlobStorageService blobStorageService;
+    private ImageStorageService imageStorageService;
 
     /**
      * Get all group visits for a user (visits from groups they are a member of)
@@ -137,7 +137,7 @@ public class GroupVisitService {
         if (request.receiptImage() != null && !request.receiptImage().isEmpty()) {
         // Only upload to Blob Storage if the incoming string looks like a new Base64 upload
         if (request.receiptImage().startsWith("data:image")) {
-            String imageUrl = blobStorageService.uploadBase64Image(request.receiptImage());
+            String imageUrl = imageStorageService.uploadBase64Image(request.receiptImage());
             visit.setReceiptImage(imageUrl); // Store the URL instead of the Base64 string
         } else {
             // If it's already a URL, just save it

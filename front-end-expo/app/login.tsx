@@ -18,6 +18,17 @@ export default function LoginScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Clear error when user starts typing
+  const handleEmailChange = (text: string) => {
+    if (error) setError(null);
+    setEmail(text);
+  };
+
+  const handlePasswordChange = (text: string) => {
+    if (error) setError(null);
+    setPassword(text);
+  };
+
   const onSubmit = async () => {
     setError(null);
 
@@ -58,7 +69,7 @@ export default function LoginScreen() {
         <FormField
           label="E-mail"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={handleEmailChange}
           placeholder="your@email.com"
           keyboardType="email-address"
           autoCapitalize="none"
@@ -66,7 +77,7 @@ export default function LoginScreen() {
         <FormField
           label="Password"
           value={password}
-          onChangeText={setPassword}
+          onChangeText={handlePasswordChange}
           placeholder="password"
           secureTextEntry
         />
